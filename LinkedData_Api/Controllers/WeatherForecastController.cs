@@ -3,12 +3,13 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace LinkedData_Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
@@ -24,6 +25,7 @@ namespace LinkedData_Api.Controllers
         }
 
         [HttpGet]
+        [Route("[controller]")]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
@@ -35,5 +37,14 @@ namespace LinkedData_Api.Controllers
             })
             .ToArray();
         }
+
+        [HttpGet]
+        //musí být právě 3 ve tvaru controller/neco/neco/neco... vsechny pole povinny ;)
+        [Route("[controller]/{object}/{predicate}/{subject}")]
+        public string Test(string @object, string predicate, string subject)
+        {
+            return $"Předané parametry: {@object} -> {predicate} -> {subject}.\nZde tedy bude logika pro zpracování spraql dotazu a následné zobrazení. :)";
+        }
+
     }
 }
