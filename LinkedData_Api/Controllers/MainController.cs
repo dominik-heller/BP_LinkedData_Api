@@ -17,17 +17,18 @@ namespace LinkedData_Api.Controllers
     public partial class MainController : ControllerBase
     {
         //RouteTemplates
+        private const string RecursivePart = "{resource?}/{predicate?}/{r2?}/{p2?}/{r3?}/{p3?}/{r4?}";
         private const string BaseApiClassRoute =
-            "api/{endpoint}/class/{classId?}/{subject?}/{predicate?}/{object?}";
+            "api/{endpoint}/class/{classId?}/"+ RecursivePart;
 
         private const string BaseApiResourceRoute =
-            "api/{endpoint}/resource/{subject?}/{predicate?}/{object?}";
+            "api/{endpoint}/resource/{subject?}/"+ RecursivePart;
 
         private const string BaseApiGraphClassRoute =
-            "api/{endpoint}/{graph}/class/{classId?}/{subject?}/{predicate?}/{object?}";
-        
+            "api/{endpoint}/{graph}/class/{classId?}/"+ RecursivePart;
+
         private const string BaseApiGraphResourceRoute =
-            "api/{endpoint}/{graph}/resource/{subject?}/{predicate?}/{object?}";
+            "api/{endpoint}/{graph}/resource/{subject?}/"+ RecursivePart;
 
 
         //ENDPOINT_settings
