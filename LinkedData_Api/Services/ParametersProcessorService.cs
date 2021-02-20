@@ -1,15 +1,27 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Web;
-using LinkedData_Api.DataModel;
+using LinkedData_Api.DataModel.ParameterDto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
 namespace LinkedData_Api.Services
 {
-    public class ParametersProcessor
+    public class ParametersProcessorService : IParametersProcessorService
     {
-        public static ParameterDto ProcessParameters(RouteValueDictionary requestRouteValues,
+        /*Není to I/O operace (neopouští pamět PC (př na sít či do db)) => může to být, ale není to stěžejní udělat asynchronně
+        public static async Task<ParameterDto> ProcessParametersAsync(RouteValueDictionary requestRouteValues,
+            QueryString requestQueryString)
+        {
+            ParameterDto parameterDto = new ParameterDto();
+            await Task.Run(() =>
+            {
+                parameterDto = ProcessParameters(requestRouteValues, requestQueryString);
+            });
+            return parameterDto;
+        }
+        */
+
+        public ParameterDto ProcessParameters(RouteValueDictionary requestRouteValues,
             QueryString requestQueryString)
         {
             ParameterDto parameterDto = new ParameterDto();

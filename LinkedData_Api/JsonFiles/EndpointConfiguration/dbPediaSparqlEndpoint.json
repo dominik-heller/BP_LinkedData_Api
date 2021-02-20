@@ -1,0 +1,25 @@
+﻿{
+  "endpoint_name": "dbpedia",
+  "endpoint_url": "https://dbpedia.org/sparql",
+  "default_graph": "http://dbpedia.org",
+  "named_graphs": [
+  ],
+  "namespaces": [
+  ],
+  "supported_methods": {
+    "sparql_1.0": "yes",
+    "sparql_1.1": "no"
+  },
+  "entry_class": [
+    {
+      "graph_name": "default",
+      "command": "SELECT  ?s WHERE   { ?s  a  owl:Class }"
+    }
+  ],
+  "entry_resource": [
+    {
+      "graph_name": "default",
+      "command": "SELECT distinct ?s WHERE { ?s ?p ?o }"
+    }
+  ]
+}

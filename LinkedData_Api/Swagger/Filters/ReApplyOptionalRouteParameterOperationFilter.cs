@@ -2,7 +2,7 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace LinkedData_Api.Filters
+namespace LinkedData_Api.Swagger.Filters
 {
 	public class ReApplyOptionalRouteParameterOperationFilter : IOperationFilter
 	{

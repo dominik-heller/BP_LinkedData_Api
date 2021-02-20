@@ -1,3 +1,6 @@
+using System;
+using LinkedData_Api.Services;
+using LinkedData_Api.Swagger.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,10 +25,16 @@ namespace LinkedData_Api
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.OperationFilter<Filters.ReApplyOptionalRouteParameterOperationFilter>();
+                c.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
 //c.EnableAnnotations();
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "LinkedData_Api", Version = "v1"});
             });
+            
+            //CustomServices
+            services.AddSingleton<INamespaceFactoryService, NamespaceFactoryService>();
+            services.AddSingleton<IEndpointConfigurationService, EndpointConfigurationService>();
+            services.AddSingleton<IParametersProcessorService, ParametersProcessorService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +55,7 @@ namespace LinkedData_Api
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            
         }
     }
 }

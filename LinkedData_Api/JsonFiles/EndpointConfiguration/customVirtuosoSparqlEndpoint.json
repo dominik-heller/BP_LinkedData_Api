@@ -1,0 +1,61 @@
+﻿{
+  "endpoint_name": "virtuoso",
+  "endpoint_url": "http://localhost:8890/sparql",
+  "default_graph": "http://localhost:8890/ovm",
+  "named_graphs": [
+    {
+      "graph_name": "ovm",
+      "uri": "http://localhost:8890/ovm"
+    },
+    {
+      "graph_name": "lexvo",
+      "uri": "http://localhost:8890/lexvo"
+    }
+  ],
+  "namespaces": [
+    {
+      "prefix": "foaf",
+      "uri": "http://xmlns.com/foaf/0.1/"
+    },
+    {
+      "prefix": "rdfs",
+      "uri": "http://www.w3.org/2000/01/rdf-schema#"
+    },
+    {
+      "prefix": "rdf",
+      "uri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    },
+    {
+      "prefix": "skos",
+      "uri": "http://www.w3.org/2004/02/skos/core#"
+    },
+    {
+      "prefix": "owl",
+      "uri": "http://www.w3.org/2002/07/owl#"
+    }
+  ],
+  "supported_methods": {
+    "sparql_1.0": "yes",
+    "sparql_1.1": "yes"
+  },
+  "entry_class": [
+    {
+      "graph_name": "default",
+      "command": "SELECT distinct ?o where {[] a ?o}"
+    },
+    {
+      "graph_name": "ovm",
+      "command": "SELECT distinct ?o where {[] a ?o}"
+    },
+    {
+      "graph_name": "lexvo",
+      "command": "SELECT distinct ?o where {[] a ?o}"
+    }
+  ],
+  "entry_resource": [
+    {
+      "graph_name": "default",
+      "command": "SELECT distinct ?s WHERE { ?s ?p ?o }"
+    }
+  ]
+}

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace LinkedData_Api.DataModel
+﻿namespace LinkedData_Api.DataModel.ParameterDto
 {
     public class RouteParametersDto
     {

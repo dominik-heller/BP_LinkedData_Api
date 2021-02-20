@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using LinkedData_Api.Services;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -30,7 +31,15 @@ namespace LinkedData_Api.Controllers
         private const string BaseApiGraphResourceRoute =
             "api/{endpoint}/{graph}/resource/{subject?}/"+ RecursivePart;
 
-
+        private INamespaceFactoryService _namespaceFactoryService;
+        private IEndpointConfigurationService _endpointConfigurationService;
+        private IParametersProcessorService _parametersProcessorService;
+        public MainController(INamespaceFactoryService namespaceFactoryService, IEndpointConfigurationService endpointConfigurationService, IParametersProcessorService parametersProcessorService)
+        {
+            _namespaceFactoryService = namespaceFactoryService;
+            _endpointConfigurationService = endpointConfigurationService;
+            _parametersProcessorService = parametersProcessorService;
+        }
         //ENDPOINT_settings
         //př: https://localhost:5001/api/endpoint1
         [HttpGet("api/{endpoint}")]
