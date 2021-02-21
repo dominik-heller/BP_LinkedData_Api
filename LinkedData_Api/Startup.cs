@@ -34,6 +34,8 @@ namespace LinkedData_Api
             services.AddSingleton<INamespaceFactoryService, NamespaceFactoryService>();
             services.AddSingleton<IEndpointConfigurationService, EndpointConfigurationService>();
             services.AddSingleton<IParametersProcessorService, ParametersProcessorService>();
+            services.AddSingleton<ISparqlFactoryService, SparqlFactoryService>();
+            services.AddSingleton<IResultFormatterService, ResultFormatterService>();
 
         }
 

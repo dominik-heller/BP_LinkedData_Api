@@ -38,7 +38,7 @@ namespace LinkedData_Api.DataModel.EndpointConfigurationDto
 
         [JsonProperty("command")] public string Command { get; set; }
     }
-    
+
     public class EndpointDto
     {
         [JsonProperty("endpoint_name")] public string EndpointName { get; set; }
@@ -51,8 +51,7 @@ namespace LinkedData_Api.DataModel.EndpointConfigurationDto
 
         [JsonProperty("namespaces")] public List<Namespace> Namespaces { get; set; }
 
-        [JsonProperty("supported_methods")]
-        public SupportedMethods SupportedMethods { get; set; }
+        [JsonProperty("supported_methods")] public SupportedMethods SupportedMethods { get; set; }
 
         [JsonProperty("entry_class")] public List<EntryClass> EntryClass { get; set; }
 

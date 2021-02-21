@@ -1,35 +1,48 @@
 ﻿#nullable enable
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using LinkedData_Api.DataModel;
 using LinkedData_Api.DataModel.ParameterDto;
+using LinkedData_Api.Model.Contracts.ResponsesVM;
 using LinkedData_Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using VDS.RDF.Query;
 
 namespace LinkedData_Api.Controllers
 {
     public partial class MainController : ControllerBase
     {
         //př: https://localhost:5001/api/dbpedia/class/dbo:country/dbr:Germany/dbo:Capital/dbr:Berlin
-        [HttpGet(BaseApiClassRoute)]
+        [HttpGet(ApiRoutes.DefaultGraphClassRoute)]
         public ActionResult Get_DefaultGraph_ClassStart()
         {
-           // MyTests.Test();
             ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
                 Request.QueryString);
-            var c = _endpointConfigurationService.GetEndpointUrl(pd.RouteParameters.Endpoint);
-            if (c != null)
+            var x = pd.RouteParameters.ClassId;
+            if (pd.RouteParameters.ClassId == null)
             {
-                return Ok(c);
+                string defaultClassQuery =
+                    _sparqlFactoryService.ConstructEntryClassQuery(pd.RouteParameters.Endpoint);
+                if (defaultClassQuery != null)
+                {
+                    IEnumerable<SparqlResult> sparqlResults = _sparqlFactoryService.ExecuteSelectSparqlQuery(pd.RouteParameters.Endpoint, defaultClassQuery);
+                    if (sparqlResults != null)
+                    {
+                        IdsVm idsVm = _resultFormatterService.FormatSparqlResultToList(sparqlResults);
+                        if (idsVm != null) return Ok(idsVm);
+                    }
+                }
             }
 
-            return NotFound("Nenalezeno");
+            IdsVm idsVm2 = new(){Ids = new List<string>(){"pea", "adasf"}};
+            return NotFound(idsVm2);
         }
 
         //př: https://localhost:5001/api/endpoint1/resource/dbr:Germany/dbo:Capital/dbr:Berlin
-        [HttpGet(BaseApiResourceRoute)]
+        [HttpGet(ApiRoutes.DefaultGraphResourceRoute)]
         public ActionResult Get_DefaultGraph_ResourcesStart()
         {
             ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
@@ -38,7 +51,7 @@ namespace LinkedData_Api.Controllers
         }
 
         //př: https://localhost:5001/api/endpoint1/graph1/class/dbo:Country/dbr:Germany/dbo:Capital/dbr:Berlin
-        [HttpGet(BaseApiGraphClassRoute)]
+        [HttpGet(ApiRoutes.NamedGraphClassRoute)]
         public ActionResult Get_GraphSpecific_ClassStart()
         {
             ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
@@ -48,7 +61,7 @@ namespace LinkedData_Api.Controllers
 
 
         //př: https://localhost:5001/api/endpoint1/graph1/resource/dbr:Germany/dbo:Capital/dbr:Berlin
-        [HttpGet(BaseApiGraphResourceRoute)]
+        [HttpGet(ApiRoutes.NamedGraphResourceRoute)]
         public ActionResult Get_GraphSpecific_ResourceStart()
         {
             ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,

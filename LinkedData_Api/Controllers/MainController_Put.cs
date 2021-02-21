@@ -7,7 +7,7 @@ namespace LinkedData_Api.Controllers
     {
         //CLASS_defaultgraph
         //př: https://localhost:5001/api/endpoint1/class/dbo:country/dbr:Germany/dbo:Capital/dbr:Berlin
-        [HttpPut(BaseApiClassRoute)]
+        [HttpPut(ApiRoutes.DefaultGraphClassRoute)]
         public string Put_DefaultGraph_ClassStart([FromRoute] string endpoint, [FromRoute] string? class_id = null,
             [FromRoute] string? subject = null,
             [FromRoute] string? predicate = null, [FromRoute] string? @object = null)
@@ -18,7 +18,7 @@ namespace LinkedData_Api.Controllers
 
         //RESOURCE_defaultgraph
         //př: https://localhost:5001/api/endpoint1/resource/dbr:Germany/dbo:Capital/dbr:Berlin
-        [HttpPut(BaseApiResourceRoute)]
+        [HttpPut(ApiRoutes.DefaultGraphResourceRoute)]
         public string Put_DefaultGraph_ResourcesStart([FromRoute] string endpoint, [FromRoute] string? subject = null,
             [FromRoute] string? predicate = null, [FromRoute] string? @object = null)
         {
@@ -28,7 +28,7 @@ namespace LinkedData_Api.Controllers
 
         //CLASS_namedgraph
         //př: https://localhost:5001/api/endpoint1/graph1/class/dbo:Country/dbr:Germany/dbo:Capital/dbr:Berlin
-        [HttpPut(BaseApiGraphClassRoute)]
+        [HttpPut(ApiRoutes.NamedGraphClassRoute)]
         public string Put_GraphSpecific_ClassStart([FromRoute] string endpoint, [FromRoute] string graph,
             [FromRoute] string? classId = null,
             [FromRoute] string? subject = null, [FromRoute] string? predicate = null,
@@ -41,7 +41,7 @@ namespace LinkedData_Api.Controllers
 
         //RESOURCE_namedgraph
         //př: https://localhost:5001/api/endpoint1/graph1/resource/dbr:Germany/dbo:Capital/dbr:Berlin
-        [HttpPut(BaseApiGraphResourceRoute)]
+        [HttpPut(ApiRoutes.NamedGraphResourceRoute)]
         public string Put_GraphSpecific_ResourceStart([FromRoute] string endpoint, [FromRoute] string graph,
             [FromRoute] string? subject = null, [FromRoute] string? predicate = null,
             [FromRoute] string? @object = null)
