@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using LinkedData_Api.Data;
+using LinkedData_Api.Services.Contracts;
 using Newtonsoft.Json.Linq;
 using VDS.RDF;
 
@@ -9,44 +11,29 @@ namespace LinkedData_Api.Services
 {
     public class NamespaceFactoryService : INamespaceFactoryService
     {
-        private readonly NamespaceMapper _namespaceMapper;
+        private readonly ThreadSafeQNameOutputMapper _namespaceMapper;
 
-        public NamespaceFactoryService()
+        public NamespaceFactoryService(IDataAccess dataAccess)
         {
-            _namespaceMapper = new NamespaceMapper();
-            LoadNamespacesFromFile();
+            _namespaceMapper = dataAccess.LoadNamespacesFromFile();
         }
-
-        //načte asi 2500 výchozích prefixů z filu
-        public void LoadNamespacesFromFile()
-        {
-            JObject o = JObject.Parse(File.ReadAllText(@"JsonFiles/Namespaces/namespaces.json"));
-            foreach (var v in o)
-            {
-                // Debug.WriteLine(v.Key+":"+v.Value);
-                if (v.Value != null) _namespaceMapper.AddNamespace(v.Key, new Uri(v.Value.ToString()));
-            }
-
-            Debug.WriteLine("tady");
-        }
-
         
         public bool GetAbsoluteUriFromQname(string qname, out string absoluteUri)
         {
             var s = qname.Split(":");
             try
             {
-                absoluteUri = _namespaceMapper.GetNamespaceUri(s[0])+s[1];
+                absoluteUri = _namespaceMapper.GetNamespaceUri(s[0]) + s[1];
                 return true;
             }
             catch (RdfException)
             {
                 Console.WriteLine("Absolute Uri could not have been created.");
-                absoluteUri=String.Empty;
+                absoluteUri = String.Empty;
                 return false;
             }
         }
-        
+
         //přijde dbpedia.org/resource#Germany a nutno to změnit na př: dbr:Germany
         public bool GetQnameFromAbsoluteUri(string uri, out string qname)
         {
@@ -58,7 +45,7 @@ namespace LinkedData_Api.Services
             }
 
             //pokud ne vytvoří nový prefix/namespace ve tvaru ns[cislo] a vrati qname
-            Console.WriteLine("Namespace undefined.");
+          //  Console.WriteLine("Namespace undefined.");
             if (GetNamespaceUriFromAbsoluteUri(uri, out var nsUri))
             {
                 string prefix;
@@ -68,17 +55,19 @@ namespace LinkedData_Api.Services
                 }
                 else
                 {
-                    prefix = $"_ns{_namespaceMapper.Prefixes.Where(x => x.StartsWith("_ns")).Select(x => int.Parse(x.Substring(3))).Max() + 1}";
+                    prefix =
+                        $"_ns{_namespaceMapper.Prefixes.Where(x => x.StartsWith("_ns")).Select(x => int.Parse(x.Substring(3))).Max() + 1}";
                 }
 
                 _namespaceMapper.AddNamespace(prefix, new Uri(nsUri));
-                Console.WriteLine("Namespace added.");
+          //      Console.WriteLine("Namespace added.");
                 if (_namespaceMapper.ReduceToQName(uri, out _qname))
                 {
                     qname = _qname;
                     return true;
                 }
             }
+
             qname = string.Empty;
             return false;
         }

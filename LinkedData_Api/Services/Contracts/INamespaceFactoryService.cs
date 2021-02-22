@@ -1,8 +1,7 @@
-﻿namespace LinkedData_Api.Services
+﻿namespace LinkedData_Api.Services.Contracts
 {
     public interface INamespaceFactoryService
     {
-        void LoadNamespacesFromFile();
         bool GetAbsoluteUriFromQname(string qname, out string absoluteUri);
         bool GetQnameFromAbsoluteUri(string uri, out string qname);
     }

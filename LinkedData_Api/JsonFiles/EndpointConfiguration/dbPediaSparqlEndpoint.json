@@ -13,7 +13,7 @@
   "entry_class": [
     {
       "graph_name": "default",
-      "command": "SELECT  ?s WHERE   { ?s  a  owl:Class }"
+      "command": "SELECT DISTINCT ?s WHERE   { ?s  a  owl:Class }"
     }
   ],
   "entry_resource": [

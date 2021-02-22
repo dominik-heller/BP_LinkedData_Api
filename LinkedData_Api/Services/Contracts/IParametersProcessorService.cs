@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace LinkedData_Api.Services
+namespace LinkedData_Api.Services.Contracts
 {
     public interface IParametersProcessorService
     {

@@ -1,18 +1,6 @@
 ﻿#nullable enable
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using LinkedData_Api.DataModel.EndpointConfigurationDto;
-using LinkedData_Api.Services;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Newtonsoft.Json;
-using Swashbuckle.AspNetCore.Annotations;
+using LinkedData_Api.Services.Contracts;
 
 namespace LinkedData_Api.Controllers
 {
@@ -20,15 +8,15 @@ namespace LinkedData_Api.Controllers
     public partial class MainController : ControllerBase
     {
         private readonly INamespaceFactoryService _namespaceFactoryService;
-        private readonly IEndpointConfigurationService _endpointConfigurationService;
+        private readonly IEndpointService _endpointService;
         private readonly IParametersProcessorService _parametersProcessorService;
         private readonly ISparqlFactoryService _sparqlFactoryService;
         private readonly IResultFormatterService _resultFormatterService;
         
-        public MainController(INamespaceFactoryService namespaceFactoryService, IEndpointConfigurationService endpointConfigurationService, IParametersProcessorService parametersProcessorService, ISparqlFactoryService sparqlFactoryService, IResultFormatterService resultFormatterService)
+        public MainController(INamespaceFactoryService namespaceFactoryService, IEndpointService endpointService, IParametersProcessorService parametersProcessorService, ISparqlFactoryService sparqlFactoryService, IResultFormatterService resultFormatterService)
         {
             _namespaceFactoryService = namespaceFactoryService;
-            _endpointConfigurationService = endpointConfigurationService;
+            _endpointService = endpointService;
             _parametersProcessorService = parametersProcessorService;
             _sparqlFactoryService = sparqlFactoryService;
             _resultFormatterService = resultFormatterService;
@@ -38,7 +26,7 @@ namespace LinkedData_Api.Controllers
         [HttpGet(ApiRoutes.EndpointInfo)]
         public IActionResult Get_EndpointSettings([FromRoute] string endpoint)
         {
-            var info = _endpointConfigurationService.GetEndpointConfiguration(endpoint);
+            var info = _endpointService.GetEndpointConfiguration(endpoint);
             if (info != null) return Ok(info);
             return NotFound("Endpoint does not exist.");
         }
@@ -47,7 +35,7 @@ namespace LinkedData_Api.Controllers
         [HttpGet(ApiRoutes.EndpointGraphs)]
         public IActionResult Get_GraphsForEndpoint([FromRoute] string endpoint)
         {
-            var graphs = _endpointConfigurationService.GetEndpointGraphs(endpoint);
+            var graphs = _endpointService.GetEndpointGraphs(endpoint);
             if (graphs != null) return Ok(graphs);
             return NotFound("Endpoint does not exist.");
         }

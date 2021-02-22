@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using LinkedData_Api.Model.Contracts.ResponsesVM;
+using LinkedData_Api.Model.ViewModels;
 using VDS.RDF.Query;
 
-namespace LinkedData_Api.Services
+namespace LinkedData_Api.Services.Contracts
 {
     public interface IResultFormatterService
     {
-        IdsVm FormatSparqlResultToList(IEnumerable<SparqlResult> sparqlResult);
+        CurieVm FormatSparqlResultToList(IEnumerable<SparqlResult> sparqlResults);
         void FormatSparqlResultToResourceDetail();
     }
 }

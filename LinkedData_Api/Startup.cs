@@ -1,5 +1,7 @@
 using System;
+using LinkedData_Api.Data;
 using LinkedData_Api.Services;
+using LinkedData_Api.Services.Contracts;
 using LinkedData_Api.Swagger.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,10 +34,11 @@ namespace LinkedData_Api
             
             //CustomServices
             services.AddSingleton<INamespaceFactoryService, NamespaceFactoryService>();
-            services.AddSingleton<IEndpointConfigurationService, EndpointConfigurationService>();
+            services.AddSingleton<IEndpointService, EndpointService>();
             services.AddSingleton<IParametersProcessorService, ParametersProcessorService>();
             services.AddSingleton<ISparqlFactoryService, SparqlFactoryService>();
             services.AddSingleton<IResultFormatterService, ResultFormatterService>();
+            services.AddSingleton<IDataAccess, DataAccess>();
 
         }
 
@@ -57,7 +60,8 @@ namespace LinkedData_Api
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            
+
+           // MyTests.Test();
         }
     }
 }

@@ -1,30 +1,54 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using LinkedData_Api.Model.Contracts.ResponsesVM;
+using LinkedData_Api.Model.ViewModels;
+using LinkedData_Api.Services.Contracts;
 using VDS.RDF.Query;
 
 namespace LinkedData_Api.Services
 {
     public class ResultFormatterService : IResultFormatterService
     {
-        public IdsVm FormatSparqlResultToList(IEnumerable<SparqlResult> sparqlResults)
+        private readonly INamespaceFactoryService _namespaceFactoryService;
+
+        public ResultFormatterService(INamespaceFactoryService namespaceFactoryService)
         {
-            IdsVm idsVm = new IdsVm();
+            _namespaceFactoryService = namespaceFactoryService;
+        }
+
+        public CurieVm FormatSparqlResultToList(IEnumerable<SparqlResult> sparqlResults)
+        {
+            CurieVm curieVm = new CurieVm();
             foreach (var sparqlResult in sparqlResults)
             {
                 string variable = sparqlResult.Variables.First();
-                idsVm.Ids.Add(sparqlResult.Value(variable).ToString());
+                curieVm.Curies.Add(sparqlResult.Value(variable).ToString());
                 //TODO: dále zformátovat výstup do Curie => TransformResultToQnameRepresentation()
             }
 
-            return idsVm;
+            curieVm = TransformResultToQnameRepresentation(curieVm);
+            return curieVm;
         }
 
-        public void TransformResultToQnameRepresentation()
+        private CurieVm TransformResultToQnameRepresentation(CurieVm _curieVm)
         {
-            
+            CurieVm curieVm = new CurieVm();
+            foreach (var c in _curieVm.Curies)
+            {
+                _namespaceFactoryService.GetQnameFromAbsoluteUri(c, out var qname);
+                //př. u lexvo to někdy nevrátí celé uri ale rovnou qname... ceknu jestli mame pro dany qname definici, pokud ano vratim... hned
+                if (String.IsNullOrEmpty(qname) && _namespaceFactoryService.GetAbsoluteUriFromQname(c, out var absoluteUri))
+                {
+                    curieVm.Curies.Add(c);
+                    continue;
+                }
+
+                curieVm.Curies.Add(qname);
+            }
+
+            return curieVm;
         }
-        
+
         public void FormatSparqlResultToResourceDetail()
         {
         }

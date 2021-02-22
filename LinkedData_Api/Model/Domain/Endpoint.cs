@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
-namespace LinkedData_Api.DataModel.EndpointConfigurationDto
+namespace LinkedData_Api.Model.Domain
 {
     public class NamedGraph
     {
@@ -39,7 +38,7 @@ namespace LinkedData_Api.DataModel.EndpointConfigurationDto
         [JsonProperty("command")] public string Command { get; set; }
     }
 
-    public class EndpointDto
+    public class Endpoint
     {
         [JsonProperty("endpoint_name")] public string EndpointName { get; set; }
 
