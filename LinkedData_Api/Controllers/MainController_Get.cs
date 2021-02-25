@@ -1,34 +1,43 @@
 ﻿#nullable enable
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LinkedData_Api.Model.ParameterDto;
 using LinkedData_Api.Model.ViewModels;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using VDS.RDF.Query;
 
 namespace LinkedData_Api.Controllers
 {
     public partial class MainController
     {
+
         //př: https://localhost:5001/api/dbpedia/class/dbo:country/dbr:Germany/dbo:Capital/dbr:Berlin
         [HttpGet(ApiRoutes.DefaultGraphClassRoute)]
         public async Task<IActionResult> Get_DefaultGraph_ClassStart()
         {
             ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
                 Request.QueryString);
+            var endpoint = pd.RouteParameters.Endpoint;
             if (pd.RouteParameters.ClassId == null) //pouze dotaz na api/endpoint/class => vrátí všechny třídy
             {
                 string? query =
-                    _sparqlFactoryService.GetDefaultEntryClassQuery(pd.RouteParameters.Endpoint);
+                    _sparqlFactoryService.GetFinalQuery(
+                        _endpointService.GetDefaultEntryClassQuery(endpoint), pd);
                 if (query != null)
                 {
                     IEnumerable<SparqlResult>? sparqlResults = await
-                        _sparqlFactoryService.ExecuteRemoteSelectSparqlQueryAsync(pd.RouteParameters.Endpoint, null, query);
+                        _endpointService.ExecuteSelectSparqlQueryAsync(endpoint, null, query);
                     if (sparqlResults != null)
                     {
                         CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToList(sparqlResults);
-                        if (curiesVm != null) return Ok(curiesVm);
+                        if (curiesVm != null)
+                        {
+                            return Ok(curiesVm);
+                        }
                     }
                 }
             }
@@ -51,11 +60,14 @@ namespace LinkedData_Api.Controllers
         {
             ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
                 Request.QueryString);
-            string? query = _sparqlFactoryService.GetGraphSpecificEntryClassQuery(pd.RouteParameters.Endpoint, pd.RouteParameters.Graph);
+            string? query = _sparqlFactoryService.GetFinalQuery(
+                _endpointService.GetGraphSpecificEntryClassQuery(pd.RouteParameters.Endpoint,
+                    pd.RouteParameters.Graph), pd);
             if (query != null)
             {
-                IEnumerable<SparqlResult>? sparqlResults = await 
-                    _sparqlFactoryService.ExecuteRemoteSelectSparqlQueryAsync(pd.RouteParameters.Endpoint,pd.RouteParameters.Graph, query);
+                IEnumerable<SparqlResult>? sparqlResults = await
+                    _endpointService.ExecuteSelectSparqlQueryAsync(pd.RouteParameters.Endpoint,
+                        pd.RouteParameters.Graph, query);
                 if (sparqlResults != null)
                 {
                     CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToList(sparqlResults);
@@ -65,8 +77,7 @@ namespace LinkedData_Api.Controllers
 
             return NotFound("nenalezeno");
         }
-
-
+        
         //př: https://localhost:5001/api/endpoint1/graph1/resource/dbr:Germany/dbo:Capital/dbr:Berlin
         [HttpGet(ApiRoutes.NamedGraphResourceRoute)]
         public ActionResult Get_GraphSpecific_ResourceStart()
@@ -88,5 +99,6 @@ namespace LinkedData_Api.Controllers
             // $"CLASS_DefaultGraph\nEndpoint: {endpoint}\t Graph: Default\t \tClass_Id:{class_id}\nPředané parametry: {subject} -> {predicate} -> {@object}.\nZde tedy bude logika pro zpracování spraql dotazu a následné zobrazení. :)";
         }
        */
+
     }
 }

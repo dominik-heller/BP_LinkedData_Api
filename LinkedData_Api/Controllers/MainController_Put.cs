@@ -5,6 +5,8 @@ namespace LinkedData_Api.Controllers
 {
     public partial class MainController
     {
+        /*
+        
         //CLASS_defaultgraph
         //př: https://localhost:5001/api/endpoint1/class/dbo:country/dbr:Germany/dbo:Capital/dbr:Berlin
         [HttpPut(ApiRoutes.DefaultGraphClassRoute)]
@@ -49,5 +51,7 @@ namespace LinkedData_Api.Controllers
             return
                 $"RESOURCE_NamedGraph\nEndpoint: {endpoint}\t Graph: {graph}\t \nPředané parametry: {subject} -> {predicate} -> {@object}.\nZde tedy bude logika pro zpracování spraql dotazu a následné zobrazení. :)";
         }
+        
+        */
     }
 }

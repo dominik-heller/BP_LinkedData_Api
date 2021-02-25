@@ -41,21 +41,21 @@
   "entry_class": [
     {
       "graph_name": "default",
-      "command": "SELECT distinct ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing>}"
+      "command": "SELECT DISTINCT ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing>}"
     },
     {
       "graph_name": "ovm",
-      "command": "SELECT distinct ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing>}"
+      "command": "SELECT DISTINCT ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing>}"
     },
     {
       "graph_name": "lexvo",
-      "command": "SELECT distinct ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class>}"
+      "command": "SELECT DISTINCT ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class>}"
     }
   ],
   "entry_resource": [
     {
       "graph_name": "default",
-      "command": "SELECT distinct ?s WHERE { ?s ?p ?o }"
+      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
     }
   ]
 }

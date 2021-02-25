@@ -27,8 +27,8 @@ namespace LinkedData_Api
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
-//c.EnableAnnotations();
+                //c.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
+                //c.EnableAnnotations();
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "LinkedData_Api", Version = "v1"});
             });
             

@@ -83,11 +83,11 @@ namespace LinkedData_Api.Services
 
                             break;
                         }
-                        case "page":
+                        case "offset":
                         {
                             if (int.TryParse(requestQueryStringValues[key], out var result))
                             {
-                                queryStringParametersDto.Page = result;
+                                queryStringParametersDto.Offset = result;
                             }
 
                             break;

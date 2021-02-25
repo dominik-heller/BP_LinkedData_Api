@@ -7,10 +7,10 @@ namespace LinkedData_Api
 {
     public class MyTests
     {
-
+/*
         public static void Test()
         {
-            EndpointConfigurationFilesProcessorTest();
+           EndpointConfigurationFilesProcessorTest();
             NamespaceFactoryTest();
         }
 
@@ -32,5 +32,6 @@ namespace LinkedData_Api
             var b5 = nf.GetAbsoluteUriFromQname("_ns0:A._J._Reynolds", out var k);
             var b6 = nf.GetAbsoluteUriFromQname("wrong_prefix:A._J._Reynolds", out var p);
         }
+        */
     }
 }
