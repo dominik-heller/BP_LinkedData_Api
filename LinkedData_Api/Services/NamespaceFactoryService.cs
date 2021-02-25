@@ -15,7 +15,7 @@ namespace LinkedData_Api.Services
 
         public NamespaceFactoryService(IDataAccess dataAccess)
         {
-            _namespaceMapper = dataAccess.LoadNamespacesFromFile();
+            _namespaceMapper = dataAccess.LoadNamespacesFile();
         }
         
         public bool GetAbsoluteUriFromQname(string qname, out string absoluteUri)
@@ -44,7 +44,7 @@ namespace LinkedData_Api.Services
                 return true;
             }
 
-            //pokud ne vytvoří nový prefix/namespace ve tvaru ns[cislo] a vrati qname
+            //pokud ne vytvoří nový prefix/namespace ve tvaru ns[cislo] a vrati qname (pokud je příchozí ve tvaru http... jinak vrací string.empty)
           //  Console.WriteLine("Namespace undefined.");
             if (GetNamespaceUriFromAbsoluteUri(uri, out var nsUri))
             {

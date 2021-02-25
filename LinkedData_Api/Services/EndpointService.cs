@@ -18,11 +18,9 @@ namespace LinkedData_Api.Services
 
         public EndpointService(IDataAccess dataAccess)
         {
-            _endpoints = dataAccess.ProcessConfigurationFiles();
-       //     CreateRemoteEndpointConnectionObjects(_endpointDtos);
+            _endpoints = dataAccess.LoadConfigurationFiles();
         }
-
-
+        
         public Endpoint? GetEndpointConfiguration(string endpointName)
         {
             return _endpoints.FirstOrDefault(x => x.EndpointName.Equals(endpointName));
@@ -48,7 +46,5 @@ namespace LinkedData_Api.Services
             graphsList?.Insert(0, namedGraph);
             return graphsList;
         }
-
-
     }
 }

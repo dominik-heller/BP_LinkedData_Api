@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
-using LinkedData_Api.DataModel.ParameterDto;
+using System.Threading.Tasks;
 using LinkedData_Api.Model.Domain;
 using LinkedData_Api.Services.Contracts;
 using VDS.RDF;
@@ -31,7 +31,7 @@ namespace LinkedData_Api.Services
             {
                 query = endpointDto.EntryClass.FirstOrDefault(x => x.GraphName.Equals("default"))?.Command;
             }
-
+            query += " LIMIT 100"; //TODO: toto samozřejmě jen dočasné, bude odstaněno při řešení paginace :)
             return query;
         }
 
@@ -44,14 +44,14 @@ namespace LinkedData_Api.Services
                 query = endpointDto.EntryClass.FirstOrDefault(x => x.GraphName.Equals(graphName))?.Command;
             }
 
+            query += " LIMIT 100"; //TODO: toto samozřejmě jen dočasné, bude odstaněno při řešení paginace :)
             return query;
         }
 
-        public IEnumerable<SparqlResult>? ExecuteSelectSparqlQuery(string endpointName, string? graphName, string query)
+        public async Task<IEnumerable<SparqlResult>?> ExecuteRemoteSelectSparqlQueryAsync(string endpointName, string? graphName, string query)
         {
             SparqlResultSet? sparqlResultSet = null;
             Endpoint? endpoint = _endpointConfigurationService.GetEndpointConfiguration(endpointName);
-            query += " LIMIT 100"; //TODO: toto samozřejmě jen dočasné, bude odstaněno při řešení paginace :)
             if (endpoint != null && endpoint.SupportedMethods.Sparql10.Equals("yes"))
             {
                 SparqlRemoteEndpoint sparqlEndpoint;
@@ -61,11 +61,11 @@ namespace LinkedData_Api.Services
                 }
                 else
                 {
-                    sparqlEndpoint = new SparqlRemoteEndpoint(new Uri(endpoint.EndpointUrl));
+                    sparqlEndpoint = new SparqlRemoteEndpoint(new Uri(endpoint.EndpointUrl), endpoint.DefaultGraph);
                 }
                 try
                 {
-                    sparqlResultSet = sparqlEndpoint.QueryWithResultSet(query);
+                    sparqlResultSet = await Task.Run(()=>sparqlEndpoint.QueryWithResultSet(query));
                 }
                 catch (RdfException)
                 {

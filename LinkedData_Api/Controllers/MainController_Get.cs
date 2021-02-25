@@ -1,7 +1,8 @@
 ﻿#nullable enable
 
 using System.Collections.Generic;
-using LinkedData_Api.DataModel.ParameterDto;
+using System.Threading.Tasks;
+using LinkedData_Api.Model.ParameterDto;
 using LinkedData_Api.Model.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using VDS.RDF.Query;
@@ -12,7 +13,7 @@ namespace LinkedData_Api.Controllers
     {
         //př: https://localhost:5001/api/dbpedia/class/dbo:country/dbr:Germany/dbo:Capital/dbr:Berlin
         [HttpGet(ApiRoutes.DefaultGraphClassRoute)]
-        public ActionResult Get_DefaultGraph_ClassStart()
+        public async Task<IActionResult> Get_DefaultGraph_ClassStart()
         {
             ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
                 Request.QueryString);
@@ -22,8 +23,8 @@ namespace LinkedData_Api.Controllers
                     _sparqlFactoryService.GetDefaultEntryClassQuery(pd.RouteParameters.Endpoint);
                 if (query != null)
                 {
-                    IEnumerable<SparqlResult>? sparqlResults =
-                        _sparqlFactoryService.ExecuteSelectSparqlQuery(pd.RouteParameters.Endpoint, null, query);
+                    IEnumerable<SparqlResult>? sparqlResults = await
+                        _sparqlFactoryService.ExecuteRemoteSelectSparqlQueryAsync(pd.RouteParameters.Endpoint, null, query);
                     if (sparqlResults != null)
                     {
                         CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToList(sparqlResults);
@@ -46,15 +47,15 @@ namespace LinkedData_Api.Controllers
 
         //př: https://localhost:5001/api/virtuoso/ovm/class/dbo:Country/dbr:Germany/dbo:Capital/dbr:Berlin
         [HttpGet(ApiRoutes.NamedGraphClassRoute)]
-        public ActionResult Get_GraphSpecific_ClassStart()
+        public async Task<IActionResult> Get_GraphSpecific_ClassStart()
         {
             ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
                 Request.QueryString);
             string? query = _sparqlFactoryService.GetGraphSpecificEntryClassQuery(pd.RouteParameters.Endpoint, pd.RouteParameters.Graph);
             if (query != null)
             {
-                IEnumerable<SparqlResult>? sparqlResults =
-                    _sparqlFactoryService.ExecuteSelectSparqlQuery(pd.RouteParameters.Endpoint,pd.RouteParameters.Graph, query);
+                IEnumerable<SparqlResult>? sparqlResults = await 
+                    _sparqlFactoryService.ExecuteRemoteSelectSparqlQueryAsync(pd.RouteParameters.Endpoint,pd.RouteParameters.Graph, query);
                 if (sparqlResults != null)
                 {
                     CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToList(sparqlResults);

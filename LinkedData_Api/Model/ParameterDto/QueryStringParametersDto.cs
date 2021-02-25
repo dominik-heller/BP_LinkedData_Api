@@ -1,4 +1,4 @@
-﻿namespace LinkedData_Api.DataModel.ParameterDto
+﻿namespace LinkedData_Api.Model.ParameterDto
 {
     public class QueryStringParametersDto
     {

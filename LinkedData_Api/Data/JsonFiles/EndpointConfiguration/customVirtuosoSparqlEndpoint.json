@@ -41,15 +41,15 @@
   "entry_class": [
     {
       "graph_name": "default",
-      "command": "SELECT distinct ?o where {[] a ?o}"
+      "command": "SELECT distinct ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing>}"
     },
     {
       "graph_name": "ovm",
-      "command": "SELECT distinct ?o where {[] a ?o}"
+      "command": "SELECT distinct ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing>}"
     },
     {
       "graph_name": "lexvo",
-      "command": "SELECT distinct ?o where {[] a ?o}"
+      "command": "SELECT distinct ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class>}"
     }
   ],
   "entry_resource": [

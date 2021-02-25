@@ -13,10 +13,10 @@ namespace LinkedData_Api.Data
     public class DataAccess : IDataAccess
     {
         //Get Endpoint Configuration from Files and dispose them in ReadOnly = Thread-Safe Collection  
-        public ReadOnlyCollection<Endpoint> ProcessConfigurationFiles()
+        public ReadOnlyCollection<Endpoint> LoadConfigurationFiles()
         {
             List<Endpoint> endpointDtos = new List<Endpoint>();
-            string[] fileEntries = Directory.GetFiles("JsonFiles/EndpointConfiguration");
+            string[] fileEntries = Directory.GetFiles("Data/JsonFiles/EndpointConfiguration");
             foreach (string fileName in fileEntries)
             {
                 Endpoint endpoint = JsonConvert.DeserializeObject<Endpoint>(File.ReadAllText(fileName));
@@ -28,10 +28,10 @@ namespace LinkedData_Api.Data
             return readOnlyCollection;
         }
 
-        public ThreadSafeQNameOutputMapper LoadNamespacesFromFile()
+        public ThreadSafeQNameOutputMapper LoadNamespacesFile()
         {
             ThreadSafeQNameOutputMapper namespaceMapper = new ThreadSafeQNameOutputMapper(new NamespaceMapper());
-            JObject o = JObject.Parse(File.ReadAllText(@"JsonFiles/Namespaces/namespaces.json"));
+            JObject o = JObject.Parse(File.ReadAllText(@"Data/JsonFiles/Namespaces/namespaces.json"));
             foreach (var v in o)
             {
                 // Debug.WriteLine(v.Key+":"+v.Value);

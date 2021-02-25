@@ -17,4 +17,13 @@
     <Folder Include="Swagger" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="JsonFiles\EndpointConfiguration\customVirtuosoSparqlEndpoint.json" />
+    <_ContentIncludedByDefault Remove="JsonFiles\EndpointConfiguration\dbPediaSparqlEndpoint.json" />
+    <_ContentIncludedByDefault Remove="JsonFiles\Namespaces\namespaces.json" />
+    <_ContentIncludedByDefault Remove="Data\JsonFiles\EndpointConfiguration\customVirtuosoSparqlEndpoint.json" />
+    <_ContentIncludedByDefault Remove="Data\JsonFiles\EndpointConfiguration\dbPediaSparqlEndpoint.json" />
+    <_ContentIncludedByDefault Remove="Data\JsonFiles\Namespaces\namespaces.json" />
+  </ItemGroup>
+
 </Project>
