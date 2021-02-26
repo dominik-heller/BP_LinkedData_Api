@@ -8,6 +8,19 @@ namespace LinkedData_Api.Services.Contracts
 {
     public interface ISparqlFactoryService
     {
-        string? GetFinalQuery(string? query, ParameterDto parameterDto);
+        /// <summary>
+        /// Return updated sparql query based on querystring parameters or null.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="queryStringParameters"></param>
+        /// <returns></returns>
+        string? GetFinalQuery(string? query, QueryStringParametersDto queryStringParameters);
+
+        /// <summary>
+        /// Return new sparql query for {class} endpoint based on route and querystring parameters or null.
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public string? GetFinalQueryForClass(ParameterDto parameters);
     }
 }

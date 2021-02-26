@@ -1,4 +1,8 @@
 using System;
+using System.IO;
+using System.Reflection;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using LinkedData_Api.Data;
 using LinkedData_Api.Services;
 using LinkedData_Api.Services.Contracts;
@@ -27,10 +31,22 @@ namespace LinkedData_Api
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                //c.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
+               // c.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
                 //c.EnableAnnotations();
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "LinkedData_Api", Version = "v1"});
+                //Generate swagger advanced documentation
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
+/*
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+            });
+*/
+
+            
             
             //CustomServices
             services.AddSingleton<INamespaceFactoryService, NamespaceFactoryService>();

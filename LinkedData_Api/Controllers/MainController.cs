@@ -5,6 +5,7 @@ using LinkedData_Api.Services.Contracts;
 namespace LinkedData_Api.Controllers
 {
     [ApiController]
+    [Produces("application/json")]
     public partial class MainController : ControllerBase
     {
         private readonly INamespaceFactoryService _namespaceFactoryService;
@@ -23,6 +24,11 @@ namespace LinkedData_Api.Controllers
         }
 
         //př: https://localhost:5001/api/virtuoso
+        /// <summary>
+        /// Returns endpoint configuration information.
+        /// </summary>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
         [HttpGet(ApiRoutes.EndpointInfo)]
         public IActionResult Get_EndpointSettings([FromRoute] string endpoint)
         {
@@ -32,6 +38,11 @@ namespace LinkedData_Api.Controllers
         }
         
         //př: https://localhost:5001/api/virtuoso/graphs
+        /// <summary>
+        /// Returns endpoint's named graphs.
+        /// </summary>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
         [HttpGet(ApiRoutes.EndpointGraphs)]
         public IActionResult Get_GraphsForEndpoint([FromRoute] string endpoint)
         {

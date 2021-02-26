@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using LinkedData_Api.Data;
+using LinkedData_Api.Model.Domain;
 using LinkedData_Api.Services.Contracts;
 using Newtonsoft.Json.Linq;
 using VDS.RDF;
@@ -70,6 +72,14 @@ namespace LinkedData_Api.Services
 
             qname = string.Empty;
             return false;
+        }
+
+        public void AddNewPrefixes(IEnumerable<Namespace> namespaces )
+        {
+            foreach (var var in namespaces)
+            {
+                _namespaceMapper.AddNamespace(var.Prefix, new Uri(var.Uri));
+            }
         }
 
         private static bool GetNamespaceUriFromAbsoluteUri(string uri, out string nsUri)

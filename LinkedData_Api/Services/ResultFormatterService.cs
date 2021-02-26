@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Services.Contracts;
+using VDS.RDF;
 using VDS.RDF.Query;
 
 namespace LinkedData_Api.Services
@@ -21,7 +23,7 @@ namespace LinkedData_Api.Services
             CurieVm curieVm = new CurieVm();
             foreach (var sparqlResult in sparqlResults)
             {
-                string variable = sparqlResult.Variables.First();
+                string variable = sparqlResult.FirstOrDefault().Key;
                 curieVm.Curies.Add(sparqlResult.Value(variable).ToString());
                 //TODO: dále zformátovat výstup do Curie => TransformResultToQnameRepresentation()
             }
@@ -49,9 +51,8 @@ namespace LinkedData_Api.Services
                     continue;
                 }
                 */
-                curieVm.Curies.Add(qname);
+                curieVm.Curies.Add(HttpUtility.UrlDecode(qname));
             }
-
             return curieVm;
         }
 

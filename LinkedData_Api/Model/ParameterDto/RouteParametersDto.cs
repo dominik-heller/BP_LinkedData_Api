@@ -4,7 +4,7 @@
     {
         public string Endpoint { get; set; }
         public string Graph { get; set; }
-        public string ClassId { get; set; }
+        public string Class { get; set; }
         public string Resource { get; set; }
         public string Predicate { get; set; }
 

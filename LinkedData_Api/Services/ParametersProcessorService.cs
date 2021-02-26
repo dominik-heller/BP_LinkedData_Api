@@ -41,9 +41,9 @@ namespace LinkedData_Api.Services
                         routeParametersDto.Graph = requestRouteValues[key].ToString();
                         break;
                     }
-                    case "classId":
+                    case "class":
                     {
-                        routeParametersDto.ClassId = requestRouteValues[key].ToString();
+                        routeParametersDto.Class = requestRouteValues[key].ToString();
                         break;
                     }
                     case "resource":
