@@ -3,27 +3,30 @@ using Newtonsoft.Json;
 
 namespace LinkedData_Api.Model.ViewModels
 {
-    public class PropertyName
-    {
-        [JsonProperty("literals")] public List<LiteralVm.Literal> Literals { get; set; }
 
-        [JsonProperty("curies")] public List<string> Curies { get; set; }
-    }
 
-    public class Property
+    public class PropertyContent
     {
-        [JsonProperty("property_name")] public PropertyName PropertyName { get; set; }
-    }
+        public List<string> Curies;
+        public List<Literal> Literals;
 
-    public class Resource
-    {
-        [JsonProperty("properties")] public List<Property> Properties { get; set; }
+        public PropertyContent()
+        {
+            Curies = new List<string>();
+            Literals = new List<Literal>();
+        }
     }
 
     public class ResourceVm
     {
-        [JsonProperty("resource")] public Resource Resource { get; set; }
+        public Dictionary<string, PropertyContent> Properties { get; set; }
+
+        public ResourceVm()
+        {
+            Properties = new Dictionary<string, PropertyContent>();
+         //   Properties = new Dictionary<string, PropertyContent>();
+         //   Properties.Add("das",new PropertyContent());
+         //   Properties["das"].Curies.Add("dasda");
+        }
     }
-
 }
-

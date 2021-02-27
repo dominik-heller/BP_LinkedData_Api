@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LinkedData_Api.Model.ParameterDto;
 using LinkedData_Api.Model.ViewModels;
@@ -19,7 +20,7 @@ namespace LinkedData_Api.Controllers
         /// <summary>
         /// Returns list of classes.
         /// </summary>
-        /// <param name="limit">Default = 100</param>
+        /// <param name="limit">Default = 50</param>
         /// <param name="offset">Default = 0</param>
         /// <param name="regex"></param>
         /// <param name="sort"></param>
@@ -29,13 +30,19 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.NamedGraphClasses)]
         [ProducesResponseType(typeof(CurieVm), 200)]
         [ProducesResponseType(typeof(string), 404)]
-        public async Task<IActionResult> GetClasses([FromQuery] string? limit, [FromQuery] string? offset, [FromQuery] string? regex, [FromQuery] string? sort)
+        public async Task<IActionResult> GetClasses([FromQuery] string? limit, [FromQuery] string? offset,
+            [FromQuery] string? regex, [FromQuery] string? sort)
         {
-            ParameterDto parameters = _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
-            string? query = _sparqlFactoryService.GetFinalQuery(_endpointService.GetEntryClassQuery(parameters.RouteParameters.Endpoint, parameters.RouteParameters.Graph), parameters.QueryStringParametersDto);
+            ParameterDto parameters =
+                _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
+            string? query = _sparqlFactoryService.GetFinalQuery(
+                _endpointService.GetEntryClassQuery(parameters.RouteParameters.Endpoint,
+                    parameters.RouteParameters.Graph), parameters.QueryStringParametersDto);
             if (query != null)
             {
-                var sparqlResults = await _endpointService.ExecuteSelectSparqlQueryAsync(parameters.RouteParameters.Endpoint, parameters.RouteParameters.Graph, query);
+                var sparqlResults =
+                    await _endpointService.ExecuteSelectSparqlQueryAsync(parameters.RouteParameters.Endpoint,
+                        parameters.RouteParameters.Graph, query);
                 if (sparqlResults != null)
                 {
                     CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToList(sparqlResults);
@@ -74,7 +81,7 @@ namespace LinkedData_Api.Controllers
         /// <summary>
         /// Returns list of resources.
         /// </summary>
-        /// <param name="limit">Default = 100</param>
+        /// <param name="limit">Default = 50</param>
         /// <param name="offset">Default = 0</param>
         /// <param name="regex"></param>
         /// <param name="sort"></param>
@@ -87,11 +94,16 @@ namespace LinkedData_Api.Controllers
         public async Task<IActionResult> GetResources([FromQuery] string? limit,
             [FromQuery] string? offset, [FromQuery] string? regex, [FromQuery] string? sort)
         {
-            ParameterDto parameters = _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
-            string? query = _sparqlFactoryService.GetFinalQuery(_endpointService.GetEntryResourceQuery(parameters.RouteParameters.Endpoint, parameters.RouteParameters.Graph), parameters.QueryStringParametersDto);
+            ParameterDto parameters =
+                _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
+            string? query = _sparqlFactoryService.GetFinalQuery(
+                _endpointService.GetEntryResourceQuery(parameters.RouteParameters.Endpoint,
+                    parameters.RouteParameters.Graph), parameters.QueryStringParametersDto);
             if (query != null)
             {
-                var sparqlResults = await _endpointService.ExecuteSelectSparqlQueryAsync(parameters.RouteParameters.Endpoint, parameters.RouteParameters.Graph, query);
+                var sparqlResults =
+                    await _endpointService.ExecuteSelectSparqlQueryAsync(parameters.RouteParameters.Endpoint,
+                        parameters.RouteParameters.Graph, query);
                 if (sparqlResults != null)
                 {
                     CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToList(sparqlResults);
@@ -115,13 +127,12 @@ namespace LinkedData_Api.Controllers
         #endregion
 
 
-         #region ConcreteClasses
-        
-        
+        #region ConcreteClass
+
         /// <summary>
         /// Returns list of resources for given class.
         /// </summary>
-        /// <param name="limit">Default = 100</param>
+        /// <param name="limit">Default = 50</param>
         /// <param name="offset">Default = 0</param>
         /// <param name="regex"></param>
         /// <param name="sort"></param>
@@ -131,13 +142,17 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.NamedGraphConcreteClass)]
         [ProducesResponseType(typeof(CurieVm), 200)]
         [ProducesResponseType(typeof(string), 404)]
-        public async Task<IActionResult> GetConcreteClass([FromQuery] string? limit, [FromQuery] string? offset, [FromQuery] string? regex, [FromQuery] string? sort)
+        public async Task<IActionResult> GetConcreteClass([FromQuery] string? limit, [FromQuery] string? offset,
+            [FromQuery] string? regex, [FromQuery] string? sort)
         {
-            ParameterDto parameters = _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
+            ParameterDto parameters =
+                _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             string? query = _sparqlFactoryService.GetFinalQueryForClass(parameters);
             if (query != null)
             {
-                var sparqlResults = await _endpointService.ExecuteSelectSparqlQueryAsync(parameters.RouteParameters.Endpoint, parameters.RouteParameters.Graph, query);
+                var sparqlResults =
+                    await _endpointService.ExecuteSelectSparqlQueryAsync(parameters.RouteParameters.Endpoint,
+                        parameters.RouteParameters.Graph, query);
                 if (sparqlResults != null)
                 {
                     CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToList(sparqlResults);
@@ -157,9 +172,56 @@ namespace LinkedData_Api.Controllers
             return "Get_NamedGraphConcreteClass";
         }
 */
+
         #endregion
+
+        #region ConcreteResource
+
+        /// <summary>
+        /// Returns detailed view for given resource.
+        /// </summary>
+        /// <param name="limit">Default = 50</param>
+        /// <param name="offset">Default = 0</param>
+        /// <param name="regex"></param>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        [HttpGet(ApiRoutes.DefaultGraphResourcesConcreteResource)]
+        public async Task<IActionResult> GetConcreteResource([FromQuery] string? limit, [FromQuery] string? offset,
+            [FromQuery] string? regex, [FromQuery] string? sort)
+        {
+            ParameterDto parameters =
+                _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
+            string? query = _sparqlFactoryService.GetFinalQueryForResource(parameters);
+            if (query != null)
+            {
+                var sparqlResults = await _endpointService.ExecuteSelectSparqlQueryAsync(
+                    parameters.RouteParameters.Endpoint,
+                    parameters.RouteParameters.Graph, query);
+                if (sparqlResults != null)
+                {
+                   ResourceVm resourceVm = _resultFormatterService.FormatSparqlResultToResourceDetail(sparqlResults);
+                   return Ok(resourceVm);
+                }
+
+            }
+
+            return NotFound("Not found!");
+            }
+
 /*
-        #region ConcreteResources
+        [HttpGet(ApiRoutes.NamedGraphResourcesConcreteResource)]
+        public string Get_NamedGraphResourcesConcreteResource()
+        {
+            ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
+                Request.QueryString);
+            return "Get_NamedGraphClassesConcreteResource";
+        }
+*/
+
+            #endregion
+
+/*
+        #region ConcreteResourceForClass
 
         [HttpGet(ApiRoutes.DefaultGraphClassesConcreteResource)]
         public string Get_DefaultGraphClassesConcreteResource()
@@ -171,22 +233,6 @@ namespace LinkedData_Api.Controllers
 
         [HttpGet(ApiRoutes.NamedGraphClassesConcreteResource)]
         public string Get_NamedGraphClassesConcreteResource()
-        {
-            ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
-                Request.QueryString);
-            return "Get_NamedGraphClassesConcreteResource";
-        }
-
-        [HttpGet(ApiRoutes.DefaultGraphResourcesConcreteResource)]
-        public string Get_DefaultGraphResourcesConcreteResource()
-        {
-            ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
-                Request.QueryString);
-            return "Get_DefaultGraphClassesConcreteResource";
-        }
-
-        [HttpGet(ApiRoutes.NamedGraphResourcesConcreteResource)]
-        public string Get_NamedGraphResourcesConcreteResource()
         {
             ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
                 Request.QueryString);
@@ -352,5 +398,6 @@ public async Task<IActionResult> Get_DefaultGraph_ClassStartAsync()
   // $"CLASS_DefaultGraph\nEndpoint: {endpoint}\t Graph: Default\t \tClass_Id:{class_id}\nPředané parametry: {subject} -> {predicate} -> {@object}.\nZde tedy bude logika pro zpracování spraql dotazu a následné zobrazení. :)";
 }
 */
+        
     }
 }

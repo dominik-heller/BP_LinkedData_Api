@@ -16,7 +16,7 @@ namespace LinkedData_Api.Services
     public class EndpointService : IEndpointService
     {
         private readonly ReadOnlyCollection<Endpoint> _endpoints;
-
+        private const int SparqlEndpointConnectionTimeout = 5000;
 
         public EndpointService(IDataAccess dataAccess, INamespaceFactoryService namespaceFactoryService)
         {
@@ -82,7 +82,7 @@ namespace LinkedData_Api.Services
             if (endpoint != null && endpoint.SupportedMethods.Sparql10.Equals("yes"))
             {
                 SparqlRemoteEndpoint sparqlEndpoint;
-
+ 
                 if (graphName != null && !endpoint.NamedGraphs.Exists(x => x.GraphName.Equals(graphName))) return null;
                 if (graphName != null && endpoint.NamedGraphs.Exists(x => x.GraphName.Equals(graphName)))
                 {
@@ -96,6 +96,7 @@ namespace LinkedData_Api.Services
 
                 try
                 {
+                    sparqlEndpoint.Timeout = SparqlEndpointConnectionTimeout;
                     sparqlResultSet = await Task.Run(() => sparqlEndpoint.QueryWithResultSet(query));
                 }
                 catch (RdfException)

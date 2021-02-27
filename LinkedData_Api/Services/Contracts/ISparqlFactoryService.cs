@@ -17,10 +17,17 @@ namespace LinkedData_Api.Services.Contracts
         string? GetFinalQuery(string? query, QueryStringParametersDto queryStringParameters);
 
         /// <summary>
-        /// Return new sparql query for {class} endpoint based on route and querystring parameters or null.
+        /// Return new sparql query for concrete {class} endpoint based on route and querystring parameters or null.
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
         public string? GetFinalQueryForClass(ParameterDto parameters);
+
+        /// <summary>
+        /// Return new sparql query for concrete {resource} endpoint based on route and querystring parameters or null.
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public string? GetFinalQueryForResource(ParameterDto parameters);
     }
 }

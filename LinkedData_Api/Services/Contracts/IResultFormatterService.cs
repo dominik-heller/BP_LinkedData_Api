@@ -7,6 +7,6 @@ namespace LinkedData_Api.Services.Contracts
     public interface IResultFormatterService
     {
         CurieVm FormatSparqlResultToList(IEnumerable<SparqlResult> sparqlResults);
-        void FormatSparqlResultToResourceDetail();
+        ResourceVm FormatSparqlResultToResourceDetail(IEnumerable<SparqlResult> sparqlResults);
     }
 }

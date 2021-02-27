@@ -19,7 +19,7 @@ namespace LinkedData_Api.Services
         {
             _namespaceMapper = dataAccess.LoadNamespacesFile();
         }
-        
+
         public bool GetAbsoluteUriFromQname(string qname, out string absoluteUri)
         {
             var s = qname.Split(":");
@@ -47,7 +47,7 @@ namespace LinkedData_Api.Services
             }
 
             //pokud ne vytvoří nový prefix/namespace ve tvaru ns[cislo] a vrati qname (pokud je příchozí ve tvaru http... jinak vrací string.empty)
-          //  Console.WriteLine("Namespace undefined.");
+            //  Console.WriteLine("Namespace undefined.");
             if (GetNamespaceUriFromAbsoluteUri(uri, out var nsUri))
             {
                 string prefix;
@@ -62,7 +62,7 @@ namespace LinkedData_Api.Services
                 }
 
                 _namespaceMapper.AddNamespace(prefix, new Uri(nsUri));
-          //      Console.WriteLine("Namespace added.");
+                //      Console.WriteLine("Namespace added.");
                 if (_namespaceMapper.ReduceToQName(uri, out _qname))
                 {
                     qname = _qname;
@@ -74,7 +74,8 @@ namespace LinkedData_Api.Services
             return false;
         }
 
-        public void AddNewPrefixes(IEnumerable<Namespace> namespaces )
+
+        public void AddNewPrefixes(IEnumerable<Namespace> namespaces)
         {
             foreach (var var in namespaces)
             {

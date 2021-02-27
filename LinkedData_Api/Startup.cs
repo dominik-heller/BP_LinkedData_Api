@@ -31,7 +31,7 @@ namespace LinkedData_Api
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-               // c.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
+                // c.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
                 //c.EnableAnnotations();
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "LinkedData_Api", Version = "v1"});
                 //Generate swagger advanced documentation
@@ -39,15 +39,16 @@ namespace LinkedData_Api
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
-/*
-            services.AddControllers().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
-            });
-*/
+            /*
+            //ignores null values in json response => 
+            services.AddMvc()
+                .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; });
+                
+            */
+            //enables JSONIGNORE
+            //services.AddMvc().AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-            
-            
+
             //CustomServices
             services.AddSingleton<INamespaceFactoryService, NamespaceFactoryService>();
             services.AddSingleton<IEndpointService, EndpointService>();
@@ -55,7 +56,6 @@ namespace LinkedData_Api
             services.AddSingleton<ISparqlFactoryService, SparqlFactoryService>();
             services.AddSingleton<IResultFormatterService, ResultFormatterService>();
             services.AddSingleton<IDataAccess, DataAccess>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,7 +77,7 @@ namespace LinkedData_Api
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-           // MyTests.Test();
+            // MyTests.Test();
         }
     }
 }

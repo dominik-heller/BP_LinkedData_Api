@@ -49,12 +49,29 @@ namespace LinkedData_Api.Services
                 SparqlParameterizedString sparqlParameterizedString = new();
                 sparqlParameterizedString.CommandText = "SELECT ?s WHERE {?s ?p @var}";
                 sparqlParameterizedString.SetUri("var", new Uri(absoluteUri));
-                string query = ApplyQueryStringParametersToSparqlQuery(sparqlParameterizedString.ToString(),parameters.QueryStringParametersDto);
+                string query = ApplyQueryStringParametersToSparqlQuery(sparqlParameterizedString.ToString(),
+                    parameters.QueryStringParametersDto);
                 return query;
             }
+
             return null;
         }
 
+        public string? GetFinalQueryForResource(ParameterDto parameters)
+        {
+            if (_namespaceFactoryService.GetAbsoluteUriFromQname(parameters.RouteParameters.Resource,
+                out var absoluteUri))
+            {
+                SparqlParameterizedString sparqlParameterizedString = new();
+                sparqlParameterizedString.CommandText = "SELECT * WHERE {@var ?p ?o}";
+                sparqlParameterizedString.SetUri("var", new Uri(absoluteUri));
+                string query = ApplyQueryStringParametersToSparqlQuery(sparqlParameterizedString.ToString(),
+                    parameters.QueryStringParametersDto);
+                return query;
+            }
+
+            return null;
+        }
 
         private string ApplyQueryStringParametersToSparqlQuery(string query,
             QueryStringParametersDto queryStringParameters)
@@ -68,7 +85,7 @@ namespace LinkedData_Api.Services
                 query = $"{query.Substring(0, i)} FILTER regex(?s, \"{regex}\") {query.Substring(i)}";
             }
 
-            //TODO: Potentially ddd sort  ...?sort(+foaf:name) = ORDER BY Desc(foaf:name) X  ...?sort(-foaf:name) = ORDER BY (foaf:name) ***možná ani orderby desc netřeba
+            //TODO: Potentially ddd sort ...?sort(+foaf:name) = ORDER BY Desc(foaf:name) X ...?sort(-foaf:name) = ORDER BY (foaf:name) ***možná ani orderby desc netřeba
             query += $" LIMIT {limit} OFFSET {offset}";
 
             return query;
