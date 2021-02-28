@@ -185,7 +185,9 @@ namespace LinkedData_Api.Controllers
         /// <param name="regex"></param>
         /// <param name="sort"></param>
         /// <returns></returns>
-        [HttpGet(ApiRoutes.DefaultGraphResourcesConcreteResource)]
+        [HttpGet]
+        [Route(ApiRoutes.DefaultGraphResourcesConcreteResource)]
+        [Route(ApiRoutes.NamedGraphResourcesConcreteResource)]
         public async Task<IActionResult> GetConcreteResource([FromQuery] string? limit, [FromQuery] string? offset,
             [FromQuery] string? regex, [FromQuery] string? sort)
         {

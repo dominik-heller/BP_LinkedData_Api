@@ -28,7 +28,7 @@ namespace LinkedData_Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
             services.AddSwaggerGen(c =>
             {
                 // c.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
@@ -39,12 +39,10 @@ namespace LinkedData_Api
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
-            /*
-            //ignores null values in json response => 
-            services.AddMvc()
-                .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; });
-                
-            */
+
+
+
+
             //enables JSONIGNORE
             //services.AddMvc().AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 

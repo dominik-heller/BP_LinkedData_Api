@@ -7,9 +7,9 @@ namespace LinkedData_Api.Model.ViewModels
     {
         [JsonProperty("value")] public string Value { get; set; }
 
-        [JsonProperty("datatype")] public string Datatype { get; set; }
+        [JsonProperty("datatype", NullValueHandling = NullValueHandling.Ignore)] public string Datatype { get; set; }
 
-        [JsonProperty("language")] public string Language { get; set; }
+        [JsonProperty("language", NullValueHandling = NullValueHandling.Ignore)] public string Language { get; set; }
     }
 
     public class LiteralVm

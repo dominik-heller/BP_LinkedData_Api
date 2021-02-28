@@ -36,7 +36,7 @@ namespace LinkedData_Api.Services
         public ResourceVm FormatSparqlResultToResourceDetail(IEnumerable<SparqlResult> sparqlResults)
         {
            
-            ResourceVm resourceVm = new ResourceVm();
+            ResourceVm resourceVm = new ResourceVm(){Properties = new Dictionary<string,PropertyContent>()};
             
            foreach (var sparqlResult in sparqlResults)
            {
@@ -45,26 +45,40 @@ namespace LinkedData_Api.Services
                if (!resourceVm.Properties.ContainsKey(propertyQname))
                    resourceVm.Properties.Add(propertyQname, new PropertyContent());
                string obj = sparqlResult.Value("o").ToString();
+               if (propertyQname.Contains("label") || propertyQname.Contains("comment"))
+               {
+                   if (resourceVm.Properties[propertyQname].Literals == null)
+                       resourceVm.Properties[propertyQname].Literals = new List<Literal>();
+                   resourceVm.Properties[propertyQname].Literals.Add(new Literal() {Value = obj});
+                   continue;
+               }
                if (GetLiteralFromUriIfContainsDatatypeDeclaration(obj, out var literal))
                {
+                   if (resourceVm.Properties[propertyQname].Literals == null)
+                       resourceVm.Properties[propertyQname].Literals = new List<Literal>();
                    resourceVm.Properties[propertyQname].Literals.Add(literal);
                    continue;
                }
 
                if (CheckIfUriIsUrlLink(obj))
                {
+                   if (resourceVm.Properties[propertyQname].Literals == null)
+                       resourceVm.Properties[propertyQname].Literals = new List<Literal>();
                    resourceVm.Properties[propertyQname].Literals.Add((new Literal() {Value = obj}));
                    continue;
                }
 
                if (!_namespaceFactoryService.GetQnameFromAbsoluteUri(obj, out var objQname))
                {
+                   if (resourceVm.Properties[propertyQname].Literals == null)
+                       resourceVm.Properties[propertyQname].Literals = new List<Literal>();
                    resourceVm.Properties[propertyQname].Literals.Add((new Literal() {Value = obj}));
                    //   Console.WriteLine("Literal:" + obj);
                    continue;
                }
-
-               resourceVm.Properties[propertyQname].Curies.Add(objQname);
+               if (resourceVm.Properties[propertyQname].Curies == null)
+                   resourceVm.Properties[propertyQname].Curies = new List<string>();
+               resourceVm.Properties[propertyQname].Curies.Add(HttpUtility.UrlDecode(objQname));
                // Console.WriteLine("Curie:" + objQname);
            }
            

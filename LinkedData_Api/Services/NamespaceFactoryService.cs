@@ -22,15 +22,15 @@ namespace LinkedData_Api.Services
 
         public bool GetAbsoluteUriFromQname(string qname, out string absoluteUri)
         {
-            var s = qname.Split(":");
+            var s = qname.Split(new[] { ':' }, 2);
             try
             {
                 absoluteUri = _namespaceMapper.GetNamespaceUri(s[0]) + s[1];
                 return true;
             }
-            catch (RdfException)
+            catch (RdfException e)
             {
-                Console.WriteLine("Absolute Uri could not have been created.");
+                Console.WriteLine("Absolute Uri could not have been created. "+ e);
                 absoluteUri = String.Empty;
                 return false;
             }
@@ -85,6 +85,8 @@ namespace LinkedData_Api.Services
 
         private static bool GetNamespaceUriFromAbsoluteUri(string uri, out string nsUri)
         {
+            nsUri = string.Empty;
+            if (!uri.StartsWith("http")) return false;
             if (uri.Contains('#'))
             {
                 nsUri = uri.Substring(0, uri.LastIndexOf('#') + 1);
@@ -96,8 +98,6 @@ namespace LinkedData_Api.Services
                 nsUri = uri.Substring(0, uri.LastIndexOf('/') + 1);
                 return true;
             }
-
-            nsUri = string.Empty;
             return false;
         }
     }
