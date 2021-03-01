@@ -22,18 +22,24 @@ namespace LinkedData_Api.Services
 
         public bool GetAbsoluteUriFromQname(string qname, out string absoluteUri)
         {
-            var s = qname.Split(new[] { ':' }, 2);
-            try
+            if (qname.Contains(":"))
             {
-                absoluteUri = _namespaceMapper.GetNamespaceUri(s[0]) + s[1];
-                return true;
+                var s = qname.Split(new[] {':'}, 2);
+                try
+                {
+                    absoluteUri = _namespaceMapper.GetNamespaceUri(s[0]) + s[1];
+                    return true;
+                }
+                catch (RdfException e)
+                {
+                    Console.WriteLine("Absolute Uri could not have been created. " + e);
+                    absoluteUri = String.Empty;
+                    return false;
+                }
             }
-            catch (RdfException e)
-            {
-                Console.WriteLine("Absolute Uri could not have been created. "+ e);
-                absoluteUri = String.Empty;
-                return false;
-            }
+
+            absoluteUri = null;
+            return false;
         }
 
         //přijde dbpedia.org/resource#Germany a nutno to změnit na př: dbr:Germany
@@ -98,6 +104,7 @@ namespace LinkedData_Api.Services
                 nsUri = uri.Substring(0, uri.LastIndexOf('/') + 1);
                 return true;
             }
+
             return false;
         }
     }

@@ -37,15 +37,15 @@ namespace LinkedData_Api
             {
                 c.ExampleFilters();
                 // c.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
-                //c.EnableAnnotations();
+                c.EnableAnnotations();
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "LinkedData_Api", Version = "v1"});
                 //Generate swagger advanced documentation
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
-            services.AddSwaggerExamplesFromAssemblyOf<Startup>();
             services.AddSwaggerGenNewtonsoftSupport();
+            services.AddSwaggerExamplesFromAssemblyOf<Startup>();
 
 
 

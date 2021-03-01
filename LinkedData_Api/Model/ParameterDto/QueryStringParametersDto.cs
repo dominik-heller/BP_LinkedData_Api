@@ -10,6 +10,6 @@ namespace LinkedData_Api.Model.ParameterDto
         [DefaultValue(DefaultLimit)] public int Limit { get; set; } = DefaultLimit;
         [DefaultValue(DefaultOffset)] public int Offset { get; set; } = DefaultOffset;
         public string Regex { get; set; }
-         public string Sort { get; set; } // příp. OrderBy
+        public string Sort { get; set; } // příp. OrderBy
     }
 }

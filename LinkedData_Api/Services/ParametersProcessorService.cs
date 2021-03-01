@@ -24,10 +24,10 @@ namespace LinkedData_Api.Services
         }
         */
 
-        public ParameterDto ProcessParameters(RouteValueDictionary requestRouteValues,
+        public ParametersDto ProcessParameters(RouteValueDictionary requestRouteValues,
             QueryString requestQueryString)
         {
-            ParameterDto parameterDto = new ParameterDto();
+            ParametersDto parameterDto = new ParametersDto();
             RouteParametersDto routeParametersDto = new RouteParametersDto();
             foreach (var key in requestRouteValues.Keys)
             {

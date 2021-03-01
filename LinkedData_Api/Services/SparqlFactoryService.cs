@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using LinkedData_Api.Model.Domain;
 using LinkedData_Api.Model.ParameterDto;
+using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Services.Contracts;
 using VDS.RDF;
 using VDS.RDF.Query;
@@ -22,6 +23,7 @@ namespace LinkedData_Api.Services
             _namespaceFactoryService = namespaceFactoryService;
         }
 
+        #region SelectQueries
 
         public string? GetFinalQuery(string? query, QueryStringParametersDto queryStringParameters)
         {
@@ -29,7 +31,7 @@ namespace LinkedData_Api.Services
             return query;
         }
 
-        public string? GetFinalQueryForClass(ParameterDto parameters)
+        public string? GetFinalSelectQueryForClass(ParametersDto parameters)
         {
             if (_namespaceFactoryService.GetAbsoluteUriFromQname(parameters.RouteParameters.Class, out var absoluteUri))
             {
@@ -44,7 +46,7 @@ namespace LinkedData_Api.Services
             return null;
         }
 
-        public string? GetFinalQueryForResource(ParameterDto parameters)
+        public string? GetFinalSelectQueryForResource(ParametersDto parameters)
         {
             if (_namespaceFactoryService.GetAbsoluteUriFromQname(parameters.RouteParameters.Resource,
                 out var absoluteUri))
@@ -60,60 +62,126 @@ namespace LinkedData_Api.Services
             return null;
         }
 
-        public string? GetFinalQueryForPredicate(ParameterDto parameters)
+        public string? GetFinalSelectQueryForPredicate(ParametersDto parameters)
         {
+            SparqlParameterizedString sparqlParameterizedString = new();
+            if (parameters.RouteParameters.Resource.Equals("*"))
+                sparqlParameterizedString.CommandText = "SELECT * WHERE {[] @pred ?o}";
             if (_namespaceFactoryService.GetAbsoluteUriFromQname(parameters.RouteParameters.Resource,
                 out var resourceAbsoluteUri))
             {
-                if (_namespaceFactoryService.GetAbsoluteUriFromQname(parameters.RouteParameters.Predicate,
-                    out var predicateAbsoluteUri))
-                {
-                    SparqlParameterizedString sparqlParameterizedString = new();
-                    sparqlParameterizedString.CommandText = "SELECT * WHERE {@sub @pred ?o}";
-                    sparqlParameterizedString.SetUri("sub", new Uri(resourceAbsoluteUri));
-                    sparqlParameterizedString.SetUri("pred", new Uri(predicateAbsoluteUri));
-                    string query = ApplyQueryStringParametersToSparqlQuery(sparqlParameterizedString.ToString(),
-                        parameters.QueryStringParametersDto, "?o");
-                    return query;
-                }
+                sparqlParameterizedString.CommandText = "SELECT * WHERE {@sub @pred ?o}";
+                sparqlParameterizedString.SetUri("sub", new Uri(resourceAbsoluteUri));
             }
 
-            return null;
-        }
-
-        /*
-        public string? GetFinalQueryForClassResource(string? classQuery, ParameterDto parameters)
-        {
-            if (classQuery == null) return null;
-            if (_namespaceFactoryService.GetAbsoluteUriFromQname(parameters.RouteParameters.Resource,
-                out var absoluteUri))
+            if (_namespaceFactoryService.GetAbsoluteUriFromQname(parameters.RouteParameters.Predicate,
+                out var predicateAbsoluteUri))
             {
-                string query = ConstructClassResourceQuery(classQuery);
-                SparqlParameterizedString sparqlParameterizedString = new();
-                sparqlParameterizedString.CommandText = query;
-                sparqlParameterizedString.SetUri("var", new Uri(absoluteUri));
-                query = ApplyQueryStringParametersToSparqlQuery(sparqlParameterizedString.ToString(),
-                    parameters.QueryStringParametersDto, "?p");
+                sparqlParameterizedString.SetUri("pred", new Uri(predicateAbsoluteUri));
+                string query = ApplyQueryStringParametersToSparqlQuery(sparqlParameterizedString.ToString(),
+                    parameters.QueryStringParametersDto, "?o");
                 return query;
             }
 
             return null;
         }
 
-        private string ConstructClassResourceQuery(string classQuery)
+        #endregion
+
+
+        #region PutSparqlQueries
+
+        public string? GetFinalPutQueryForResource(ParametersDto parameters, ResourceVm resourceVm)
         {
-            var x = Regex.Split(classQuery, "where", RegexOptions.IgnoreCase);
-            var y = x[1].Substring(x[1].IndexOf('?')).Split((char[]) null!, StringSplitOptions.RemoveEmptyEntries)
-                .Select(i => i.Trim()).First();
-            x[0] = x[0].Replace(y, "*");
-            var query = x[1].Replace(y, "@var");
-            var i = query.IndexOfAny(new char[] {';', '}'});
-            query = query.Remove(i, 1);
-            query = query.Insert(i, "; ?p ?o }");
-            query = $"{x[0]} WHERE {query}";
-            return query;
+            string resourceCurie = parameters.RouteParameters.Resource;
+            if (_namespaceFactoryService.GetAbsoluteUriFromQname(resourceCurie, out string resourceAbsoluteUri))
+            {
+                SparqlParameterizedString sparqlParameterizedDeleteQuery = new();
+                sparqlParameterizedDeleteQuery.CommandText = "DELETE {@sub ?p ?o} WHERE {@sub ?p ?o} ";
+                sparqlParameterizedDeleteQuery.SetUri("sub", new Uri(resourceAbsoluteUri));
+                string deleteQuery = sparqlParameterizedDeleteQuery.ToString();
+                SparqlParameterizedString sparqlParameterizedInsertQuery = new();
+                sparqlParameterizedInsertQuery.CommandText = "INSERT DATA {@sub @pred @obj";
+                string insertQuery = "";
+                sparqlParameterizedInsertQuery.SetUri("sub", new Uri(resourceAbsoluteUri));
+                SparqlParameterizedString sparqlParameterizedInsertSubQuery = new();
+                sparqlParameterizedInsertSubQuery.CommandText = "; @pred @obj";
+                bool first = true;
+                foreach (var propertyName in resourceVm.Properties.Keys)
+                {
+                    if (_namespaceFactoryService.GetAbsoluteUriFromQname(propertyName, out string predicateAbsoluteUri))
+                    {
+                        sparqlParameterizedInsertQuery.SetUri("pred", new Uri(predicateAbsoluteUri));
+                        sparqlParameterizedInsertSubQuery.SetUri("pred", new Uri(predicateAbsoluteUri));
+                        PropertyContent x = resourceVm.Properties[propertyName];
+                        foreach (var objCurie in x.Curies)
+                        {
+                            if (_namespaceFactoryService.GetAbsoluteUriFromQname(objCurie,
+                                out string objectAbsoluteUri))
+                            {
+                                if (first)
+                                {
+                                    sparqlParameterizedInsertQuery.SetUri("obj", new Uri(objectAbsoluteUri));
+                                    insertQuery = sparqlParameterizedInsertQuery.ToString();
+                                    first = false;
+                                    continue;
+                                }
+
+                                sparqlParameterizedInsertSubQuery.SetUri("obj", new Uri(objectAbsoluteUri));
+                                insertQuery += sparqlParameterizedInsertSubQuery.ToString();
+                                Console.WriteLine(insertQuery);
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                        //TODO: Insert literals: foreach...
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+
+                string finalQuery = deleteQuery + insertQuery + "}";
+                Console.WriteLine(finalQuery);
+                return finalQuery;
+            }
+
+            return null;
         }
-*/
+
+        #endregion
+
+
+        /*
+         *{
+  "properties": {
+    "propertyName": {
+      "curies": [
+        "curie1",
+        "curie2",
+        "curie3"
+      ],
+      "literals": [
+        {
+          "value": "value1",
+          "datatype": "datatype1",
+          "language": "lang1"
+        },
+        {
+          "value": "value1",
+          "datatype": "datatype1",
+          "language": "lang1"
+        }
+      ]
+    }
+  }
+}
+         */
+
+
         private string ApplyQueryStringParametersToSparqlQuery(string query,
             QueryStringParametersDto queryStringParameters, string sortAndRegexParameter)
         {
@@ -137,6 +205,20 @@ namespace LinkedData_Api.Services
             //TODO: Potentially ddd sort ...?sort(+foaf:name) = ORDER BY Desc(foaf:name) X ...?sort(-foaf:name) = ORDER BY (foaf:name) ***možná ani orderby desc netřeba
             query += $" LIMIT {limit} OFFSET {offset}";
 
+            return query;
+        }
+
+        private string ConstructClassResourceQuery(string classQuery)
+        {
+            var x = Regex.Split(classQuery, "where", RegexOptions.IgnoreCase);
+            var y = x[1].Substring(x[1].IndexOf('?')).Split((char[]) null!, StringSplitOptions.RemoveEmptyEntries)
+                .Select(i => i.Trim()).First();
+            x[0] = x[0].Replace(y, "*");
+            var query = x[1].Replace(y, "@var");
+            var i = query.IndexOfAny(new char[] {';', '}'});
+            query = query.Remove(i, 1);
+            query = query.Insert(i, "; ?p ?o }");
+            query = $"{x[0]} WHERE {query}";
             return query;
         }
     }

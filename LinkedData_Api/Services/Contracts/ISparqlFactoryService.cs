@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LinkedData_Api.Model.ParameterDto;
+using LinkedData_Api.Model.ViewModels;
 using VDS.RDF.Query;
 
 namespace LinkedData_Api.Services.Contracts
@@ -17,20 +18,32 @@ namespace LinkedData_Api.Services.Contracts
         string? GetFinalQuery(string? query, QueryStringParametersDto queryStringParameters);
 
         /// <summary>
-        /// Return new sparql query for concrete {class} endpoint based on route and querystring parameters or null.
+        /// Return select sparql query for concrete {class} endpoint based on route and querystring parameters or null.
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public string? GetFinalQueryForClass(ParameterDto parameters);
+        public string? GetFinalSelectQueryForClass(ParametersDto parameters);
 
         /// <summary>
-        /// Return new sparql query for concrete {resource} endpoint based on route and querystring parameters or null.
+        /// Return select sparql query for concrete {resource} endpoint based on route and querystring parameters or null.
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public string? GetFinalQueryForResource(ParameterDto parameters);
-        
-        public string? GetFinalQueryForPredicate(ParameterDto parameters);
-   //     public string? GetFinalQueryForClassResource(string? classQuery, ParameterDto parameters);
+        public string? GetFinalSelectQueryForResource(ParametersDto parameters);
+
+        /// <summary>
+        /// Return select sparql query for concrete {predicate} endpoint based on route and querystring parameters or null.
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public string? GetFinalSelectQueryForPredicate(ParametersDto parameters);
+
+        /// <summary>
+        /// Returns update sparql query deleting resource (if exists) and creating new one.
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <param name="resourceVm"></param>
+        /// <returns></returns>
+        string? GetFinalPutQueryForResource(ParametersDto parameters, ResourceVm resourceVm);
     }
 }
