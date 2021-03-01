@@ -19,24 +19,32 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.NamedGraphResourcesConcreteResource)]
         public async Task<IActionResult> PutConcreteClass(ResourceVm resourceVm)
         {
-            ParametersDto parameters = _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
+            ParametersDto parameters =
+                _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             string? query = _sparqlFactoryService.GetFinalPutQueryForResource(parameters, resourceVm);
-            /*   if (!string.IsNullOrEmpty(classQuery))
-               {
-                   query = _sparqlFactoryService.GetFinalPutQueryForClass(parameters, classQuery, curieVm);
-                   if (query != null)
-                   {
-                       
-                                       var sparqlResults = await _endpointService.ExecuteSelectSparqlQueryAsync(parameters.RouteParameters.Endpoint, parameters.RouteParameters.Graph, query);
-                                       if (sparqlResults != null)
-                                       {
-                                           CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToCurieList(sparqlResults);
-                                           return Ok(curiesVm);
-                                       }
-                   }
-               }
-   */
-            return NotFound(new ErrorVm() {ErrorMessage = "No results were found for given class."});
+
+            if (query != null)
+            {
+                bool successful = await _endpointService.ExecuteUpdateSparqlQueryAsync(
+                    parameters.RouteParameters.Endpoint,
+                    parameters.RouteParameters.Graph, query);
+                if (successful)
+                {
+                    return Ok("Resource created!");
+                }
+
+                return NotFound(new ErrorVm()
+                {
+                    ErrorMessage =
+                        "Resource could not have been created! Check if SPARQL endpoint supports UPDATE operation."
+                });
+            }
+
+            return NotFound(new ErrorVm()
+            {
+                ErrorMessage =
+                    "Resource could not have been created! Check if SPARQL submitted query has correct syntax."
+            });
         }
 
         #endregion

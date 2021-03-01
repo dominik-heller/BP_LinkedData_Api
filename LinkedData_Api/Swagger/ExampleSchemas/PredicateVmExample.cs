@@ -17,7 +17,7 @@ namespace LinkedData_Api.Swagger.ExampleSchemas
                 Literals = new List<Literal>()
                 {
                     new() {Value = "value1", Datatype = "datatype1", Language = "lang1"},
-                    new() {Value = "value1", Datatype = "datatype1", Language = "lang1"}
+                    new() {Value = "value1", Datatype = "datatype1", Language = "lang2"}
                 }
             };
         }

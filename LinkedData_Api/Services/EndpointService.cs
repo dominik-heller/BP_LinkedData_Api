@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using LinkedData_Api.Data;
 using LinkedData_Api.Model.Domain;
@@ -77,13 +78,46 @@ namespace LinkedData_Api.Services
         public async Task<IEnumerable<SparqlResult>?> ExecuteSelectSparqlQueryAsync(string endpointName,
             string? graphName, string query)
         {
-            SparqlResultSet? sparqlResultSet = null;
             Endpoint? endpoint = _endpoints.FirstOrDefault(x => x.EndpointName.Equals(endpointName));
             if (endpoint != null && endpoint.SupportedMethods.Sparql10.Equals("yes"))
             {
                 SparqlRemoteEndpoint sparqlEndpoint;
- 
+
                 if (graphName != null && !endpoint.NamedGraphs.Exists(x => x.GraphName.Equals(graphName))) return null;
+                if (graphName != null && endpoint.NamedGraphs.Exists(x => x.GraphName.Equals(graphName)))
+                {
+                    sparqlEndpoint = new SparqlRemoteEndpoint(new Uri(endpoint.EndpointUrl),
+                        new Uri(endpoint.NamedGraphs.Find(x => x.GraphName.Equals(graphName))!.Uri));
+                }
+                else
+                {
+                    sparqlEndpoint = new SparqlRemoteEndpoint(new Uri(endpoint.EndpointUrl), endpoint.DefaultGraph);
+                }
+                try
+                {
+                    sparqlEndpoint.Timeout = SparqlEndpointConnectionTimeout;
+                    var sparqlResultSet = await Task.Run(() => sparqlEndpoint.QueryWithResultSet(query));
+                    if (sparqlResultSet?.Results.Count == 0) return null;
+                    return sparqlResultSet?.Results;
+                }
+                catch (RdfException)
+                {
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+        public async Task<bool> ExecuteUpdateSparqlQueryAsync(string endpointName,
+            string? graphName, string query)
+        {
+            Endpoint? endpoint = _endpoints.FirstOrDefault(x => x.EndpointName.Equals(endpointName));
+            if (endpoint != null && endpoint.SupportedMethods.Sparql11.Equals("yes"))
+            {
+                SparqlRemoteEndpoint sparqlEndpoint;
+
+                if (graphName != null && !endpoint.NamedGraphs.Exists(x => x.GraphName.Equals(graphName))) return false;
                 if (graphName != null && endpoint.NamedGraphs.Exists(x => x.GraphName.Equals(graphName)))
                 {
                     sparqlEndpoint = new SparqlRemoteEndpoint(new Uri(endpoint.EndpointUrl),
@@ -97,16 +131,17 @@ namespace LinkedData_Api.Services
                 try
                 {
                     sparqlEndpoint.Timeout = SparqlEndpointConnectionTimeout;
-                    sparqlResultSet = await Task.Run(() => sparqlEndpoint.QueryWithResultSet(query));
+                    sparqlEndpoint.HttpMode = "POST";
+                    var httpWebResponse = await Task.Run(() => sparqlEndpoint.QueryRaw(query));
+                    if (httpWebResponse.StatusCode == HttpStatusCode.OK) return true;
                 }
                 catch (RdfException)
                 {
-                    return null;
+                    return false;
                 }
             }
 
-            if (sparqlResultSet?.Results.Count == 0) return null;
-            return sparqlResultSet?.Results;
+            return false;
         }
     }
 }

@@ -13,14 +13,15 @@ namespace LinkedData_Api.Swagger.ExampleSchemas
                 Properties = new Dictionary<string, PropertyContent>()
                 {
                     {
-                        "propertyName",
+                        "ex:exampleProperty",
                         new PropertyContent()
                         {
-                            Curies = new List<string>() {"curie1", "curie2", "curie3"},
+                            Curies = new List<string>() {"ex:curie1", "ex:curie2", "ex:curie3"},
                             Literals = new List<Literal>()
                             {
-                                new() {Value = "value1", Datatype = "datatype1", Language = "lang1"},
-                                new() {Value = "value1", Datatype = "datatype1", Language = "lang1"}
+                                new() {Value = "Example language text...", Language = "en"},
+                                new() {Value = "2021-03-02T20:00:00-01:00", Datatype = "xsd:dateTime"},
+                                new() {Value = "String value"}
                             }
                         }
                     }

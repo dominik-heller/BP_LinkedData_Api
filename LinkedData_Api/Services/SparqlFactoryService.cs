@@ -114,29 +114,49 @@ namespace LinkedData_Api.Services
                         sparqlParameterizedInsertQuery.SetUri("pred", new Uri(predicateAbsoluteUri));
                         sparqlParameterizedInsertSubQuery.SetUri("pred", new Uri(predicateAbsoluteUri));
                         PropertyContent x = resourceVm.Properties[propertyName];
-                        foreach (var objCurie in x.Curies)
+                        if (x.Curies != null)
                         {
-                            if (_namespaceFactoryService.GetAbsoluteUriFromQname(objCurie,
-                                out string objectAbsoluteUri))
+                            foreach (var objCurie in x.Curies)
+                            {
+                                if (_namespaceFactoryService.GetAbsoluteUriFromQname(objCurie,
+                                    out string objectAbsoluteUri))
+                                {
+                                    if (first)
+                                    {
+                                        sparqlParameterizedInsertQuery.SetUri("obj", new Uri(objectAbsoluteUri));
+                                        insertQuery = sparqlParameterizedInsertQuery.ToString();
+                                        first = false;
+                                        continue;
+                                    }
+
+                                    sparqlParameterizedInsertSubQuery.SetUri("obj", new Uri(objectAbsoluteUri));
+                                    insertQuery += sparqlParameterizedInsertSubQuery.ToString();
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            }
+                        }
+
+                        if (x.Literals != null)
+                        {
+                            foreach (var literal in x.Literals)
                             {
                                 if (first)
                                 {
-                                    sparqlParameterizedInsertQuery.SetUri("obj", new Uri(objectAbsoluteUri));
+                                    sparqlParameterizedInsertQuery =
+                                        ConstructLiteralString(sparqlParameterizedInsertQuery, literal);
                                     insertQuery = sparqlParameterizedInsertQuery.ToString();
                                     first = false;
                                     continue;
                                 }
 
-                                sparqlParameterizedInsertSubQuery.SetUri("obj", new Uri(objectAbsoluteUri));
+                                sparqlParameterizedInsertSubQuery =
+                                    ConstructLiteralString(sparqlParameterizedInsertSubQuery, literal);
                                 insertQuery += sparqlParameterizedInsertSubQuery.ToString();
-                                Console.WriteLine(insertQuery);
-                            }
-                            else
-                            {
-                                return null;
                             }
                         }
-                        //TODO: Insert literals: foreach...
                     }
                     else
                     {
@@ -181,6 +201,37 @@ namespace LinkedData_Api.Services
 }
          */
 
+        #region PrivateMethods
+
+        private SparqlParameterizedString ConstructLiteralString(
+            SparqlParameterizedString sparqlParameterizedQuery, Literal literal)
+        {
+            if (literal.Datatype == null && literal.Language == null)
+            {
+                sparqlParameterizedQuery.SetLiteral("obj", literal.Value);
+                return sparqlParameterizedQuery;
+            }
+
+            if (literal.Language != null)
+            {
+                sparqlParameterizedQuery.SetLiteral("obj", literal.Value, literal.Language);
+                return sparqlParameterizedQuery;
+            }
+            
+            if (literal.Datatype != null)
+            {
+                if (_namespaceFactoryService.GetAbsoluteUriFromQname(literal.Datatype, out var datatypeAbsoluteUri))
+                {
+                    sparqlParameterizedQuery.SetLiteral("obj", literal.Value, new Uri(datatypeAbsoluteUri));
+                }
+                else
+                {
+                    sparqlParameterizedQuery.SetLiteral("obj", literal.Value);
+                }
+            }
+            
+            return sparqlParameterizedQuery;
+        }
 
         private string ApplyQueryStringParametersToSparqlQuery(string query,
             QueryStringParametersDto queryStringParameters, string sortAndRegexParameter)
@@ -221,5 +272,7 @@ namespace LinkedData_Api.Services
             query = $"{x[0]} WHERE {query}";
             return query;
         }
+
+        #endregion
     }
 }
