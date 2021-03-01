@@ -19,7 +19,7 @@ namespace LinkedData_Api.Services
             _namespaceFactoryService = namespaceFactoryService;
         }
 
-        public CurieVm FormatSparqlResultToList(IEnumerable<SparqlResult> sparqlResults)
+        public CurieVm FormatSparqlResultToCurieList(IEnumerable<SparqlResult> sparqlResults)
         {
             CurieVm curieVm = new CurieVm();
             foreach (var sparqlResult in sparqlResults)
@@ -35,56 +35,128 @@ namespace LinkedData_Api.Services
 
         public ResourceVm FormatSparqlResultToResourceDetail(IEnumerable<SparqlResult> sparqlResults)
         {
-           
-            ResourceVm resourceVm = new ResourceVm(){Properties = new Dictionary<string,PropertyContent>()};
-            
-           foreach (var sparqlResult in sparqlResults)
-           {
-               string property = sparqlResult.Value("p").ToString();
-               if (!_namespaceFactoryService.GetQnameFromAbsoluteUri(property, out var propertyQname)) continue;
-               if (!resourceVm.Properties.ContainsKey(propertyQname))
-                   resourceVm.Properties.Add(propertyQname, new PropertyContent());
-               string obj = sparqlResult.Value("o").ToString();
-               if (propertyQname.Contains("label") || propertyQname.Contains("comment"))
-               {
-                   if (resourceVm.Properties[propertyQname].Literals == null)
-                       resourceVm.Properties[propertyQname].Literals = new List<Literal>();
-                   resourceVm.Properties[propertyQname].Literals.Add(new Literal() {Value = obj});
-                   continue;
-               }
-               if (GetLiteralFromUriIfContainsDatatypeDeclaration(obj, out var literal))
-               {
-                   if (resourceVm.Properties[propertyQname].Literals == null)
-                       resourceVm.Properties[propertyQname].Literals = new List<Literal>();
-                   resourceVm.Properties[propertyQname].Literals.Add(literal);
-                   continue;
-               }
+            ResourceVm resourceVm = new ResourceVm() {Properties = new Dictionary<string, PropertyContent>()};
 
-               if (CheckIfUriIsUrlLink(obj))
-               {
-                   if (resourceVm.Properties[propertyQname].Literals == null)
-                       resourceVm.Properties[propertyQname].Literals = new List<Literal>();
-                   resourceVm.Properties[propertyQname].Literals.Add((new Literal() {Value = obj}));
-                   continue;
-               }
+            foreach (var sparqlResult in sparqlResults)
+            {
+                string property = sparqlResult.Value("p").ToString();
+                if (!_namespaceFactoryService.GetQnameFromAbsoluteUri(property, out var propertyQname)) continue;
+                if (!resourceVm.Properties.ContainsKey(propertyQname))
+                    resourceVm.Properties.Add(propertyQname, new PropertyContent());
+                string obj = sparqlResult.Value("o").ToString();
+                if (CheckIfValueIsLiteral(obj, propertyQname, out Literal literal))
+                {
+                    if (resourceVm.Properties[propertyQname].Literals == null)
+                        resourceVm.Properties[propertyQname].Literals = new List<Literal>();
+                    resourceVm.Properties[propertyQname].Literals.Add(literal);
+                }
+                else
+                {
+                    if (_namespaceFactoryService.GetQnameFromAbsoluteUri(obj, out var objQname))
+                    {
+                        if (resourceVm.Properties[propertyQname].Curies == null)
+                            resourceVm.Properties[propertyQname].Curies = new List<string>();
+                        resourceVm.Properties[propertyQname].Curies.Add(HttpUtility.UrlDecode(objQname));
+                    }
+                }
+            }
 
-               if (!_namespaceFactoryService.GetQnameFromAbsoluteUri(obj, out var objQname))
-               {
-                   if (resourceVm.Properties[propertyQname].Literals == null)
-                       resourceVm.Properties[propertyQname].Literals = new List<Literal>();
-                   resourceVm.Properties[propertyQname].Literals.Add((new Literal() {Value = obj}));
-                   //   Console.WriteLine("Literal:" + obj);
-                   continue;
-               }
-               if (resourceVm.Properties[propertyQname].Curies == null)
-                   resourceVm.Properties[propertyQname].Curies = new List<string>();
-               resourceVm.Properties[propertyQname].Curies.Add(HttpUtility.UrlDecode(objQname));
-               // Console.WriteLine("Curie:" + objQname);
-           }
-           
             return resourceVm;
-
         }
+
+        public PredicateVm FormatSparqlResultToCurieAndLiteralList(string predicate,
+            IEnumerable<SparqlResult> sparqlResults)
+        {
+            PredicateVm predicateVm = new PredicateVm();
+            foreach (var sparqlResult in sparqlResults)
+            {
+                string obj = sparqlResult.Value("o").ToString();
+                if (CheckIfValueIsLiteral(obj, predicate, out Literal literal))
+                {
+                    if (predicateVm.Literals == null) predicateVm.Literals = new List<Literal>();
+                    predicateVm.Literals.Add(literal);
+                }
+                else
+                {
+                    if (_namespaceFactoryService.GetQnameFromAbsoluteUri(obj, out var objQname))
+                    {
+                        if (predicateVm.Curies == null)
+                            predicateVm.Curies = new List<string>();
+                        predicateVm.Curies.Add(HttpUtility.UrlDecode(objQname));
+                    }
+                }
+            }
+
+            return predicateVm;
+        }
+
+        private bool CheckIfValueIsLiteral(string obj, string propertyQname, out Literal _literal)
+        {
+            if (propertyQname.Contains("label") || propertyQname.Contains("comment") ||
+                propertyQname.Contains("homepage"))
+            {
+                if (LiteralContainsLangNotation(obj, out var lit))
+                {
+                    _literal = lit;
+                }
+                else
+                {
+                    _literal = new Literal() {Value = obj, Datatype = "xsd:string"};
+                }
+
+                return true;
+            }
+
+            if (GetLiteralFromUriIfContainsDatatypeDeclaration(obj, out var literal))
+            {
+                _literal = literal;
+                return true;
+            }
+
+            if (CheckIfUriIsUrlLink(obj))
+            {
+                _literal = new Literal() {Value = obj, Datatype = "xsd:string"};
+                return true;
+            }
+
+            if (!_namespaceFactoryService.GetQnameFromAbsoluteUri(obj, out var objQname))
+            {
+                if (LiteralContainsLangNotation(obj, out var lit))
+                {
+                    _literal = lit;
+                }
+                else
+                {
+                    _literal = new Literal() {Value = obj, Datatype = "xsd:string"};
+                }
+
+                return true;
+            }
+
+            _literal = null;
+            return false;
+        }
+
+        private bool LiteralContainsLangNotation(string obj, out Literal literal)
+        {
+            literal = null;
+            if (obj.Length > 4)
+            {
+                if (obj.LastIndexOf("@", StringComparison.Ordinal) > obj.Length - 4)
+                {
+                    literal = new Literal()
+                    {
+                        Value = obj.Remove(obj.LastIndexOf("@", StringComparison.Ordinal)),
+                        Language = obj.Substring(obj.LastIndexOf("@", StringComparison.Ordinal) + 1),
+                        Datatype = "rdf:langString"
+                    };
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
 
         private bool CheckIfUriIsUrlLink(string uri)
         {

@@ -16,7 +16,7 @@ namespace LinkedData_Api.Services
     public class EndpointService : IEndpointService
     {
         private readonly ReadOnlyCollection<Endpoint> _endpoints;
-        private const int SparqlEndpointConnectionTimeout = 5000;
+        private const int SparqlEndpointConnectionTimeout = 10000;
 
         public EndpointService(IDataAccess dataAccess, INamespaceFactoryService namespaceFactoryService)
         {

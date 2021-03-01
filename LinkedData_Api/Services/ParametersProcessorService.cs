@@ -1,4 +1,6 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Web;
 using LinkedData_Api.Model.ParameterDto;
 using LinkedData_Api.Services.Contracts;
@@ -58,7 +60,12 @@ namespace LinkedData_Api.Services
                     }
                     default:
                     {
-                        if (key.StartsWith("r")) routeParametersDto.Resource = requestRouteValues[key].ToString();
+                        if (key.StartsWith("r"))
+                        {
+                            routeParametersDto.Resource = requestRouteValues[key].ToString();
+                            routeParametersDto.Predicate = null;
+                        }
+
                         if (key.StartsWith("p")) routeParametersDto.Predicate = requestRouteValues[key].ToString();
                         break;
                     }
@@ -72,7 +79,7 @@ namespace LinkedData_Api.Services
                 NameValueCollection requestQueryStringValues = HttpUtility.ParseQueryString(requestQueryString.Value!);
                 foreach (string key in requestQueryStringValues.Keys)
                 {
-                    switch (key)
+                    switch (key.ToLower())
                     {
                         case "limit":
                         {
@@ -109,6 +116,64 @@ namespace LinkedData_Api.Services
 
             parameterDto.QueryStringParametersDto = queryStringParametersDto;
             return parameterDto;
+        }
+
+        public string ReduceUrl(string url, string type)
+        {
+            var queryString = "";
+            var finalUrl = "";
+            if (type.Equals("resource"))
+            {
+                if (url.Contains("?")) queryString = url.Split("?").Last();
+                if (url.Contains("/classes/"))
+                {
+                    var split = url.Split("/classes/");
+                    var firstPart = split[0];
+                    var secondPart = split[1];
+                    var newResource = secondPart.Split("/").Last();
+                    finalUrl = firstPart + "/resources/" + newResource + "/" + queryString;
+                    return finalUrl;
+                }
+                else
+                {
+                    var split = url.Split("/resources/");
+                    var firstPart = split[0];
+                    var secondPart = split[1];
+                    var newResource = secondPart.Split("/").Last();
+                    finalUrl = firstPart + "/resources/" + newResource + "/" + queryString;
+                    return finalUrl;
+                }
+            }
+            else
+            {
+                if (type.Equals("predicate"))
+                {
+                    if (url.Contains("?")) queryString = url.Split("?").Last();
+                    if (url.Contains("/classes/"))
+                    {
+                        var split = url.Split("/classes/");
+                        var firstPart = split[0];
+                        var secondPart = split[1];
+                        var newPredicate = secondPart.Split("/").Last();
+                        var newResource = secondPart.Split("/")[^2];
+                        finalUrl = firstPart + "/resources/" + newResource + "/" + newPredicate + "?" + queryString;
+                        return finalUrl;
+                    }
+                    else
+                    {
+                        var split = url.Split("/resources/");
+                        var firstPart = split[0];
+                        var secondPart = split[1];
+                        var newPredicate = secondPart.Split("/").Last();
+                        var newResource = secondPart.Split("/")[^2];
+                        finalUrl = firstPart + "/resources/" + newResource + "/" + newPredicate + "?" + queryString;
+                        return finalUrl;
+                    }
+                }
+            }
+
+            var y = url.IndexOf("resources", StringComparison.Ordinal) + 10;
+            return finalUrl;
         }
     }
 }

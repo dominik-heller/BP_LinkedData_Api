@@ -29,5 +29,8 @@ namespace LinkedData_Api.Services.Contracts
         /// <param name="parameters"></param>
         /// <returns></returns>
         public string? GetFinalQueryForResource(ParameterDto parameters);
+        
+        public string? GetFinalQueryForPredicate(ParameterDto parameters);
+   //     public string? GetFinalQueryForClassResource(string? classQuery, ParameterDto parameters);
     }
 }

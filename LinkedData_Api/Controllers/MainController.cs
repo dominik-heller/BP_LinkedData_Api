@@ -8,15 +8,13 @@ namespace LinkedData_Api.Controllers
     [Produces("application/json")]
     public partial class MainController : ControllerBase
     {
-        private readonly INamespaceFactoryService _namespaceFactoryService;
         private readonly IEndpointService _endpointService;
         private readonly IParametersProcessorService _parametersProcessorService;
         private readonly ISparqlFactoryService _sparqlFactoryService;
         private readonly IResultFormatterService _resultFormatterService;
         
-        public MainController(INamespaceFactoryService namespaceFactoryService, IEndpointService endpointService, IParametersProcessorService parametersProcessorService, ISparqlFactoryService sparqlFactoryService, IResultFormatterService resultFormatterService)
+        public MainController(IEndpointService endpointService, IParametersProcessorService parametersProcessorService, ISparqlFactoryService sparqlFactoryService, IResultFormatterService resultFormatterService)
         {
-            _namespaceFactoryService = namespaceFactoryService;
             _endpointService = endpointService;
             _parametersProcessorService = parametersProcessorService;
             _sparqlFactoryService = sparqlFactoryService;

@@ -8,5 +8,7 @@ namespace LinkedData_Api.Services.Contracts
     {
         ParameterDto ProcessParameters(RouteValueDictionary requestRouteValues,
             QueryString requestQueryString);
+
+        string ReduceUrl(string url, string type);
     }
 }

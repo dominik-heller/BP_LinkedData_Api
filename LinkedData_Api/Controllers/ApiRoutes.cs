@@ -11,7 +11,7 @@
 
 
        // private const string ClassRecursivePart = "/{resource?}/{predicate?}/{r2?}/{p2?}/{r3?}/{p3?}/{r4?}";
-        private const string RecursivePart = "/{r2?}/{p2?}/{r3?}/{p3?}/{r4?}";
+        private const string RecursivePart = "/{r2}/{p2?}/{r3?}/{p3?}/{r4?}";
 
         public const string DefaultGraphClasses = Base + "/{endpoint}/classes";
         public const string NamedGraphClasses = Base + "/{endpoint}/{graph}/classes";
@@ -27,9 +27,9 @@
         public const string NamedGraphClassStartConcreteResourcePredicate = NamedGraphClassesConcreteResource + "/{predicate}";
         public const string DefaultGraphResourceStartConcreteResourcePredicate = DefaultGraphResourcesConcreteResource + "/{predicate}";
         public const string NamedGraphResourceStartConcreteResourcePredicate = NamedGraphResourcesConcreteResource + "/{predicate}";
-        public const string DefaultGraphClassStartRecursiveRoute = NamedGraphClassStartConcreteResourcePredicate + RecursivePart;
-        public const string NamedGraphClassStartRecursiveRoute = DefaultGraphResourceStartConcreteResourcePredicate + RecursivePart;
-        public const string DefaultGraphResourceStartRecursiveRoute = NamedGraphResourcesConcreteResource + RecursivePart;
+        public const string DefaultGraphClassStartRecursiveRoute = DefaultGraphClassStartConcreteResourcePredicate + RecursivePart;
+        public const string NamedGraphClassStartRecursiveRoute = NamedGraphClassStartConcreteResourcePredicate + RecursivePart;
+        public const string DefaultGraphResourceStartRecursiveRoute = DefaultGraphResourceStartConcreteResourcePredicate + RecursivePart;
         public const string NamedGraphResourceStartRecursiveRoute = NamedGraphResourceStartConcreteResourcePredicate + RecursivePart;
         
         

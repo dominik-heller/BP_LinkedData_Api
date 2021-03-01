@@ -12,13 +12,5 @@ namespace LinkedData_Api.Model.ViewModels
         [JsonProperty("language", NullValueHandling = NullValueHandling.Ignore)] public string Language { get; set; }
     }
 
-    public class LiteralVm
-    {
-        [JsonProperty("literals")] public List<Literal> Literals { get; set; }
 
-        public LiteralVm()
-        {
-            Literals = new List<Literal>();
-        }
-    }
 }
