@@ -160,7 +160,7 @@ namespace LinkedData_Api.Services
 
         private bool CheckIfUriIsUrlLink(string uri)
         {
-            Console.WriteLine(uri.LastIndexOf("/", StringComparison.Ordinal));
+        //    Console.WriteLine(uri.LastIndexOf("/", StringComparison.Ordinal));
             if (uri.EndsWith("/")) return true;
             if (uri.EndsWith(".html")) return true;
             if (uri.Contains(".jpg")) return true;

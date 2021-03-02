@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 
 namespace LinkedData_Api.Model.ViewModels
 {
-    public class PredicateVm
+    public class PredicateVm : PropertyContent
     {
-        [JsonProperty("literals")] public List<Literal> Literals { get; set; }
-        [JsonProperty("curies")] public List<string> Curies { get; set; }
+
     }
+
 }

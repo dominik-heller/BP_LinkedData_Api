@@ -11,6 +11,4 @@ namespace LinkedData_Api.Model.ViewModels
 
         [JsonProperty("language", NullValueHandling = NullValueHandling.Ignore)] public string Language { get; set; }
     }
-
-
 }

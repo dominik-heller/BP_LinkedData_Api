@@ -32,21 +32,32 @@ namespace LinkedData_Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddNewtonsoftJson();
-       //     services.AddMvc(opt => opt.EnableEndpointRouting = false);
+            //     services.AddMvc(opt => opt.EnableEndpointRouting = false);
             services.AddSwaggerGen(c =>
             {
                 c.ExampleFilters();
                 // c.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
                 c.EnableAnnotations();
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "LinkedData_Api", Version = "v1"});
-                //Generate swagger advanced documentation
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "LinkedData API",
+                    Description =
+                        @"<article>REST API for extraction and manipulation with semantic data, normally available only via SPARQL endpoints.</br>
+                         This project is part of bachelor thesis <em>Linked data utilization via web API</em> at Faculty of Science, The University of South Bohemia, České Budějovice, Czech Republic.</article>",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Dominik Heller",
+                        Email = "helled01@prf.jcu.cz",
+                    }
+                });
+                //Generate swagger extented documentation
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
             services.AddSwaggerGenNewtonsoftSupport();
             services.AddSwaggerExamplesFromAssemblyOf<Startup>();
-
 
 
             //enables JSONIGNORE
@@ -69,7 +80,8 @@ namespace LinkedData_Api
             {
                 app.UseDeveloperExceptionPage();
             }
-           // app.UseMvc();
+
+            // app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LinkedData_Api v1"));
 

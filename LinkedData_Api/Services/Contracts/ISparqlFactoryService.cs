@@ -45,5 +45,13 @@ namespace LinkedData_Api.Services.Contracts
         /// <param name="resourceVm"></param>
         /// <returns></returns>
         string? GetFinalPutQueryForResource(ParametersDto parameters, ResourceVm resourceVm);
+
+        /// <summary>
+        /// Returns update sparql query deleting resource predicate (if exists) and creating new one.
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <param name="predicateVm"></param>
+        /// <returns></returns>
+        string? GetFinalPutQueryForPredicate(ParametersDto parameters, PredicateVm predicateVm);
     }
 }

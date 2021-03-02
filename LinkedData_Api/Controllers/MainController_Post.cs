@@ -1,4 +1,7 @@
 ﻿#nullable enable
+using System.Threading.Tasks;
+using LinkedData_Api.Model.ParameterDto;
+using LinkedData_Api.Model.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LinkedData_Api.Controllers
@@ -6,53 +9,43 @@ namespace LinkedData_Api.Controllers
     public partial class MainController
     {
         
-        /*
-        
-        //CLASS_defaultgraph
-        //př: https://localhost:5001/api/endpoint1/class/dbo:country/dbr:Germany/dbo:Capital/dbr:Berlin
-        [HttpPost(ApiRoutes.DefaultGraphClassRoute)]
-        public string Post_DefaultGraph_ClassStart([FromRoute] string endpoint, [FromRoute] string? class_id = null,
-            [FromRoute] string? subject = null,
-            [FromRoute] string? predicate = null, [FromRoute] string? @object = null)
+/*
+        #region Resources
+
+        /// <summary>
+        /// Returns list of resources.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route(ApiRoutes.DefaultGraphResources)]
+        [Route(ApiRoutes.NamedGraphResources)]
+        public async Task<IActionResult> PostResource(NamedResourceVm namedResourceVm)
         {
-            return
-                $"CLASS_DefaultGraph\nEndpoint: {endpoint}\t Graph: Default\t \tClass_Id:{class_id}\nPředané parametry: {subject} -> {predicate} -> {@object}.\nZde tedy bude logika pro zpracování spraql dotazu a následné zobrazení. :)";
+            ParametersDto parameters =
+                _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
+            string? query = _sparqlFactoryService.GetFinalQuery(
+                _endpointService.GetEntryResourceQuery(parameters.RouteParameters.Endpoint,
+                    parameters.RouteParameters.Graph), parameters.QueryStringParametersDto);
+            if (query != null)
+            {
+                var sparqlResults =
+                    await _endpointService.ExecuteSelectSparqlQueryAsync(parameters.RouteParameters.Endpoint,
+                        parameters.RouteParameters.Graph, query);
+                if (sparqlResults != null)
+                {
+                    CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToCurieList(sparqlResults);
+                    return Ok(curiesVm);
+                }
+            }
+
+            return NotFound(new ErrorVm()
+            {
+                ErrorMessage =
+                    "No results were found. Check endpoint/graph name and consequently entry resource query for given endpoint."
+            });
         }
 
-        //RESOURCE_defaultgraph
-        //př: https://localhost:5001/api/endpoint1/resource/dbr:Germany/dbo:Capital/dbr:Berlin
-        [HttpPost(ApiRoutes.DefaultGraphResourceRoute)]
-        public string Post_DefaultGraph_ResourcesStart([FromRoute] string endpoint, [FromRoute] string? subject = null,
-            [FromRoute] string? predicate = null, [FromRoute] string? @object = null)
-        {
-            return
-                $"CLASS_DefaultGraph\nEndpoint: {endpoint}\t Graph: Default\t \nPředané parametry: {subject} -> {predicate} -> {@object}.\nZde tedy bude logika pro zpracování spraql dotazu a následné zobrazení. :)";
-        }
-
-        //CLASS_namedgraph
-        //př: https://localhost:5001/api/endpoint1/graph1/class/dbo:Country/dbr:Germany/dbo:Capital/dbr:Berlin
-        [HttpPost(ApiRoutes.NamedGraphClassRoute)]
-        public string Post_GraphSpecific_ClassStart([FromRoute] string endpoint, [FromRoute] string graph,
-            [FromRoute] string? classId = null,
-            [FromRoute] string? subject = null, [FromRoute] string? predicate = null,
-            [FromRoute] string? @object = null)
-        {
-            return
-                $"CLASS_NamedGraph\nEndpoint: {endpoint}\t Graph: {graph} \tClass_Id:{classId} \nPředané parametry: {subject} -> {predicate} -> {@object}.\nZde tedy bude logika pro zpracování spraql dotazu a následné zobrazení. :)";
-        }
-
-
-        //RESOURCE_namedgraph
-        //př: https://localhost:5001/api/endpoint1/graph1/resource/dbr:Germany/dbo:Capital/dbr:Berlin
-        [HttpPost(ApiRoutes.NamedGraphResourceRoute)]
-        public string Post_GraphSpecific_ResourceStart([FromRoute] string endpoint, [FromRoute] string graph,
-            [FromRoute] string? subject = null, [FromRoute] string? predicate = null,
-            [FromRoute] string? @object = null)
-        {
-            return
-                $"RESOURCE_NamedGraph\nEndpoint: {endpoint}\t Graph: {graph}\t \nPředané parametry: {subject} -> {predicate} -> {@object}.\nZde tedy bude logika pro zpracování spraql dotazu a následné zobrazení. :)";
-        }
-        
-        */
+        #endregion
+  */
     }
 }
