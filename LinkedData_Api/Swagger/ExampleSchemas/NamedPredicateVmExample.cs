@@ -4,12 +4,13 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace LinkedData_Api.Swagger.ExampleSchemas
 {
-    public class PredicateVmExample : IExamplesProvider<PredicateVm>
+    public class NamedPredicateVmExample : IExamplesProvider<NamedPredicateVm>
     {
-        public PredicateVm GetExamples()
+        public NamedPredicateVm GetExamples()
         {
-            return new PredicateVm()
+            return new NamedPredicateVm()
             {
+                PredicateCurie = "ex:examplePredicate",
                 Curies = new List<string>()
                 {
                     "ex:curie1", "ex:curie2", "ex:curie3"

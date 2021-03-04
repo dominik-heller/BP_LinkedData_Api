@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel;
-using Swashbuckle.AspNetCore.Annotations;
 
-namespace LinkedData_Api.Model.ParameterDto
+namespace LinkedData_Api.Model.Domain
 {
-    public class QueryStringParametersDto
+    public class QueryStringParameters
     {
         private const int DefaultLimit = 50;
         private const int DefaultOffset = 0;

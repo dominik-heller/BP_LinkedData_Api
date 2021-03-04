@@ -1,15 +1,86 @@
 ﻿#nullable enable
-
+using System.ComponentModel;
 using System.Threading.Tasks;
+using AngleSharp.Attributes;
+using LinkedData_Api.Model.Domain;
 using LinkedData_Api.Model.ParameterDto;
 using LinkedData_Api.Model.ViewModels;
+using LinkedData_Api.Services.Contracts;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LinkedData_Api.Controllers
 {
-    public partial class MainController
+    [ApiController]
+    [Produces("application/json")]
+    public class GetController : ControllerBase
     {
+        private readonly IEndpointService _endpointService;
+        private readonly IParametersProcessorService _parametersProcessorService;
+        private readonly ISparqlFactoryService _sparqlFactoryService;
+        private readonly IResultFormatterService _resultFormatterService;
+
+        public GetController(IEndpointService endpointService, IParametersProcessorService parametersProcessorService,
+            ISparqlFactoryService sparqlFactoryService, IResultFormatterService resultFormatterService)
+        {
+            _endpointService = endpointService;
+            _parametersProcessorService = parametersProcessorService;
+            _sparqlFactoryService = sparqlFactoryService;
+            _resultFormatterService = resultFormatterService;
+        }
+
+
+        #region GeneralInfo
+
+        //př: https://localhost:5001/api/virtuoso
+        /// <summary>
+        /// Returns endpoint configuration information.
+        /// </summary>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
+        [HttpGet(ApiRoutes.EndpointInfo)]
+        public IActionResult Get_EndpointSettings([FromRoute] string endpoint)
+        {
+            var info = _endpointService.GetEndpointConfiguration(endpoint);
+            if (info != null) return Ok(info);
+            return NotFound("Endpoint does not exist.");
+        }
+
+        //př: https://localhost:5001/api/virtuoso/graphs
+        /// <summary>
+        /// Returns endpoint's named graphs.
+        /// </summary>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
+        [HttpGet(ApiRoutes.EndpointGraphs)]
+        public IActionResult Get_GraphsForEndpoint([FromRoute] string endpoint)
+        {
+            var graphs = _endpointService.GetEndpointGraphs(endpoint);
+            if (graphs != null) return Ok(graphs);
+            return NotFound("Endpoint does not exist.");
+        }
+
+        /*   
+           //NAMESPACES_enpoint
+           //př: https://localhost:5001/api/endpoint1/namespaces
+           [HttpGet("api/namespaces")]
+           public string Get_Namespaces()
+           {
+               return $"NAMESPACES POSTED";
+           }
+   
+           //NAMESPACES_enpoint_POST
+           //př: https://localhost:5001/api/endpoint1/namespaces
+           [HttpPost("api/namespaces")]
+           public string Post_Namespaces()
+           {
+               return $"NAMESPACES POSTED";
+           }
+          */
+
+        #endregion
+
+
         #region Classes
 
         /// <summary>
@@ -21,9 +92,9 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.NamedGraphClasses)]
         [ProducesResponseType(typeof(CurieVm), 200)]
         [ProducesResponseType(typeof(ErrorVm), 404)]
-        public async Task<IActionResult> GetClasses([FromQuery] QueryStringParametersDto queryStringParametersDto)
+        public async Task<IActionResult> GetClasses([FromQuery] QueryStringParameters queryStringParametersDto)
         {
-            ParametersDto parameters =
+            Parameters parameters =
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             string? query = _sparqlFactoryService.GetFinalQuery(
                 _endpointService.GetEntryClassQuery(parameters.RouteParameters.Endpoint,
@@ -61,9 +132,9 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.NamedGraphResources)]
         [ProducesResponseType(typeof(CurieVm), 200)]
         [ProducesResponseType(typeof(ErrorVm), 404)]
-        public async Task<IActionResult> GetResources([FromQuery] QueryStringParametersDto queryStringParametersDto)
+        public async Task<IActionResult> GetResources([FromQuery] QueryStringParameters queryStringParametersDto)
         {
-            ParametersDto parameters =
+            Parameters parameters =
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             string? query = _sparqlFactoryService.GetFinalQuery(
                 _endpointService.GetEntryResourceQuery(parameters.RouteParameters.Endpoint,
@@ -101,9 +172,9 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.NamedGraphConcreteClass)]
         [ProducesResponseType(typeof(CurieVm), 200)]
         [ProducesResponseType(typeof(ErrorVm), 404)]
-        public async Task<IActionResult> GetConcreteClass([FromQuery] QueryStringParametersDto queryStringParametersDto)
+        public async Task<IActionResult> GetConcreteClass([FromQuery] QueryStringParameters queryStringParametersDto)
         {
-            ParametersDto parameters =
+            Parameters parameters =
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             string? query = _sparqlFactoryService.GetFinalSelectQueryForClass(parameters);
             if (query != null)
@@ -137,9 +208,9 @@ namespace LinkedData_Api.Controllers
         [ProducesResponseType(typeof(ResourceVm), 200)]
         [ProducesResponseType(typeof(ErrorVm), 404)]
         public async Task<IActionResult> GetConcreteResource(
-            [FromQuery] QueryStringParametersDto queryStringParametersDto)
+            [FromQuery] QueryStringParameters queryStringParametersDto)
         {
-            ParametersDto parameters =
+            Parameters parameters =
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             string? query = _sparqlFactoryService.GetFinalSelectQueryForResource(parameters);
             if (query != null)
@@ -174,9 +245,9 @@ namespace LinkedData_Api.Controllers
         [ProducesResponseType(typeof(PredicateVm), 200)]
         [ProducesResponseType(typeof(ErrorVm), 404)]
         public async Task<IActionResult> GetConcreteResourcePredicate(
-            [FromQuery] QueryStringParametersDto queryStringParametersDto)
+            [FromQuery] QueryStringParameters queryStringParametersDto)
         {
-            ParametersDto parameters =
+            Parameters parameters =
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             string? query = _sparqlFactoryService.GetFinalSelectQueryForPredicate(parameters);
             if (query != null)
@@ -208,7 +279,7 @@ namespace LinkedData_Api.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult RecursiveRouteRedirect()
         {
-            ParametersDto parameters =
+            Parameters parameters =
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             if (parameters.RouteParameters.Predicate == null)
                 return Redirect(_parametersProcessorService.ReduceUrl(Request.GetEncodedUrl(), "resource"));

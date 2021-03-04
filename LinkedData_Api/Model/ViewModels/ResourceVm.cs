@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace LinkedData_Api.Model.ViewModels
 {
-    public class PropertyContent
+    public class PredicateContent
     {
         [JsonProperty("curies", NullValueHandling = NullValueHandling.Ignore)]
         public List<string> Curies;
@@ -16,6 +16,6 @@ namespace LinkedData_Api.Model.ViewModels
     public class ResourceVm
     {
         [JsonProperty("properties")]
-        public Dictionary<string, PropertyContent> Properties { get; set; }
+        public Dictionary<string, PredicateContent> Predicates { get; set; }
     }
 }

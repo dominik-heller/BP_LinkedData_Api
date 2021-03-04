@@ -4,16 +4,17 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace LinkedData_Api.Swagger.ExampleSchemas
 {
-    public class ResourceVmExample : IExamplesProvider<ResourceVm>
+    public class NamedResourceVmExample :IExamplesProvider<NamedResourceVm>
     {
-        public ResourceVm GetExamples()
+        public NamedResourceVm GetExamples()
         {
-            return new ResourceVm()
+            return new NamedResourceVm()
             {
+                ResourceCurie = "ex:exampleResource",
                 Predicates = new Dictionary<string, PredicateContent>()
                 {
                     {
-                        "ex:exampleProperty",
+                        "ex:examplePredicate",
                         new PredicateContent()
                         {
                             Curies = new List<string>() {"ex:curie1", "ex:curie2", "ex:curie3"},

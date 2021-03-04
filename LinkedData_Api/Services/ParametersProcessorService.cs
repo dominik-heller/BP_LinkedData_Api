@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
+using LinkedData_Api.Model.Domain;
 using LinkedData_Api.Model.ParameterDto;
 using LinkedData_Api.Services.Contracts;
 using Microsoft.AspNetCore.Http;
@@ -24,11 +25,11 @@ namespace LinkedData_Api.Services
         }
         */
 
-        public ParametersDto ProcessParameters(RouteValueDictionary requestRouteValues,
+        public Parameters ProcessParameters(RouteValueDictionary requestRouteValues,
             QueryString requestQueryString)
         {
-            ParametersDto parameterDto = new ParametersDto();
-            RouteParametersDto routeParametersDto = new RouteParametersDto();
+            Parameters parameterDto = new Parameters();
+            RouteParameters routeParametersDto = new RouteParameters();
             foreach (var key in requestRouteValues.Keys)
             {
                 switch (key)
@@ -73,43 +74,46 @@ namespace LinkedData_Api.Services
             }
 
             parameterDto.RouteParameters = routeParametersDto;
-            QueryStringParametersDto queryStringParametersDto = new QueryStringParametersDto();
+            QueryStringParameters queryStringParametersDto = new QueryStringParameters();
             if (requestQueryString.HasValue)
             {
                 NameValueCollection requestQueryStringValues = HttpUtility.ParseQueryString(requestQueryString.Value!);
-                foreach (string key in requestQueryStringValues.Keys)
+                if (requestQueryStringValues.HasKeys())
                 {
-                    switch (key.ToLower())
+                    foreach (string key in requestQueryStringValues.Keys)
                     {
-                        case "limit":
+                        switch (key.ToLower())
                         {
-                            if (int.TryParse(requestQueryStringValues[key], out var result))
+                            case "limit":
                             {
-                                queryStringParametersDto.Limit = result;
-                            }
+                                if (int.TryParse(requestQueryStringValues[key], out var result))
+                                {
+                                    queryStringParametersDto.Limit = result;
+                                }
 
-                            break;
-                        }
-                        case "offset":
-                        {
-                            if (int.TryParse(requestQueryStringValues[key], out var result))
+                                break;
+                            }
+                            case "offset":
                             {
-                                queryStringParametersDto.Offset = result;
-                            }
+                                if (int.TryParse(requestQueryStringValues[key], out var result))
+                                {
+                                    queryStringParametersDto.Offset = result;
+                                }
 
-                            break;
+                                break;
+                            }
+                            case "regex":
+                            {
+                                queryStringParametersDto.Regex = requestQueryStringValues[key];
+                                break;
+                            }
+                            case "sort":
+                            {
+                                queryStringParametersDto.Sort = requestQueryStringValues[key];
+                                break;
+                            }
+                            //Případně další parametry
                         }
-                        case "regex":
-                        {
-                            queryStringParametersDto.Regex = requestQueryStringValues[key];
-                            break;
-                        }
-                        case "sort":
-                        {
-                            queryStringParametersDto.Sort = requestQueryStringValues[key];
-                            break;
-                        }
-                        //Případně další parametry
                     }
                 }
             }

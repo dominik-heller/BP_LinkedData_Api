@@ -6,7 +6,7 @@ namespace LinkedData_Api.Services.Contracts
 {
     public interface IParametersProcessorService
     {
-        ParametersDto ProcessParameters(RouteValueDictionary requestRouteValues,
+        Parameters ProcessParameters(RouteValueDictionary requestRouteValues,
             QueryString requestQueryString);
 
         string ReduceUrl(string url, string type);

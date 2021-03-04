@@ -3,13 +3,28 @@ using System;
 using System.Threading.Tasks;
 using LinkedData_Api.Model.ParameterDto;
 using LinkedData_Api.Model.ViewModels;
+using LinkedData_Api.Services.Contracts;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LinkedData_Api.Controllers
 {
-    public partial class MainController
+    [ApiController]
+    [Produces("application/json")]
+    public class PutController : ControllerBase
     {
+        private readonly IEndpointService _endpointService;
+        private readonly IParametersProcessorService _parametersProcessorService;
+        private readonly ISparqlFactoryService _sparqlFactoryService;
+
+        public PutController(IEndpointService endpointService, IParametersProcessorService parametersProcessorService,
+            ISparqlFactoryService sparqlFactoryService)
+        {
+            _endpointService = endpointService;
+            _parametersProcessorService = parametersProcessorService;
+            _sparqlFactoryService = sparqlFactoryService;
+        }
+
         #region ConcreteClass
 
         /// <summary>
@@ -19,11 +34,11 @@ namespace LinkedData_Api.Controllers
         [HttpPut]
         [Route(ApiRoutes.DefaultGraphResourcesConcreteResource)]
         [Route(ApiRoutes.NamedGraphResourcesConcreteResource)]
-        [ProducesResponseType(typeof(ResourceVm),201)]
+        [ProducesResponseType(typeof(ResourceVm), 201)]
         [ProducesResponseType(typeof(ErrorVm), 400)]
-        public async Task<IActionResult> PutConcreteClass([FromBody] ResourceVm resourceVm)
+        public async Task<IActionResult> PutResource([FromBody] ResourceVm resourceVm)
         {
-            ParametersDto parameters =
+            Parameters parameters =
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             string? query = _sparqlFactoryService.GetFinalPutQueryForResource(parameters, resourceVm);
 
@@ -47,7 +62,7 @@ namespace LinkedData_Api.Controllers
             return BadRequest(new ErrorVm()
             {
                 ErrorMessage =
-                    "Resource could not have been created! Check if SPARQL submitted query has correct syntax."
+                    "Resource could not have been created! Check if submitted values has correct semantic syntax."
             });
         }
 
@@ -63,11 +78,11 @@ namespace LinkedData_Api.Controllers
         [HttpPut]
         [Route(ApiRoutes.DefaultGraphResourceStartConcreteResourcePredicate)]
         [Route(ApiRoutes.NamedGraphResourceStartConcreteResourcePredicate)]
-        [ProducesResponseType(typeof(PredicateVm),201)]
+        [ProducesResponseType(typeof(PredicateVm), 201)]
         [ProducesResponseType(typeof(ErrorVm), 400)]
-        public async Task<IActionResult> PutConcreteResourcePredicate(PredicateVm predicateVm)
+        public async Task<IActionResult> PutPredicate(PredicateVm predicateVm)
         {
-            ParametersDto parameters =
+            Parameters parameters =
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             string? query = _sparqlFactoryService.GetFinalPutQueryForPredicate(parameters, predicateVm);
 
@@ -91,7 +106,7 @@ namespace LinkedData_Api.Controllers
             return BadRequest(new ErrorVm()
             {
                 ErrorMessage =
-                    "Resource could not have been created! Check if SPARQL submitted values has correct semantic syntax."
+                    "Resource could not have been created! Check if submitted values has correct semantic syntax."
             });
         }
 

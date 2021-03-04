@@ -1,4 +1,5 @@
-﻿#nullable enable
+﻿/*
+#nullable enable
 using Microsoft.AspNetCore.Mvc;
 using LinkedData_Api.Services.Contracts;
 
@@ -48,7 +49,7 @@ namespace LinkedData_Api.Controllers
             if (graphs != null) return Ok(graphs);
             return NotFound("Endpoint does not exist.");
         }
-     /*   
+        
         //NAMESPACES_enpoint
         //př: https://localhost:5001/api/endpoint1/namespaces
         [HttpGet("api/namespaces")]
@@ -64,6 +65,8 @@ namespace LinkedData_Api.Controllers
         {
             return $"NAMESPACES POSTED";
         }
-       */ 
+        
     }
 }
+*/
+

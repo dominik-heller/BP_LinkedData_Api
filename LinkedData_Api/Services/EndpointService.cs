@@ -9,8 +9,11 @@ using LinkedData_Api.Data;
 using LinkedData_Api.Model.Domain;
 using LinkedData_Api.Services.Contracts;
 using VDS.RDF;
+using VDS.RDF.Parsing;
 using VDS.RDF.Query;
+using VDS.RDF.Query.Patterns;
 using VDS.RDF.Update;
+using VDS.RDF.Update.Commands;
 
 namespace LinkedData_Api.Services
 {

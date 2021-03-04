@@ -1,6 +1,6 @@
-﻿namespace LinkedData_Api.Model.ParameterDto
+﻿namespace LinkedData_Api.Model.Domain
 {
-    public class RouteParametersDto
+    public class RouteParameters
     {
         public string Endpoint { get; set; }
         public string Graph { get; set; }

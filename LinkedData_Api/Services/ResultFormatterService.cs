@@ -35,28 +35,28 @@ namespace LinkedData_Api.Services
 
         public ResourceVm FormatSparqlResultToResourceDetail(IEnumerable<SparqlResult> sparqlResults)
         {
-            ResourceVm resourceVm = new ResourceVm() {Properties = new Dictionary<string, PropertyContent>()};
+            ResourceVm resourceVm = new ResourceVm() {Predicates = new Dictionary<string, PredicateContent>()};
 
             foreach (var sparqlResult in sparqlResults)
             {
                 string property = sparqlResult.Value("p").ToString();
                 if (!_namespaceFactoryService.GetQnameFromAbsoluteUri(property, out var propertyQname)) continue;
-                if (!resourceVm.Properties.ContainsKey(propertyQname))
-                    resourceVm.Properties.Add(propertyQname, new PropertyContent());
+                if (!resourceVm.Predicates.ContainsKey(propertyQname))
+                    resourceVm.Predicates.Add(propertyQname, new PredicateContent());
                 string obj = sparqlResult.Value("o").ToString();
                 if (CheckIfValueIsLiteral(obj, propertyQname, out Literal literal))
                 {
-                    if (resourceVm.Properties[propertyQname].Literals == null)
-                        resourceVm.Properties[propertyQname].Literals = new List<Literal>();
-                    resourceVm.Properties[propertyQname].Literals.Add(literal);
+                    if (resourceVm.Predicates[propertyQname].Literals == null)
+                        resourceVm.Predicates[propertyQname].Literals = new List<Literal>();
+                    resourceVm.Predicates[propertyQname].Literals.Add(literal);
                 }
                 else
                 {
                     if (_namespaceFactoryService.GetQnameFromAbsoluteUri(obj, out var objQname))
                     {
-                        if (resourceVm.Properties[propertyQname].Curies == null)
-                            resourceVm.Properties[propertyQname].Curies = new List<string>();
-                        resourceVm.Properties[propertyQname].Curies.Add(HttpUtility.UrlDecode(objQname));
+                        if (resourceVm.Predicates[propertyQname].Curies == null)
+                            resourceVm.Predicates[propertyQname].Curies = new List<string>();
+                        resourceVm.Predicates[propertyQname].Curies.Add(HttpUtility.UrlDecode(objQname));
                     }
                 }
             }

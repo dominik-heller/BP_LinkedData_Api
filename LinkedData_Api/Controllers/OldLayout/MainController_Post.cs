@@ -1,4 +1,5 @@
-﻿#nullable enable
+﻿/*
+#nullable enable
 using System.Threading.Tasks;
 using LinkedData_Api.Model.ParameterDto;
 using LinkedData_Api.Model.ViewModels;
@@ -9,7 +10,7 @@ namespace LinkedData_Api.Controllers
     public partial class MainController
     {
         
-/*
+
         #region Resources
 
         /// <summary>
@@ -46,6 +47,7 @@ namespace LinkedData_Api.Controllers
         }
 
         #endregion
-  */
+  
     }
 }
+*/

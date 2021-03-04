@@ -1,4 +1,6 @@
-﻿namespace LinkedData_Api.Model.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LinkedData_Api.Model.ViewModels
 {
     public class NamedResourceVm : ResourceVm
     {

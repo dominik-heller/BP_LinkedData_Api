@@ -19,7 +19,7 @@
   "entry_resource": [
     {
       "graph_name": "default",
-      "command": "SELECT distinct ?s WHERE { ?s ?p ?o }"
+      "command": "SELECT distinct ?s WHERE { ?s ?p <<http://www.w3.org/2002/07/owl#Thing> }"
     }
   ]
 }
