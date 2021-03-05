@@ -24,6 +24,26 @@
     {
       "prefix": "ais",
       "uri": "https://linked.opendata.cz/zdroj/ovm/ais/"
+    },
+    {
+      "prefix": "char",
+      "uri": "http://lexvo.org/id/char/"
+    },
+    {
+      "prefix": "georeg",
+      "uri": "http://lexvo.org/id/iso3166/"
+    },
+    {
+      "prefix": "llang",
+      "uri": "http://lexvo.org/id/iso639-3/"
+    },
+    {
+      "prefix": "radical",
+      "uri": "http://lexvo.org/id/kangxi-radical/"
+    },
+    {
+      "prefix": "script",
+      "uri": "http://lexvo.org/id/script/"
     }
   ],
   "supported_methods": {

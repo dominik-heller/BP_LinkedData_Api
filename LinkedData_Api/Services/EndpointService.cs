@@ -85,19 +85,11 @@ namespace LinkedData_Api.Services
             if (endpoint != null && endpoint.SupportedMethods.Sparql10.Equals("yes"))
             {
                 SparqlRemoteEndpoint sparqlEndpoint;
-
                 if (graphName != null && !endpoint.NamedGraphs.Exists(x => x.GraphName.Equals(graphName))) return null;
-                if (graphName != null && endpoint.NamedGraphs.Exists(x => x.GraphName.Equals(graphName)))
-                {
-                    sparqlEndpoint = new SparqlRemoteEndpoint(new Uri(endpoint.EndpointUrl),
-                        new Uri(endpoint.NamedGraphs.Find(x => x.GraphName.Equals(graphName))!.Uri));
-                }
-                else
-                {
-                    sparqlEndpoint = new SparqlRemoteEndpoint(new Uri(endpoint.EndpointUrl), endpoint.DefaultGraph);
-                }
                 try
                 {
+                    sparqlEndpoint = new SparqlRemoteEndpoint(new Uri(endpoint.EndpointUrl));
+                    //   sparqlEndpoint.ResultsAcceptHeader = "text/csv";
                     sparqlEndpoint.Timeout = SparqlEndpointConnectionTimeout;
                     var sparqlResultSet = await Task.Run(() => sparqlEndpoint.QueryWithResultSet(query));
                     if (sparqlResultSet?.Results.Count == 0) return null;
@@ -119,20 +111,10 @@ namespace LinkedData_Api.Services
             if (endpoint != null && endpoint.SupportedMethods.Sparql11.Equals("yes"))
             {
                 SparqlRemoteEndpoint sparqlEndpoint;
-
                 if (graphName != null && !endpoint.NamedGraphs.Exists(x => x.GraphName.Equals(graphName))) return false;
-                if (graphName != null && endpoint.NamedGraphs.Exists(x => x.GraphName.Equals(graphName)))
-                {
-                    sparqlEndpoint = new SparqlRemoteEndpoint(new Uri(endpoint.EndpointUrl),
-                        new Uri(endpoint.NamedGraphs.Find(x => x.GraphName.Equals(graphName))!.Uri));
-                }
-                else
-                {
-                    sparqlEndpoint = new SparqlRemoteEndpoint(new Uri(endpoint.EndpointUrl), endpoint.DefaultGraph);
-                }
-
                 try
                 {
+                    sparqlEndpoint = new SparqlRemoteEndpoint(new Uri(endpoint.EndpointUrl));
                     sparqlEndpoint.Timeout = SparqlEndpointConnectionTimeout;
                     sparqlEndpoint.HttpMode = "POST";
                     var httpWebResponse = await Task.Run(() => sparqlEndpoint.QueryRaw(query));

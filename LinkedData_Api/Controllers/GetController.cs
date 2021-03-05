@@ -98,7 +98,7 @@ namespace LinkedData_Api.Controllers
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             string? query = _sparqlFactoryService.GetFinalQuery(
                 _endpointService.GetEntryClassQuery(parameters.RouteParameters.Endpoint,
-                    parameters.RouteParameters.Graph), parameters.QueryStringParametersDto);
+                    parameters.RouteParameters.Graph), parameters);
             if (query != null)
             {
                 var sparqlResults =
@@ -110,7 +110,6 @@ namespace LinkedData_Api.Controllers
                     return Ok(curiesVm);
                 }
             }
-
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
@@ -138,7 +137,7 @@ namespace LinkedData_Api.Controllers
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             string? query = _sparqlFactoryService.GetFinalQuery(
                 _endpointService.GetEntryResourceQuery(parameters.RouteParameters.Endpoint,
-                    parameters.RouteParameters.Graph), parameters.QueryStringParametersDto);
+                    parameters.RouteParameters.Graph), parameters);
             if (query != null)
             {
                 var sparqlResults =

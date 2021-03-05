@@ -15,7 +15,7 @@ namespace LinkedData_Api.Model.ViewModels
 
     public class ResourceVm
     {
-        [JsonProperty("properties")]
+        [JsonProperty("predicates")]
         public Dictionary<string, PredicateContent> Predicates { get; set; }
     }
 }

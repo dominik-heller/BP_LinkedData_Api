@@ -1,0 +1,25 @@
+﻿{
+  "endpoint_name": "elixir",
+  "endpoint_url": "https://idsm.elixir-czech.cz/sparql/endpoint/chebi",
+  "default_graph": "",
+  "named_graphs": [
+  ],
+  "namespaces": [
+    {
+      "prefix": "chebi",
+      "uri": "http://purl.obolibrary.org/obo/"
+    }
+  ],
+  "supported_methods": {
+    "sparql_1.0": "yes",
+    "sparql_1.1": "no"
+  },
+  "entry_class": [
+  ],
+  "entry_resource": [
+    {
+      "graph_name": "default",
+      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
+    }
+  ]
+}

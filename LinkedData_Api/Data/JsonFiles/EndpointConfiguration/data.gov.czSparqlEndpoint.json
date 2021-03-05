@@ -1,0 +1,33 @@
+﻿{
+  "endpoint_name": "datagov",
+  "endpoint_url": "https://data.gov.cz/sparql",
+  "default_graph": "",
+  "named_graphs": [
+    {
+      "graph_name": "school",
+      "uri": "https://data.gov.cz/zdroj/datové-sady/00551023/861588425/41f9841463beb472c92f62fff43b15dd"
+    }
+  ],
+  "namespaces": [
+  ],
+  "supported_methods": {
+    "sparql_1.0": "yes",
+    "sparql_1.1": "no"
+  },
+  "entry_class": [
+    {
+      "graph_name": "default",
+      "command": "SELECT DISTINCT ?s WHERE {?s <http://www.w3.org/ns/dqv#computedOn> <https://data.gov.cz/zdroj/katalog/NKOD>}"
+    }
+  ],
+  "entry_resource": [
+    {
+      "graph_name": "default",
+      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
+    },
+    {
+      "graph_name": "school",
+      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
+    }
+  ]
+}

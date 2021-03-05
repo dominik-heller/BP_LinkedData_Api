@@ -163,7 +163,10 @@ namespace LinkedData_Api.Services
         //    Console.WriteLine(uri.LastIndexOf("/", StringComparison.Ordinal));
             if (uri.EndsWith("/")) return true;
             if (uri.EndsWith(".html")) return true;
+            if (uri.Contains(".json")) return true;
+            if (uri.Contains(".xml")) return true;
             if (uri.Contains(".jpg")) return true;
+            if (uri.Contains(".rdf")) return true;
             if (uri.LastIndexOf("/", StringComparison.Ordinal) > 6 &&
                 uri.LastIndexOf("/", StringComparison.Ordinal) < 8 && !uri.Contains("#")) return true;
             return false;

@@ -41,10 +41,10 @@ namespace LinkedData_Api.Controllers
         [ProducesResponseType(typeof(ErrorVm), 400)]
         public async Task<IActionResult> PostResource(NamedResourceVm namedResourceVm)
         {
-            if(!ModelState.IsValid) Console.WriteLine("Invalid Model");
+            if (!ModelState.IsValid) Console.WriteLine("Invalid Model");
             Parameters parameters =
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
-            string? query = _sparqlFactoryService.GetFinalPostQueryForResource(namedResourceVm);
+            string? query = _sparqlFactoryService.GetFinalPostQueryForResource(parameters, namedResourceVm);
             if (query != null)
             {
                 bool successful = await _endpointService.ExecuteUpdateSparqlQueryAsync(

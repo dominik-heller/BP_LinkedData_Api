@@ -11,12 +11,12 @@ namespace LinkedData_Api.Services.Contracts
     public interface ISparqlFactoryService
     {
         /// <summary>
-        /// Return updated sparql query based on querystring parameters or null.
+        /// Return final sparql query with querystring parameters or null.
         /// </summary>
         /// <param name="query"></param>
-        /// <param name="queryStringParameters"></param>
+        /// <param name="parameters"></param>
         /// <returns></returns>
-        string? GetFinalQuery(string? query, QueryStringParameters queryStringParameters);
+        string? GetFinalQuery(string? query, Parameters parameters);
 
         /// <summary>
         /// Return select sparql query for concrete {class} endpoint based on route and querystring parameters or null.
@@ -58,9 +58,10 @@ namespace LinkedData_Api.Services.Contracts
         /// <summary>
         /// Returns update sparql query creating new resource or appending to existing one.
         /// </summary>
+        /// <param name="parameters"></param>
         /// <param name="namedResourceVm"></param>
         /// <returns></returns>
-        string? GetFinalPostQueryForResource(NamedResourceVm namedResourceVm);
+        string? GetFinalPostQueryForResource(Parameters parameters, NamedResourceVm namedResourceVm);
 
         /// <summary>
         /// Returns update sparql query creating new predicate for given resource or appending to existing one.
@@ -69,7 +70,7 @@ namespace LinkedData_Api.Services.Contracts
         /// <param name="namedPredicateVm"></param>
         /// <returns></returns>
         string? GetFinalPostQueryForPredicate(Parameters parameters, NamedPredicateVm namedPredicateVm);
-        
+
         /// <summary>
         /// Returns update sparql query deleting given resource and all of its references.
         /// </summary>
