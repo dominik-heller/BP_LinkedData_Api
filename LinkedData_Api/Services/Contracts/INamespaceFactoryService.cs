@@ -9,5 +9,6 @@ namespace LinkedData_Api.Services.Contracts
         bool GetAbsoluteUriFromQname(string qname, out string absoluteUri);
         bool GetQnameFromAbsoluteUri(string uri, out string qname);
         public void AddNewPrefixes(IEnumerable<Namespace> namespaces);
+        public bool GetNamespaceUriByPrefix(string prefix, out string namespaceUri);
     }
 }

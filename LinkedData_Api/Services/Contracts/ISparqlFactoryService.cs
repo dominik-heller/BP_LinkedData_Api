@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LinkedData_Api.Model.Domain;
-using LinkedData_Api.Model.ParameterDto;
 using LinkedData_Api.Model.ViewModels;
 using VDS.RDF.Query;
 

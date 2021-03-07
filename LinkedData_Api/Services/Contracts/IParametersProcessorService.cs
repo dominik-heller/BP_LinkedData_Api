@@ -1,4 +1,4 @@
-﻿using LinkedData_Api.Model.ParameterDto;
+﻿using LinkedData_Api.Model.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 

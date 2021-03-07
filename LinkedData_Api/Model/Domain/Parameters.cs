@@ -1,6 +1,4 @@
-﻿using LinkedData_Api.Model.Domain;
-
-namespace LinkedData_Api.Model.ParameterDto
+﻿namespace LinkedData_Api.Model.Domain
 {
     public class Parameters
     {

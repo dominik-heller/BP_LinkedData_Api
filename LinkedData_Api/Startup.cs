@@ -81,7 +81,9 @@ namespace LinkedData_Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
+            //crates IDataAccessService instance at start of app, not only when it is called
+            app.ApplicationServices.GetService<IDataAccess>();
             // app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c =>

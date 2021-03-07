@@ -1,7 +1,8 @@
 ﻿#nullable enable
 using System;
 using System.Threading.Tasks;
-using LinkedData_Api.Model.ParameterDto;
+using LinkedData_Api.Helpers;
+using LinkedData_Api.Model.Domain;
 using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Services.Contracts;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -58,14 +59,14 @@ namespace LinkedData_Api.Controllers
                 return BadRequest(new ErrorVm()
                 {
                     ErrorMessage =
-                        "Resource could not have been created! Check if SPARQL endpoint supports UPDATE operation."
+                        $"Resource could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
                 });
             }
 
             return BadRequest(new ErrorVm()
             {
                 ErrorMessage =
-                    "Resource could not have been created! Check if submitted values has correct semantic syntax."
+                    $"Resource could not have been created due to invalid request parameters! Check submitted URL and request body or selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -100,14 +101,14 @@ namespace LinkedData_Api.Controllers
                 return BadRequest(new ErrorVm()
                 {
                     ErrorMessage =
-                        "Resource could not have been created! Check if SPARQL endpoint supports UPDATE operation."
+                        $"Predicate could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
                 });
             }
 
             return BadRequest(new ErrorVm()
             {
                 ErrorMessage =
-                    "Resource could not have been created! Check if submitted values has correct semantic syntax."
+                    $"Predicate could not have been created due to invalid request parameters! Check submitted URL and request body or selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 

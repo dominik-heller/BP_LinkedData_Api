@@ -1,7 +1,8 @@
 ﻿#nullable enable
 using System;
 using System.Threading.Tasks;
-using LinkedData_Api.Model.ParameterDto;
+using LinkedData_Api.Helpers;
+using LinkedData_Api.Model.Domain;
 using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Services.Contracts;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -13,13 +14,13 @@ namespace LinkedData_Api.Controllers
     [Produces("application/json")]
     public class DeleteController : ControllerBase
     {
-        
         private readonly IEndpointService _endpointService;
         private readonly IParametersProcessorService _parametersProcessorService;
         private readonly ISparqlFactoryService _sparqlFactoryService;
         private readonly IResultFormatterService _resultFormatterService;
 
-        public DeleteController(IEndpointService endpointService, IParametersProcessorService parametersProcessorService,
+        public DeleteController(IEndpointService endpointService,
+            IParametersProcessorService parametersProcessorService,
             ISparqlFactoryService sparqlFactoryService, IResultFormatterService resultFormatterService)
         {
             _endpointService = endpointService;
@@ -27,7 +28,7 @@ namespace LinkedData_Api.Controllers
             _sparqlFactoryService = sparqlFactoryService;
             _resultFormatterService = resultFormatterService;
         }
-        
+
 
         #region ConcreteClass
 
@@ -38,7 +39,7 @@ namespace LinkedData_Api.Controllers
         [HttpDelete]
         [Route(ApiRoutes.DefaultGraphResourcesConcreteResource)]
         [Route(ApiRoutes.NamedGraphResourcesConcreteResource)]
-        [ProducesResponseType( 204)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorVm), 404)]
         public async Task<IActionResult> DeleteResource()
         {
@@ -59,19 +60,19 @@ namespace LinkedData_Api.Controllers
                 return NotFound(new ErrorVm()
                 {
                     ErrorMessage =
-                        "Resource could not have been deleted! Check if SPARQL endpoint supports UPDATE operation."
+                        $"Resource could not have been deleted! \nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
                 });
             }
 
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    "Resource could not have been created! Check if submitted values has correct semantic syntax."
+                    $"Resource could not have been deleted due to invalid request parameters! Check submitted URL or selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}"
             });
         }
 
         #endregion
-        
+
         #region Predicate
 
         /// <summary>
@@ -81,7 +82,7 @@ namespace LinkedData_Api.Controllers
         [HttpDelete]
         [Route(ApiRoutes.DefaultGraphResourceStartConcreteResourcePredicate)]
         [Route(ApiRoutes.NamedGraphResourceStartConcreteResourcePredicate)]
-        [ProducesResponseType( 204)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorVm), 404)]
         public async Task<IActionResult> DeletePredicate()
         {
@@ -102,20 +103,17 @@ namespace LinkedData_Api.Controllers
                 return NotFound(new ErrorVm()
                 {
                     ErrorMessage =
-                        "Resource could not have been deleted! Check if SPARQL endpoint supports UPDATE operation."
+                        $"Predicate could not have been deleted!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
                 });
             }
 
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    "Resource could not have been deleted! Check if submitted values has correct semantic syntax."
+                    $"Predicate could not have been deleted due to invalid request parameters! Check submitted URL or selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}"
             });
         }
-        #endregion
-
-        
-        
-        
     }
+
+    #endregion
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using AngleSharp.Common;
 using LinkedData_Api.Data;
 using LinkedData_Api.Model.Domain;
 using LinkedData_Api.Services.Contracts;
@@ -40,6 +41,20 @@ namespace LinkedData_Api.Services
 
             absoluteUri = null;
             return false;
+        }
+
+        public bool GetNamespaceUriByPrefix(string prefix, out string namespaceUri)
+        {
+            try
+            {
+               namespaceUri = _namespaceMapper.GetNamespaceUri(prefix).ToString();
+               return true;
+            }
+            catch (RdfException)
+            {
+                namespaceUri = null;
+                return false;
+            }
         }
 
         //přijde dbpedia.org/resource#Germany a nutno to změnit na př: dbr:Germany

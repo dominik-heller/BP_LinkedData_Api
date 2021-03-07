@@ -19,14 +19,29 @@ namespace LinkedData_Api.Services
 {
     public class EndpointService : IEndpointService
     {
+        private readonly INamespaceFactoryService _namespaceFactoryService;
         private readonly ReadOnlyCollection<Endpoint> _endpoints;
-        private const int SparqlEndpointConnectionTimeout = 10000;
+        private const int DefaultSparqlEndpointConnectionTimeout = 10000;
+
+        private const string DefaultSparqlEndpointAcceptHeaders =
+            "application/sparql-results+xml,application/sparql-results+json,text/boolean,application/rdf+xml,text/xml,application/xml,application/json,text/json,application/rdf+json,text/csv,text/comma-separated-values";
 
         public EndpointService(IDataAccess dataAccess, INamespaceFactoryService namespaceFactoryService)
         {
-            _endpoints = dataAccess.LoadConfigurationFiles();
-            foreach (var namespaces in _endpoints.Select(x => x.Namespaces))
-                namespaceFactoryService.AddNewPrefixes(namespaces);
+            _namespaceFactoryService = namespaceFactoryService;
+            _endpoints = dataAccess.GetEndpointsConfiguration();
+            AddEndpointsNamespaces(_endpoints.Select(x => x.Namespaces));
+        }
+
+        private void AddEndpointsNamespaces(IEnumerable<List<Namespace>> endpointsNamespaces)
+        {
+            foreach (var namespaces in endpointsNamespaces)
+            {
+                if (namespaces != null)
+                {
+                    _namespaceFactoryService.AddNewPrefixes(namespaces);
+                }
+            }
         }
 
         public Endpoint? GetEndpointConfiguration(string endpointName)
@@ -47,9 +62,9 @@ namespace LinkedData_Api.Services
         public string? GetEntryClassQuery(string endpoint, string? graph)
         {
             if (graph == null)
-                return _endpoints.FirstOrDefault(x => x.EndpointName.Equals(endpoint))?.EntryClass
+                return _endpoints.FirstOrDefault(x => x.EndpointName.Equals(endpoint))?.EntryClass?
                     .FirstOrDefault(x => x.GraphName.Equals("default"))?.Command;
-            return _endpoints.FirstOrDefault(x => x.EndpointName.Equals(endpoint))?.EntryClass
+            return _endpoints.FirstOrDefault(x => x.EndpointName.Equals(endpoint))?.EntryClass?
                 .FirstOrDefault(x => x.GraphName.Equals(graph))?.Command;
         }
 
@@ -85,18 +100,20 @@ namespace LinkedData_Api.Services
             if (endpoint != null && endpoint.SupportedMethods.Sparql10.Equals("yes"))
             {
                 SparqlRemoteEndpoint sparqlEndpoint;
+                if (graphName != null && endpoint.NamedGraphs == null) return null;
                 if (graphName != null && !endpoint.NamedGraphs.Exists(x => x.GraphName.Equals(graphName))) return null;
                 try
                 {
                     sparqlEndpoint = new SparqlRemoteEndpoint(new Uri(endpoint.EndpointUrl));
-                    //   sparqlEndpoint.ResultsAcceptHeader = "text/csv";
-                    sparqlEndpoint.Timeout = SparqlEndpointConnectionTimeout;
+                    sparqlEndpoint.ResultsAcceptHeader = DefaultSparqlEndpointAcceptHeaders;
+                    sparqlEndpoint.Timeout = DefaultSparqlEndpointConnectionTimeout;
                     var sparqlResultSet = await Task.Run(() => sparqlEndpoint.QueryWithResultSet(query));
                     if (sparqlResultSet?.Results.Count == 0) return null;
                     return sparqlResultSet?.Results;
                 }
-                catch (RdfException)
+                catch (RdfException e)
                 {
+                    Console.WriteLine(e);
                     return null;
                 }
             }
@@ -111,11 +128,12 @@ namespace LinkedData_Api.Services
             if (endpoint != null && endpoint.SupportedMethods.Sparql11.Equals("yes"))
             {
                 SparqlRemoteEndpoint sparqlEndpoint;
+                if (graphName != null && endpoint.NamedGraphs == null) return false;
                 if (graphName != null && !endpoint.NamedGraphs.Exists(x => x.GraphName.Equals(graphName))) return false;
                 try
                 {
                     sparqlEndpoint = new SparqlRemoteEndpoint(new Uri(endpoint.EndpointUrl));
-                    sparqlEndpoint.Timeout = SparqlEndpointConnectionTimeout;
+                    sparqlEndpoint.Timeout = DefaultSparqlEndpointConnectionTimeout;
                     sparqlEndpoint.HttpMode = "POST";
                     var httpWebResponse = await Task.Run(() => sparqlEndpoint.QueryRaw(query));
                     if (httpWebResponse.StatusCode == HttpStatusCode.OK) return true;

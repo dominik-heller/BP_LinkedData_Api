@@ -3,7 +3,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using LinkedData_Api.Model.Domain;
-using LinkedData_Api.Model.ParameterDto;
 using LinkedData_Api.Services.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;

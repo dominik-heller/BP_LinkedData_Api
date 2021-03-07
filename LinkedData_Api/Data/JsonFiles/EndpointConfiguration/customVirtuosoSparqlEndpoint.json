@@ -26,6 +26,10 @@
       "uri": "https://linked.opendata.cz/zdroj/ovm/ais/"
     },
     {
+      "prefix": "schranky",
+      "uri": "https://linked.opendata.cz/zdroj/datové-schránky/"
+    },
+    {
       "prefix": "char",
       "uri": "http://lexvo.org/id/char/"
     },

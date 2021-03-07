@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
 namespace LinkedData_Api.Model.Domain
@@ -40,9 +41,9 @@ namespace LinkedData_Api.Model.Domain
 
     public class Endpoint
     {
-        [JsonProperty("endpoint_name")] public string EndpointName { get; set; }
-
-        [JsonProperty("endpoint_url")] public string EndpointUrl { get; set; }
+        [JsonProperty("endpoint_name", Required = Required.Always)] public string EndpointName { get; set; }
+        
+        [JsonProperty("endpoint_url", Required = Required.Always)] public string EndpointUrl { get; set; }
 
         [JsonProperty("default_graph")] public string DefaultGraph { get; set; }
 

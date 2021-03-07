@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using LinkedData_Api.Model.Domain;
-using LinkedData_Api.Model.ParameterDto;
 using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Services.Contracts;
 using VDS.RDF.Query;
@@ -39,9 +38,10 @@ namespace LinkedData_Api.Services
                 SparqlParameterizedString sparqlParameterizedString = new();
                 sparqlParameterizedString.CommandText = command;
                 sparqlParameterizedString.SetUri("var", new Uri(absoluteUri));
-                string query = ApplyQueryStringParametersToSparqlQuery(sparqlParameterizedString.ToString(),
+                string? query = ApplyQueryStringParametersToSparqlQuery(sparqlParameterizedString.ToString(),
                     parameters.QueryStringParametersDto, "?s");
                 query = ImplementFromGraphClauseToSelectQuery(query, parameters);
+                if (string.IsNullOrEmpty(query)) return null;
                 return query;
             }
 
@@ -57,9 +57,10 @@ namespace LinkedData_Api.Services
                 SparqlParameterizedString sparqlParameterizedString = new();
                 sparqlParameterizedString.CommandText = command;
                 sparqlParameterizedString.SetUri("var", new Uri(absoluteUri));
-                string query = ApplyQueryStringParametersToSparqlQuery(sparqlParameterizedString.ToString(),
+                string? query = ApplyQueryStringParametersToSparqlQuery(sparqlParameterizedString.ToString(),
                     parameters.QueryStringParametersDto, "?p");
                 query = ImplementFromGraphClauseToSelectQuery(query, parameters);
+                if (string.IsNullOrEmpty(query)) return null;
                 return query;
             }
 
@@ -82,9 +83,10 @@ namespace LinkedData_Api.Services
                 out var predicateAbsoluteUri))
             {
                 sparqlParameterizedString.SetUri("pred", new Uri(predicateAbsoluteUri));
-                string query = ApplyQueryStringParametersToSparqlQuery(sparqlParameterizedString.ToString(),
+                string? query = ApplyQueryStringParametersToSparqlQuery(sparqlParameterizedString.ToString(),
                     parameters.QueryStringParametersDto, "?o");
                 query = ImplementFromGraphClauseToSelectQuery(query, parameters);
+                if (string.IsNullOrEmpty(query)) return null;
                 return query;
             }
 
@@ -104,10 +106,11 @@ namespace LinkedData_Api.Services
                 SparqlParameterizedString sparqlParameterizedDeleteQuery = new();
                 sparqlParameterizedDeleteQuery.CommandText = "DELETE {@sub ?p ?o} WHERE {@sub ?p ?o} ";
                 sparqlParameterizedDeleteQuery.SetUri("sub", new Uri(resourceAbsoluteUri));
-                string deleteQuery = sparqlParameterizedDeleteQuery.ToString();
+                string? deleteQuery = sparqlParameterizedDeleteQuery.ToString();
                 string? insertQuery = ConstructInsertResourceQueryString(resourceVm, resourceAbsoluteUri);
                 if (string.IsNullOrEmpty(insertQuery)) return null;
-                deleteQuery = ImplementFromGraphClauseToDeleteQuery(deleteQuery, parameters);
+                deleteQuery = ImplementFromGraphClauseToInsertDeleteQuery(deleteQuery, parameters);
+                if (string.IsNullOrEmpty(deleteQuery)) return null;
                 string finalQuery = deleteQuery + insertQuery;
                 Console.WriteLine(finalQuery);
                 return finalQuery;
@@ -128,11 +131,12 @@ namespace LinkedData_Api.Services
                 sparqlParameterizedDeleteQuery.CommandText = "DELETE {@sub @pred ?o} WHERE {@sub @pred ?o} ";
                 sparqlParameterizedDeleteQuery.SetUri("sub", new Uri(resourceAbsoluteUri));
                 sparqlParameterizedDeleteQuery.SetUri("pred", new Uri(predicateAbsoluteUri));
-                string deleteQuery = sparqlParameterizedDeleteQuery.ToString();
+                string? deleteQuery = sparqlParameterizedDeleteQuery.ToString();
                 string? insertQuery =
                     ConstructInsertPredicateQueryString(predicateVm, resourceAbsoluteUri, predicateAbsoluteUri);
                 if (string.IsNullOrEmpty(insertQuery)) return null;
-                deleteQuery = ImplementFromGraphClauseToDeleteQuery(deleteQuery, parameters);
+                deleteQuery = ImplementFromGraphClauseToInsertDeleteQuery(deleteQuery, parameters);
+                if (string.IsNullOrEmpty(deleteQuery)) return null;
                 string finalQuery = deleteQuery + insertQuery;
                 Console.WriteLine(finalQuery);
                 return finalQuery;
@@ -152,7 +156,7 @@ namespace LinkedData_Api.Services
             {
                 string? insertQuery = ConstructInsertResourceQueryString(namedResourceVm, resourceAbsoluteUri);
                 if (string.IsNullOrEmpty(insertQuery)) return null;
-                insertQuery = ImplementFromGraphClauseToInsertQuery(insertQuery, parameters);
+                insertQuery = ImplementFromGraphClauseToInsertDeleteQuery(insertQuery, parameters);
                 Console.WriteLine(insertQuery);
                 return insertQuery;
             }
@@ -170,7 +174,7 @@ namespace LinkedData_Api.Services
                 string? insertQuery =
                     ConstructInsertPredicateQueryString(namedPredicateVm, resourceAbsoluteUri, predicateAbsoluteUri);
                 if (string.IsNullOrEmpty(insertQuery)) return null;
-                insertQuery = ImplementFromGraphClauseToInsertQuery(insertQuery, parameters);
+                insertQuery = ImplementFromGraphClauseToInsertDeleteQuery(insertQuery, parameters);
                 Console.WriteLine(insertQuery);
                 return insertQuery;
             }
@@ -191,8 +195,9 @@ namespace LinkedData_Api.Services
                 sparqlParameterizedDeleteQuery.CommandText =
                     "DELETE {?s ?p ?o} WHERE {?s ?p ?o. FILTER (?s = @var || ?o = @var)}";
                 sparqlParameterizedDeleteQuery.SetUri("var", new Uri(resourceAbsoluteUri));
-                string deleteQuery = sparqlParameterizedDeleteQuery.ToString();
-                deleteQuery = ImplementFromGraphClauseToDeleteQuery(deleteQuery, parameters);
+                string? deleteQuery = sparqlParameterizedDeleteQuery.ToString();
+                deleteQuery = ImplementFromGraphClauseToInsertDeleteQuery(deleteQuery, parameters);
+                if (string.IsNullOrEmpty(deleteQuery)) return null;
                 return deleteQuery;
             }
 
@@ -210,9 +215,10 @@ namespace LinkedData_Api.Services
                 sparqlParameterizedDeleteQuery.CommandText = "DELETE {@sub @pred ?o} WHERE {@sub @pred ?o}";
                 sparqlParameterizedDeleteQuery.SetUri("sub", new Uri(resourceAbsoluteUri));
                 sparqlParameterizedDeleteQuery.SetUri("pred", new Uri(predicateAbsoluteUri));
-                string deleteQuery = sparqlParameterizedDeleteQuery.ToString();
+                string? deleteQuery = sparqlParameterizedDeleteQuery.ToString();
                 Console.WriteLine(deleteQuery);
-                deleteQuery = ImplementFromGraphClauseToDeleteQuery(deleteQuery, parameters);
+                deleteQuery = ImplementFromGraphClauseToInsertDeleteQuery(deleteQuery, parameters);
+                if (string.IsNullOrEmpty(deleteQuery)) return null;
                 return deleteQuery;
             }
 
@@ -396,10 +402,11 @@ namespace LinkedData_Api.Services
             return insertQuery;
         }
 
-        private string ImplementFromGraphClauseToSelectQuery(string query, Parameters parameters)
+        private string? ImplementFromGraphClauseToSelectQuery(string query, Parameters parameters)
         {
-            Endpoint endpointConfig = _endpointService.GetEndpointConfiguration(parameters.RouteParameters.Endpoint)!;
-            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph))
+            Endpoint? endpointConfig = _endpointService.GetEndpointConfiguration(parameters.RouteParameters.Endpoint);
+            if (endpointConfig == null) return null;
+            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph) && endpointConfig.NamedGraphs!=null)
             {
                 query = Regex.Replace(query, "where",
                     $"FROM <{endpointConfig.NamedGraphs.Where(x => x.GraphName.Equals(parameters.RouteParameters.Graph)).Select(y => y.Uri).FirstOrDefault()}> WHERE",
@@ -409,7 +416,7 @@ namespace LinkedData_Api.Services
 
             if (!string.IsNullOrEmpty(endpointConfig.DefaultGraph))
             {
-                query = query = Regex.Replace(query, "where", $"FROM <{endpointConfig.DefaultGraph}> WHERE",
+                query = Regex.Replace(query, "where", $"FROM <{endpointConfig.DefaultGraph}> WHERE",
                     RegexOptions.IgnoreCase);
                 return query;
             }
@@ -417,6 +424,51 @@ namespace LinkedData_Api.Services
             return query;
         }
 
+
+        private string? ImplementFromGraphClauseToInsertDeleteQuery(string query, Parameters parameters)
+        {
+            Endpoint? endpointConfig = _endpointService.GetEndpointConfiguration(parameters.RouteParameters.Endpoint);
+            if (endpointConfig == null) return null;
+            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph))
+            {
+                query =
+                    $"WITH <{endpointConfig.NamedGraphs.Where(x => x.GraphName.Equals(parameters.RouteParameters.Graph)).Select(y => y.Uri).FirstOrDefault()}> {query}";
+                return query;
+            }
+
+            if (!string.IsNullOrEmpty(endpointConfig.DefaultGraph))
+            {
+                query = $"WITH <{endpointConfig.DefaultGraph}> {query}";
+                return query;
+            }
+
+            return query;
+        }
+        #endregion
+/*
+        private string ImplementFromGraphClauseToDeleteQuery(string query, Parameters parameters)
+        {
+            Endpoint? endpointConfig = _endpointService.GetEndpointConfiguration(parameters.RouteParameters.Endpoint);
+            if (endpointConfig == null) return query;
+            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph))
+            {
+                query =
+                    $"WITH <{endpointConfig.NamedGraphs.Where(x => x.GraphName.Equals(parameters.RouteParameters.Graph)).Select(y => y.Uri).FirstOrDefault()}> {query}";
+                return query;
+            }
+
+            if (!string.IsNullOrEmpty(endpointConfig.DefaultGraph))
+            {
+                query = $"WITH <{endpointConfig.DefaultGraph} {query}";
+                return query;
+            }
+
+            return query;
+        }
+*/
+
+
+/*
         private string ImplementFromGraphClauseToInsertQuery(string query, Parameters parameters)
         {
             Endpoint? endpointConfig = _endpointService.GetEndpointConfiguration(parameters.RouteParameters.Endpoint);
@@ -438,6 +490,8 @@ namespace LinkedData_Api.Services
 
             return query;
         }
+
+
 
 
         private string ImplementFromGraphClauseToDeleteQuery(string query, Parameters parameters)
@@ -463,7 +517,6 @@ namespace LinkedData_Api.Services
 
             return query;
         }
-
-        #endregion
+*/
     }
 }

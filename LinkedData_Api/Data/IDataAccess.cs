@@ -7,7 +7,7 @@ namespace LinkedData_Api.Data
 {
     public interface IDataAccess
     {
-        ReadOnlyCollection<Endpoint> LoadConfigurationFiles();
+        ReadOnlyCollection<Endpoint> GetEndpointsConfiguration();
         ThreadSafeQNameOutputMapper LoadNamespacesFile();
     }
 }

@@ -1,13 +1,14 @@
 ﻿#nullable enable
-using System.ComponentModel;
+
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using AngleSharp.Attributes;
+using LinkedData_Api.Helpers;
 using LinkedData_Api.Model.Domain;
-using LinkedData_Api.Model.ParameterDto;
 using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Services.Contracts;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace LinkedData_Api.Controllers
 {
@@ -19,67 +20,75 @@ namespace LinkedData_Api.Controllers
         private readonly IParametersProcessorService _parametersProcessorService;
         private readonly ISparqlFactoryService _sparqlFactoryService;
         private readonly IResultFormatterService _resultFormatterService;
+        private readonly INamespaceFactoryService _namespaceFactoryService;
 
         public GetController(IEndpointService endpointService, IParametersProcessorService parametersProcessorService,
-            ISparqlFactoryService sparqlFactoryService, IResultFormatterService resultFormatterService)
+            ISparqlFactoryService sparqlFactoryService, IResultFormatterService resultFormatterService,
+            INamespaceFactoryService namespaceFactoryService)
         {
             _endpointService = endpointService;
             _parametersProcessorService = parametersProcessorService;
             _sparqlFactoryService = sparqlFactoryService;
             _resultFormatterService = resultFormatterService;
+            _namespaceFactoryService = namespaceFactoryService;
         }
 
 
         #region GeneralInfo
 
-        //př: https://localhost:5001/api/virtuoso
         /// <summary>
         /// Returns endpoint configuration information.
         /// </summary>
         /// <param name="endpoint"></param>
         /// <returns></returns>
         [HttpGet(ApiRoutes.EndpointInfo)]
+        [ProducesResponseType(typeof(Endpoint), 200)]
+        [ProducesResponseType(typeof(ErrorVm), 404)]
         public IActionResult Get_EndpointSettings([FromRoute] string endpoint)
         {
             var info = _endpointService.GetEndpointConfiguration(endpoint);
             if (info != null) return Ok(info);
-            return NotFound("Endpoint does not exist.");
+            return NotFound(new ErrorVm() {ErrorMessage = "Endpoint does not exist."});
         }
 
-        //př: https://localhost:5001/api/virtuoso/graphs
         /// <summary>
         /// Returns endpoint's named graphs.
         /// </summary>
         /// <param name="endpoint"></param>
         /// <returns></returns>
         [HttpGet(ApiRoutes.EndpointGraphs)]
+        [ProducesResponseType(typeof(List<NamedGraph>), 200)]
+        [ProducesResponseType(typeof(ErrorVm), 404)]
         public IActionResult Get_GraphsForEndpoint([FromRoute] string endpoint)
         {
             var graphs = _endpointService.GetEndpointGraphs(endpoint);
             if (graphs != null) return Ok(graphs);
-            return NotFound("Endpoint does not exist.");
+            return NotFound(new ErrorVm()
+            {
+                ErrorMessage =
+                    $"No graphs found. Check selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}"
+            });
         }
 
-        /*   
-           //NAMESPACES_enpoint
-           //př: https://localhost:5001/api/endpoint1/namespaces
-           [HttpGet("api/namespaces")]
-           public string Get_Namespaces()
-           {
-               return $"NAMESPACES POSTED";
-           }
-   
-           //NAMESPACES_enpoint_POST
-           //př: https://localhost:5001/api/endpoint1/namespaces
-           [HttpPost("api/namespaces")]
-           public string Post_Namespaces()
-           {
-               return $"NAMESPACES POSTED";
-           }
-          */
+        /// <summary>
+        /// Returns namespace URI for given prefix.
+        /// </summary>
+        /// <param name="prefix"></param>
+        /// <returns></returns>
+        [HttpGet("api/namespaces/{prefix}")]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(ErrorVm), 404)]
+        public IActionResult GetNamespaces([FromRoute] string prefix)
+        {
+            if (_namespaceFactoryService.GetNamespaceUriByPrefix(prefix, out var namespaceUri))
+            {
+                return Ok(namespaceUri);
+            }
+
+            return NotFound(new ErrorVm() {ErrorMessage = "Namespace uri for given prefix not found!"});
+        }
 
         #endregion
-
 
         #region Classes
 
@@ -109,11 +118,16 @@ namespace LinkedData_Api.Controllers
                     CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToCurieList(sparqlResults);
                     return Ok(curiesVm);
                 }
+
+
+                return NotFound(new ErrorVm()
+                    {ErrorMessage = $"No results were found! Generated sparql query: {query}"});
             }
+
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    "No results were found. Check endpoint/graph name and consequently entry class query for given endpoint."
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -148,17 +162,20 @@ namespace LinkedData_Api.Controllers
                     CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToCurieList(sparqlResults);
                     return Ok(curiesVm);
                 }
+
+
+                return NotFound(new ErrorVm()
+                    {ErrorMessage = $"No results were found! Generated sparql query: {query}"});
             }
 
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    "No results were found. Check endpoint/graph name and consequently entry resource query for given endpoint."
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
         #endregion
-
 
         #region ConcreteClass
 
@@ -186,9 +203,17 @@ namespace LinkedData_Api.Controllers
                     CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToCurieList(sparqlResults);
                     return Ok(curiesVm);
                 }
+
+
+                return NotFound(new ErrorVm()
+                    {ErrorMessage = $"No results were found! Generated sparql query: {query}"});
             }
 
-            return NotFound(new ErrorVm() {ErrorMessage = "No results were found for given class."});
+            return NotFound(new ErrorVm()
+            {
+                ErrorMessage =
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+            });
         }
 
         #endregion
@@ -222,9 +247,16 @@ namespace LinkedData_Api.Controllers
                     ResourceVm resourceVm = _resultFormatterService.FormatSparqlResultToResourceDetail(sparqlResults);
                     return Ok(resourceVm);
                 }
+
+                return NotFound(new ErrorVm()
+                    {ErrorMessage = $"No results were found! Generated sparql query: {query}"});
             }
 
-            return NotFound(new ErrorVm() {ErrorMessage = "No results were found for given resource."});
+            return NotFound(new ErrorVm()
+            {
+                ErrorMessage =
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+            });
         }
 
         #endregion
@@ -261,9 +293,17 @@ namespace LinkedData_Api.Controllers
                             parameters.RouteParameters.Predicate, sparqlResults);
                     return Ok(predicateVm);
                 }
+
+
+                return NotFound(new ErrorVm()
+                    {ErrorMessage = $"No results were found! Generated sparql query: {query}"});
             }
 
-            return NotFound(new ErrorVm() {ErrorMessage = "No results were found for given resource and predicate."});
+            return NotFound(new ErrorVm()
+            {
+                ErrorMessage =
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+            });
         }
 
         #endregion
@@ -286,91 +326,5 @@ namespace LinkedData_Api.Controllers
         }
 
         #endregion
-
-/*PŮVODNÍ ROUTOVÁNÍ
-//př: https://localhost:5001/api/dbpedia/class/dbo:country/dbr:Germany/dbo:Capital/dbr:Berlin
-[HttpGet(ApiRoutes.DefaultGraphClassRoute)]
-public async Task<IActionResult> Get_DefaultGraph_ClassStart()
-{
-  ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
-      Request.QueryString);
-  var endpoint = pd.RouteParameters.Endpoint;
-  if (pd.RouteParameters.Class == null) //pouze dotaz na api/endpoint/class => vrátí všechny třídy
-  {
-      string? query =
-          _sparqlFactoryService.GetFinalQuery(
-              _endpointService.GetDefaultEntryClassQuery(endpoint), pd);
-      if (query != null)
-      {
-          IEnumerable<SparqlResult>? sparqlResults = await
-              _endpointService.ExecuteSelectSparqlQueryAsync(endpoint, null, query);
-          if (sparqlResults != null)
-          {
-              CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToList(sparqlResults);
-              if (curiesVm != null)
-              {
-                  return Ok(curiesVm);
-              }
-          }
-      }
-  }
-
-  return NotFound("nenalezeno");
-}
-
-//př: https://localhost:5001/api/endpoint1/resource/dbr:Germany/dbo:Capital/dbr:Berlin
-[HttpGet(ApiRoutes.DefaultGraphResourceRoute)]
-public ActionResult Get_DefaultGraph_ResourcesStart()
-{
-  ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
-      Request.QueryString);
-  return Ok(pd);
-}
-
-//př: https://localhost:5001/api/virtuoso/ovm/class/dbo:Country/dbr:Germany/dbo:Capital/dbr:Berlin
-[HttpGet(ApiRoutes.NamedGraphClassRoute)]
-public async Task<IActionResult> Get_GraphSpecific_ClassStart()
-{
-  ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
-      Request.QueryString);
-  string? query = _sparqlFactoryService.GetFinalQuery(
-      _endpointService.GetGraphSpecificEntryClassQuery(pd.RouteParameters.Endpoint,
-          pd.RouteParameters.Graph), pd);
-  if (query != null)
-  {
-      IEnumerable<SparqlResult>? sparqlResults = await
-          _endpointService.ExecuteSelectSparqlQueryAsync(pd.RouteParameters.Endpoint,
-              pd.RouteParameters.Graph, query);
-      if (sparqlResults != null)
-      {
-          CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToList(sparqlResults);
-          if (curiesVm != null) return Ok(curiesVm);
-      }
-  }
-
-  return NotFound("nenalezeno");
-}
-
-//př: https://localhost:5001/api/endpoint1/graph1/resource/dbr:Germany/dbo:Capital/dbr:Berlin
-[HttpGet(ApiRoutes.NamedGraphResourceRoute)]
-public ActionResult Get_GraphSpecific_ResourceStart()
-{
-  ParameterDto pd = _parametersProcessorService.ProcessParameters(Request.RouteValues,
-      Request.QueryString);
-  return Ok(pd);
-}
-
-/* Pro proces parametrů zbytečný (není to IO operace => neopouští pamět a není to ani náročné) X pro dotaz na SPARQL ENDPOINT UŽ ANO
-public async Task<IActionResult> Get_DefaultGraph_ClassStartAsync()
-{
-   //TOHLE ŠPATNĚ => nikdy nevolat Task.Run z controlleru => použije to vlákno pro requesty na api,c ož je přesně to co nechceme
-  // ParameterDto pd0 = await Task.Run(() => Services.ParametersProcessor.ProcessParameters(Request.RouteValues, Request.QueryString));
-  //TOHLE SPRÁVNĚ
-  ParameterDto pd = await Services.ParametersProcessor.ProcessParametersAsync(Request.RouteValues,
-      Request.QueryString);
-  return Ok(pd);
-  // $"CLASS_DefaultGraph\nEndpoint: {endpoint}\t Graph: Default\t \tClass_Id:{class_id}\nPředané parametry: {subject} -> {predicate} -> {@object}.\nZde tedy bude logika pro zpracování spraql dotazu a následné zobrazení. :)";
-}
-*/
     }
 }
