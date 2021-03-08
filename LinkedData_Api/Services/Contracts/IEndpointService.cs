@@ -9,8 +9,6 @@ namespace LinkedData_Api.Services.Contracts
     public interface IEndpointService
     {
         Endpoint? GetEndpointConfiguration(string endpointName);
-        string? GetEndpointUrl(string endpointName);
-        string? GetEndpointDefaultGraph(string endpointName);
         string? GetEntryClassQuery(string endpoint, string? graph);
         string? GetEntryResourceQuery(string endpoint, string? graph);
         IEnumerable<NamedGraph>? GetEndpointGraphs(string endpointName);

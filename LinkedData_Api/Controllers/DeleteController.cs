@@ -31,15 +31,23 @@ namespace LinkedData_Api.Controllers
 
         #region GeneralInfo
 
+        /// <summary>
+        /// Removes endpoint configuration.
+        /// </summary>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route(ApiRoutes.EndpointConfiguration)]
-        public IActionResult DeleteEndpointConfiguration(string EndpointName)
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorVm), 404)]
+        public IActionResult DeleteEndpointConfiguration(string endpoint)
         {
-            bool successful = _endpointService.RemoveEndpoint(EndpointName);
+            if (_endpointService.RemoveEndpoint(endpoint)) return NoContent();
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    "neco"   });
+                    "Endpoint with given name does not exist!"
+            });
         }
 
         #endregion

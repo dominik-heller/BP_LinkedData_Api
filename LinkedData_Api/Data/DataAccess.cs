@@ -15,22 +15,24 @@ namespace LinkedData_Api.Data
 {
     public class DataAccess : IDataAccess
     {
-        private readonly ConcurrentBag<Endpoint> _threadSafeConfigurationFilesCollection;
+        private readonly ConcurrentDictionary<string, Endpoint> _threadSafeConfigurationFilesDictionary;
+
         //Get Endpoint Configuration from Files and dispose them in ReadOnly = Thread-Safe Collection  
         private readonly NamespaceMapper _namespaceMapper;
 
 
         public DataAccess()
         {
-            _threadSafeConfigurationFilesCollection =
-                new ConcurrentBag<Endpoint>(LoadConfigurationFiles(@"Data/JsonFiles/EndpointConfiguration"));
+            _threadSafeConfigurationFilesDictionary =
+                new ConcurrentDictionary<string, Endpoint>(
+                    LoadConfigurationFiles(@"Data/JsonFiles/EndpointConfiguration"));
             _namespaceMapper = new NamespaceMapper();
-            _namespaceMapper=LoadNamespacesFile(@"Data/JsonFiles/Namespaces/namespaces.json");
+            _namespaceMapper = LoadNamespacesFile(@"Data/JsonFiles/Namespaces/namespaces.json");
         }
 
-        public ConcurrentBag<Endpoint> GetEndpointsConfiguration()
+        public ConcurrentDictionary<string, Endpoint> GetEndpointsConfiguration()
         {
-            return _threadSafeConfigurationFilesCollection;
+            return _threadSafeConfigurationFilesDictionary;
         }
 
         public NamespaceMapper GetNamespaces()
@@ -49,9 +51,9 @@ namespace LinkedData_Api.Data
             return _namespaceMapper;
         }
 
-        public List<Endpoint> LoadConfigurationFiles(string pathToConfigurationFiles)
+        public Dictionary<string, Endpoint> LoadConfigurationFiles(string pathToConfigurationFiles)
         {
-            List<Endpoint> endpointDtos = new List<Endpoint>();
+            Dictionary<string, Endpoint> endpointDtos = new Dictionary<string, Endpoint>();
             string[] fileEntries = Directory.GetFiles(pathToConfigurationFiles);
             foreach (string fileName in fileEntries)
             {
@@ -60,7 +62,7 @@ namespace LinkedData_Api.Data
                     Endpoint endpoint = JsonConvert.DeserializeObject<Endpoint>(File.ReadAllText(fileName));
                     if (CheckAndAdjustEndpointConfigurationFile(endpoint, endpointDtos, out Endpoint checkedEndpoint))
                     {
-                        endpointDtos.Add(checkedEndpoint);
+                        endpointDtos.Add(endpoint.EndpointName, checkedEndpoint);
                     }
                 }
                 catch (JsonSerializationException e)
@@ -73,7 +75,7 @@ namespace LinkedData_Api.Data
             return endpointDtos;
         }
 
-        private bool CheckAndAdjustEndpointConfigurationFile(Endpoint endpoint, List<Endpoint> endpoints,
+        private bool CheckAndAdjustEndpointConfigurationFile(Endpoint endpoint, Dictionary<string, Endpoint> endpoints,
             out Endpoint checkedEndpoint)
         {
             checkedEndpoint = endpoint;
@@ -85,7 +87,7 @@ namespace LinkedData_Api.Data
                 return false;
             }
 
-            if (endpoints.Any(x => x.EndpointName.Equals(endpoint.EndpointName)))
+            if (endpoints.Any(x => x.Key.Contains(endpoint.EndpointName)))
             {
                 Console.WriteLine(
                     "Endpoint with given name already exists. Endpoint settings will be ignored.");

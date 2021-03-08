@@ -8,10 +8,10 @@ namespace LinkedData_Api.Data
 {
     public interface IDataAccess
     {
-        ConcurrentBag<Endpoint> GetEndpointsConfiguration();
+        ConcurrentDictionary<string, Endpoint> GetEndpointsConfiguration();
         NamespaceMapper GetNamespaces();
         NamespaceMapper LoadNamespacesFile(string pathToConfigurationFiles);
-        List<Endpoint> LoadConfigurationFiles(string pathToConfigurationFiles);
+        Dictionary<string, Endpoint> LoadConfigurationFiles(string pathToConfigurationFiles);
 
     }
 }
