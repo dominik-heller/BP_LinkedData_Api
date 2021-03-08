@@ -8,6 +8,7 @@ using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Services.Contracts;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using NamedGraph = LinkedData_Api.Model.Domain.NamedGraph;
 
 
 namespace LinkedData_Api.Controllers
@@ -41,10 +42,10 @@ namespace LinkedData_Api.Controllers
         /// </summary>
         /// <param name="endpoint"></param>
         /// <returns></returns>
-        [HttpGet(ApiRoutes.EndpointInfo)]
+        [HttpGet(ApiRoutes.EndpointConfiguration)]
         [ProducesResponseType(typeof(Endpoint), 200)]
         [ProducesResponseType(typeof(ErrorVm), 404)]
-        public IActionResult Get_EndpointSettings([FromRoute] string endpoint)
+        public IActionResult Get_EndpointConfiguration([FromRoute] string endpoint)
         {
             var info = _endpointService.GetEndpointConfiguration(endpoint);
             if (info != null) return Ok(info);
@@ -66,7 +67,7 @@ namespace LinkedData_Api.Controllers
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"No graphs found. Check selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}"
+                    $"No graphs found. Check selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}"
             });
         }
 
@@ -127,7 +128,7 @@ namespace LinkedData_Api.Controllers
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -170,7 +171,7 @@ namespace LinkedData_Api.Controllers
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -211,7 +212,7 @@ namespace LinkedData_Api.Controllers
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -254,7 +255,7 @@ namespace LinkedData_Api.Controllers
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -300,7 +301,7 @@ namespace LinkedData_Api.Controllers
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -319,8 +320,8 @@ namespace LinkedData_Api.Controllers
             Parameters parameters =
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             if (parameters.RouteParameters.Predicate == null)
-                return Redirect(_parametersProcessorService.ReduceUrl(Request.GetEncodedUrl(), "resource"));
-            return Redirect(_parametersProcessorService.ReduceUrl(Request.GetEncodedUrl(), "predicate"));
+                return Redirect(UrlFactoryClass.ReduceUrl(Request.GetEncodedUrl(), "resource"));
+            return Redirect(UrlFactoryClass.ReduceUrl(Request.GetEncodedUrl(), "predicate"));
         }
 
         #endregion

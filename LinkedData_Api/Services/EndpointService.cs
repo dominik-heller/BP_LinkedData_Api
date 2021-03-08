@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace LinkedData_Api.Services
     public class EndpointService : IEndpointService
     {
         private readonly INamespaceFactoryService _namespaceFactoryService;
-        private readonly ReadOnlyCollection<Endpoint> _endpoints;
+        private readonly ConcurrentBag<Endpoint> _endpoints;
         private const int DefaultSparqlEndpointConnectionTimeout = 10000;
 
         private const string DefaultSparqlEndpointAcceptHeaders =
@@ -43,7 +44,8 @@ namespace LinkedData_Api.Services
                 }
             }
         }
-
+        
+        
         public Endpoint? GetEndpointConfiguration(string endpointName)
         {
             return _endpoints.FirstOrDefault(x => x.EndpointName.Equals(endpointName));
@@ -139,6 +141,18 @@ namespace LinkedData_Api.Services
                 }
             }
 
+            return false;
+        }
+
+        public bool AddEndpoint(Endpoint endpoint)
+        {
+            if (_endpoints.Any(x => x.EndpointName.Equals(endpoint.EndpointName))) return false;
+            _endpoints.Add(endpoint);
+            return true;
+        }
+
+        public bool RemoveEndpoint(string endpointName)
+        {
             return false;
         }
     }

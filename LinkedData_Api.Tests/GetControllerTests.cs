@@ -19,7 +19,7 @@ namespace LinkedData_Api.Tests
         [InlineData("virtuoso")]
         public async Task TestConfigurationInfoEndpoint_ShouldReturnOk(string endpoint)
         {
-            var response = await TestClient.GetAsync(ApiRoutes.EndpointInfo.Replace("{endpoint}", endpoint));
+            var response = await TestClient.GetAsync(ApiRoutes.EndpointConfiguration.Replace("{endpoint}", endpoint));
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
@@ -28,7 +28,7 @@ namespace LinkedData_Api.Tests
         [InlineData("@đ[dfa")]
         public async Task TestEndpointConfigurationEndpoint_ShouldReturnNotFound(string endpoint)
         {
-            var response = await TestClient.GetAsync(ApiRoutes.EndpointInfo.Replace("{endpoint}", endpoint));
+            var response = await TestClient.GetAsync(ApiRoutes.EndpointConfiguration.Replace("{endpoint}", endpoint));
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 

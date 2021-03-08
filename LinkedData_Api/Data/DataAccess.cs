@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -14,21 +15,22 @@ namespace LinkedData_Api.Data
 {
     public class DataAccess : IDataAccess
     {
-        private readonly ReadOnlyCollection<Endpoint> _readOnlyConfigurationFilesCollection;
+        private readonly ConcurrentBag<Endpoint> _threadSafeConfigurationFilesCollection;
         //Get Endpoint Configuration from Files and dispose them in ReadOnly = Thread-Safe Collection  
-        private NamespaceMapper _namespaceMapper;
+        private readonly NamespaceMapper _namespaceMapper;
 
 
         public DataAccess()
         {
-            _readOnlyConfigurationFilesCollection =
-                new ReadOnlyCollection<Endpoint>(LoadConfigurationFiles(@"Data/JsonFiles/EndpointConfiguration"));
+            _threadSafeConfigurationFilesCollection =
+                new ConcurrentBag<Endpoint>(LoadConfigurationFiles(@"Data/JsonFiles/EndpointConfiguration"));
+            _namespaceMapper = new NamespaceMapper();
             _namespaceMapper=LoadNamespacesFile(@"Data/JsonFiles/Namespaces/namespaces.json");
         }
 
-        public ReadOnlyCollection<Endpoint> GetEndpointsConfiguration()
+        public ConcurrentBag<Endpoint> GetEndpointsConfiguration()
         {
-            return _readOnlyConfigurationFilesCollection;
+            return _threadSafeConfigurationFilesCollection;
         }
 
         public NamespaceMapper GetNamespaces()
@@ -38,7 +40,6 @@ namespace LinkedData_Api.Data
 
         public NamespaceMapper LoadNamespacesFile(string pathToConfigurationFiles)
         {
-            _namespaceMapper = new NamespaceMapper();
             JObject o = JObject.Parse(File.ReadAllText(pathToConfigurationFiles));
             foreach (var v in o)
             {

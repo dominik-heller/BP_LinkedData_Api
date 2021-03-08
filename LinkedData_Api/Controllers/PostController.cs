@@ -28,6 +28,39 @@ namespace LinkedData_Api.Controllers
             _resultFormatterService = resultFormatterService;
         }
 
+        /// <summary>
+        /// Creates new resource or appends to existing one.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route(ApiRoutes.PostEndpoints)]
+        [ProducesResponseType(typeof(Endpoint), 201)]
+        [ProducesResponseType(typeof(ErrorVm), 400)]
+        public IActionResult PostEndpoint(Endpoint endpoint)
+        {
+            if (ModelState.IsValid)
+            {
+                bool successful = _endpointService.AddEndpoint(endpoint);
+                if (successful){
+                    return Created(
+                        new Uri(UrlFactoryClass.CreateEndpointUrl(Request.GetEncodedUrl(), endpoint.EndpointName)),
+                        endpoint);
+                }
+                return BadRequest(new ErrorVm()
+                {
+                    ErrorMessage =
+                        $"Given endpoint name is already assigned. Check endpoint configuration at {UrlFactoryClass.CreateEndpointUrl(Request.GetEncodedUrl(), endpoint.EndpointName)}"
+                });
+            }
+
+            Console.WriteLine("Invalid Model");
+            return BadRequest(new ErrorVm()
+            {
+                ErrorMessage =
+                    $"Resource could not have been created due to invalid request parameters! Check submitted URL and request body or selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+            });
+        }
+
 
         #region Resources
 
@@ -59,14 +92,14 @@ namespace LinkedData_Api.Controllers
                 return BadRequest(new ErrorVm()
                 {
                     ErrorMessage =
-                        $"Resource could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                        $"Resource could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
                 });
             }
 
             return BadRequest(new ErrorVm()
             {
                 ErrorMessage =
-                    $"Resource could not have been created due to invalid request parameters! Check submitted URL and request body or selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"Resource could not have been created due to invalid request parameters! Check submitted URL and request body or selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -101,14 +134,14 @@ namespace LinkedData_Api.Controllers
                 return BadRequest(new ErrorVm()
                 {
                     ErrorMessage =
-                        $"Predicate could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                        $"Predicate could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
                 });
             }
 
             return BadRequest(new ErrorVm()
             {
                 ErrorMessage =
-                    $"Predicate could not have been created due to invalid request parameters! Check submitted URL and request body or selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"Predicate could not have been created due to invalid request parameters! Check submitted URL and request body or selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 

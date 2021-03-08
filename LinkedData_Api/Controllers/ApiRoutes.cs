@@ -34,9 +34,12 @@
         
         
         
-        public const string EndpointInfo =
+        public const string EndpointConfiguration =
             Base + "/{endpoint}";
 
+        public const string PostEndpoints =
+            Base + "/endpoints";
+        
         public const string EndpointGraphs =
             Base + "/{endpoint}/graphs";
 

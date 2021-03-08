@@ -56,14 +56,14 @@ namespace LinkedData_Api.Controllers
                 return BadRequest(new ErrorVm()
                 {
                     ErrorMessage =
-                        $"Resource could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                        $"Resource could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
                 });
             }
 
             return BadRequest(new ErrorVm()
             {
                 ErrorMessage =
-                    $"Resource could not have been created due to invalid request parameters! Check submitted URL and request body or selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"Resource could not have been created due to invalid request parameters! Check submitted URL and request body or selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -100,14 +100,14 @@ namespace LinkedData_Api.Controllers
                 return BadRequest(new ErrorVm()
                 {
                     ErrorMessage =
-                        $"Predicate could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                        $"Predicate could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
                 });
             }
 
             return BadRequest(new ErrorVm()
             {
                 ErrorMessage =
-                    $"Predicate could not have been created due to invalid request parameters! Check submitted URL and request body or selected endpoint configuration at {HelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"Predicate could not have been created due to invalid request parameters! Check submitted URL and request body or selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
