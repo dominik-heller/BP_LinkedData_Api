@@ -70,11 +70,6 @@ namespace LinkedData_Api.Services
 
         public string? GetEntryResourceQuery(string endpoint, string? graph)
         {
-            var z = _endpoints.FirstOrDefault(x => x.EndpointName.Equals(endpoint))?.EntryResource
-                .FirstOrDefault(x => x.GraphName.Equals("default"))?.Command;
-            var y = _endpoints.FirstOrDefault(x => x.EndpointName.Equals(endpoint))?.EntryResource
-                .FirstOrDefault(x => x.GraphName.Equals(graph))?.Command;
-
             if (graph == null)
                 return _endpoints.FirstOrDefault(x => x.EndpointName.Equals(endpoint))?.EntryResource
                     .FirstOrDefault(x => x.GraphName.Equals("default"))?.Command;

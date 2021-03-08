@@ -75,7 +75,7 @@ namespace LinkedData_Api.Controllers
         /// </summary>
         /// <param name="prefix"></param>
         /// <returns></returns>
-        [HttpGet("api/namespaces/{prefix}")]
+        [HttpGet(ApiRoutes.EndpointNamespacePrefix)]
         [ProducesResponseType(typeof(string), 200)]
         [ProducesResponseType(typeof(ErrorVm), 404)]
         public IActionResult GetNamespaces([FromRoute] string prefix)
@@ -132,7 +132,6 @@ namespace LinkedData_Api.Controllers
         }
 
         #endregion
-
 
         #region Resources
 
@@ -260,8 +259,7 @@ namespace LinkedData_Api.Controllers
         }
 
         #endregion
-
-
+        
         #region Predicate
 
         /// <summary>

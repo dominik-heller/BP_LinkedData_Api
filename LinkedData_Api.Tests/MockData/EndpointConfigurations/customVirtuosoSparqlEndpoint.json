@@ -1,0 +1,85 @@
+﻿{
+  "endpoint_name": "virtuoso",
+  "endpoint_url": "http://localhost:8890/sparql",
+  "default_graph": "http://localhost:8890/ovm",
+  "named_graphs": [
+    {
+      "graph_name": "ovm",
+      "uri": "http://localhost:8890/ovm"
+    },
+    {
+      "graph_name": "lexvo",
+      "uri": "http://localhost:8890/lexvo"
+    }
+  ],
+  "namespaces": [
+    {
+      "prefix": "ovmos",
+      "uri": "https://linked.opendata.cz/zdroj/ovm/osoba/"
+    },
+    {
+      "prefix": "eks",
+      "uri": "https://linked.opendata.cz/zdroj/ekonomický-subjekt/"
+    },
+    {
+      "prefix": "ais",
+      "uri": "https://linked.opendata.cz/zdroj/ovm/ais/"
+    },
+    {
+      "prefix": "schranky",
+      "uri": "https://linked.opendata.cz/zdroj/datové-schránky/"
+    },
+    {
+      "prefix": "char",
+      "uri": "http://lexvo.org/id/char/"
+    },
+    {
+      "prefix": "georeg",
+      "uri": "http://lexvo.org/id/iso3166/"
+    },
+    {
+      "prefix": "llang",
+      "uri": "http://lexvo.org/id/iso639-3/"
+    },
+    {
+      "prefix": "radical",
+      "uri": "http://lexvo.org/id/kangxi-radical/"
+    },
+    {
+      "prefix": "script",
+      "uri": "http://lexvo.org/id/script/"
+    }
+  ],
+  "supported_methods": {
+    "sparql_1.0": "yes",
+    "sparql_1.1": "yes"
+  },
+  "entry_class": [
+    {
+      "graph_name": "default",
+      "command": "SELECT DISTINCT ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing>}"
+    },
+    {
+      "graph_name": "ovm",
+      "command": "SELECT DISTINCT ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing>}"
+    },
+    {
+      "graph_name": "lexvo",
+      "command": "SELECT DISTINCT ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class>}"
+    }
+  ],
+  "entry_resource": [
+    {
+      "graph_name": "default",
+      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
+    },
+    {
+      "graph_name": "ovm",
+      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
+    },
+    {
+      "graph_name": "lexvo",
+      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
+    }
+  ]
+}

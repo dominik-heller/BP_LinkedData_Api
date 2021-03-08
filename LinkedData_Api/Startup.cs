@@ -66,12 +66,13 @@ namespace LinkedData_Api
 
 
             //CustomServices
+            services.AddSingleton<IDataAccess, DataAccess>();
             services.AddSingleton<INamespaceFactoryService, NamespaceFactoryService>();
             services.AddSingleton<IEndpointService, EndpointService>();
             services.AddSingleton<IParametersProcessorService, ParametersProcessorService>();
             services.AddSingleton<ISparqlFactoryService, SparqlFactoryService>();
             services.AddSingleton<IResultFormatterService, ResultFormatterService>();
-            services.AddSingleton<IDataAccess, DataAccess>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

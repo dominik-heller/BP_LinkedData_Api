@@ -39,6 +39,8 @@
 
         public const string EndpointGraphs =
             Base + "/{endpoint}/graphs";
+
+        public const string EndpointNamespacePrefix = Base + "/namespaces/{prefix}";
         /*
         private const string RecursivePart = "/{resource?}/{predicate?}/{r2?}/{p2?}/{r3?}/{p3?}/{r4?}";
 

@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.3" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
         <PackageReference Include="xunit" Version="2.4.1" />
@@ -22,6 +23,14 @@
 
     <ItemGroup>
       <ProjectReference Include="..\LinkedData_Api\LinkedData_Api.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="MockData\EndpointConfigurations\customVirtuosoSparqlEndpoint.json" />
+      <Content Include="MockData\EndpointConfigurations\data.gov.czSparqlEndpoint.json" />
+      <Content Include="MockData\EndpointConfigurations\dbPediaSparqlEndpoint.json" />
+      <Content Include="MockData\EndpointConfigurations\elixirChebiSparqlEndpoint.json" />
+      <Content Include="MockData\EndpointConfigurations\wrongConfigFile.json" />
     </ItemGroup>
 
 </Project>

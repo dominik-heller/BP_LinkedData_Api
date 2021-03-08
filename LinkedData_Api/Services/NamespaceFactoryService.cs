@@ -14,11 +14,11 @@ namespace LinkedData_Api.Services
 {
     public class NamespaceFactoryService : INamespaceFactoryService
     {
-        private readonly ThreadSafeQNameOutputMapper _namespaceMapper;
+        private readonly ThreadSafeQNameOutputMapper _threadSafeQNameOutputMapper;
 
         public NamespaceFactoryService(IDataAccess dataAccess)
         {
-            _namespaceMapper = dataAccess.LoadNamespacesFile();
+            _threadSafeQNameOutputMapper = new ThreadSafeQNameOutputMapper(dataAccess.GetNamespaces());
         }
 
         public bool GetAbsoluteUriFromQname(string qname, out string absoluteUri)
@@ -28,7 +28,7 @@ namespace LinkedData_Api.Services
                 var s = qname.Split(new[] {':'}, 2);
                 try
                 {
-                    absoluteUri = _namespaceMapper.GetNamespaceUri(s[0]) + s[1];
+                    absoluteUri = _threadSafeQNameOutputMapper.GetNamespaceUri(s[0]) + s[1];
                     return true;
                 }
                 catch (RdfException e)
@@ -47,7 +47,7 @@ namespace LinkedData_Api.Services
         {
             try
             {
-               namespaceUri = _namespaceMapper.GetNamespaceUri(prefix).ToString();
+               namespaceUri = _threadSafeQNameOutputMapper.GetNamespaceUri(prefix).ToString();
                return true;
             }
             catch (RdfException)
@@ -61,7 +61,7 @@ namespace LinkedData_Api.Services
         public bool GetQnameFromAbsoluteUri(string uri, out string qname)
         {
             //pokud existuje definovaný prefix/namespace pro dané uri = > vrátí qname
-            if (_namespaceMapper.ReduceToQName(uri, out var _qname))
+            if (_threadSafeQNameOutputMapper.ReduceToQName(uri, out var _qname))
             {
                 qname = _qname;
                 return true;
@@ -72,19 +72,19 @@ namespace LinkedData_Api.Services
             if (GetNamespaceUriFromAbsoluteUri(uri, out var nsUri))
             {
                 string prefix;
-                if (!_namespaceMapper.Prefixes.Any(x => x.Equals("_ns0")))
+                if (!_threadSafeQNameOutputMapper.Prefixes.Any(x => x.Equals("_ns0")))
                 {
                     prefix = "_ns0";
                 }
                 else
                 {
                     prefix =
-                        $"_ns{_namespaceMapper.Prefixes.Where(x => x.StartsWith("_ns")).Select(x => int.Parse(x.Substring(3))).Max() + 1}";
+                        $"_ns{_threadSafeQNameOutputMapper.Prefixes.Where(x => x.StartsWith("_ns")).Select(x => int.Parse(x.Substring(3))).Max() + 1}";
                 }
 
-                _namespaceMapper.AddNamespace(prefix, new Uri(nsUri));
+                _threadSafeQNameOutputMapper.AddNamespace(prefix, new Uri(nsUri));
                 //      Console.WriteLine("Namespace added.");
-                if (_namespaceMapper.ReduceToQName(uri, out _qname))
+                if (_threadSafeQNameOutputMapper.ReduceToQName(uri, out _qname))
                 {
                     qname = _qname;
                     return true;
@@ -100,7 +100,7 @@ namespace LinkedData_Api.Services
         {
             foreach (var var in namespaces)
             {
-                _namespaceMapper.AddNamespace(var.Prefix, new Uri(var.Uri));
+                _threadSafeQNameOutputMapper.AddNamespace(var.Prefix, new Uri(var.Uri));
             }
         }
 
