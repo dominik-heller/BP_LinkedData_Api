@@ -39,30 +39,21 @@ namespace LinkedData_Api.Controllers
         [ProducesResponseType(typeof(ErrorVm), 400)]
         public IActionResult PostEndpoint(EndpointVm endpoint)
         {
-            if (ModelState.IsValid)
+            bool successful =
+                _endpointService.AddEndpoint(_mapper.Map<EndpointVm, Endpoint>(endpoint), out var finalEndpoint);
+            if (successful)
             {
-                
-                bool successful = _endpointService.AddEndpoint(_mapper.Map<EndpointVm, Endpoint>(endpoint), out var finalEndpoint);
-                if (successful)
-                {
-                    return Created(
-                        new Uri(UrlHelperClass.CreateEndpointUrl(Request.GetEncodedUrl(), endpoint.EndpointName)),
-                        finalEndpoint);
-                }
-
-                return BadRequest(new ErrorVm()
-                {
-                    ErrorMessage =
-                        $"Given endpoint name is already assigned. Check this endpoint configuration at {UrlHelperClass.CreateEndpointUrl(Request.GetEncodedUrl(), endpoint.EndpointName)}"
-                });
+                return Created(
+                    new Uri(UrlHelperClass.CreateEndpointUrl(Request.GetEncodedUrl(), endpoint.EndpointName)),
+                    finalEndpoint);
             }
 
-            Console.WriteLine("Invalid Model");
             return BadRequest(new ErrorVm()
             {
                 ErrorMessage =
-                    $"FluentValErrors :)"
+                    $"Given endpoint name is already assigned. Check this endpoint configuration at {UrlHelperClass.CreateEndpointUrl(Request.GetEncodedUrl(), endpoint.EndpointName)}"
             });
+            
         }
 
 
