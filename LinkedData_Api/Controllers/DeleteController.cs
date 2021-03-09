@@ -82,14 +82,14 @@ namespace LinkedData_Api.Controllers
                 return NotFound(new ErrorVm()
                 {
                     ErrorMessage =
-                        $"Resource could not have been deleted! \nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                        $"Resource could not have been deleted! \nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
                 });
             }
 
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"Resource could not have been deleted due to invalid request parameters! Check submitted URL or selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}"
+                    $"Resource could not have been deleted due to invalid request parameters! Check submitted URL or selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}"
             });
         }
 
@@ -125,14 +125,14 @@ namespace LinkedData_Api.Controllers
                 return NotFound(new ErrorVm()
                 {
                     ErrorMessage =
-                        $"Predicate could not have been deleted!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                        $"Predicate could not have been deleted!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
                 });
             }
 
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"Predicate could not have been deleted due to invalid request parameters! Check submitted URL or selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}"
+                    $"Predicate could not have been deleted due to invalid request parameters! Check submitted URL or selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}"
             });
         }
     }

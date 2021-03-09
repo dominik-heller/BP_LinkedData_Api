@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace LinkedData_Api.Helpers
 {
-    public static class UrlFactoryClass
+    public static class UrlHelperClass
     {
         public static string GetEndpointUrl(string url)
         {

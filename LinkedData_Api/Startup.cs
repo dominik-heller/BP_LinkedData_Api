@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using FluentValidation.AspNetCore;
 using LinkedData_Api.Data;
 using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Services;
@@ -60,6 +61,11 @@ namespace LinkedData_Api
             services.AddSwaggerGenNewtonsoftSupport();
             services.AddSwaggerExamplesFromAssemblyOf<Startup>();
 
+            //fluentValidation
+            services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+
+            //automapper
+            services.AddAutoMapper(typeof(Startup));
 
             //enables JSONIGNORE
             //services.AddMvc().AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -72,7 +78,6 @@ namespace LinkedData_Api
             services.AddSingleton<IParametersProcessorService, ParametersProcessorService>();
             services.AddSingleton<ISparqlFactoryService, SparqlFactoryService>();
             services.AddSingleton<IResultFormatterService, ResultFormatterService>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,7 +87,7 @@ namespace LinkedData_Api
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             //crates IDataAccessService instance at start of app, not only when it is called
             app.ApplicationServices.GetService<IDataAccess>();
             // app.UseMvc();

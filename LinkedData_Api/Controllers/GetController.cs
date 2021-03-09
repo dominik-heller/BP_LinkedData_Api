@@ -2,13 +2,14 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using LinkedData_Api.Helpers;
 using LinkedData_Api.Model.Domain;
 using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Services.Contracts;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using NamedGraph = LinkedData_Api.Model.Domain.NamedGraph;
+using NamedGraph = LinkedData_Api.Model.ViewModels.NamedGraph;
 
 
 namespace LinkedData_Api.Controllers
@@ -22,16 +23,18 @@ namespace LinkedData_Api.Controllers
         private readonly ISparqlFactoryService _sparqlFactoryService;
         private readonly IResultFormatterService _resultFormatterService;
         private readonly INamespaceFactoryService _namespaceFactoryService;
+        private readonly IMapper _mapper;
 
         public GetController(IEndpointService endpointService, IParametersProcessorService parametersProcessorService,
             ISparqlFactoryService sparqlFactoryService, IResultFormatterService resultFormatterService,
-            INamespaceFactoryService namespaceFactoryService)
+            INamespaceFactoryService namespaceFactoryService, IMapper mapper)
         {
             _endpointService = endpointService;
             _parametersProcessorService = parametersProcessorService;
             _sparqlFactoryService = sparqlFactoryService;
             _resultFormatterService = resultFormatterService;
             _namespaceFactoryService = namespaceFactoryService;
+            _mapper = mapper;
         }
 
 
@@ -43,12 +46,12 @@ namespace LinkedData_Api.Controllers
         /// <param name="endpoint"></param>
         /// <returns></returns>
         [HttpGet(ApiRoutes.EndpointConfiguration)]
-        [ProducesResponseType(typeof(Endpoint), 200)]
+        [ProducesResponseType(typeof(EndpointVm), 200)]
         [ProducesResponseType(typeof(ErrorVm), 404)]
         public IActionResult Get_EndpointConfiguration([FromRoute] string endpoint)
         {
             var info = _endpointService.GetEndpointConfiguration(endpoint);
-            if (info != null) return Ok(info);
+            if (info != null) return Ok(_mapper.Map<Endpoint, EndpointVm>(info));
             return NotFound(new ErrorVm() {ErrorMessage = "Endpoint does not exist."});
         }
 
@@ -67,7 +70,7 @@ namespace LinkedData_Api.Controllers
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"No graphs found. Check selected endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}"
+                    $"No graphs found. Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}"
             });
         }
 
@@ -128,7 +131,7 @@ namespace LinkedData_Api.Controllers
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -171,7 +174,7 @@ namespace LinkedData_Api.Controllers
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -212,7 +215,7 @@ namespace LinkedData_Api.Controllers
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -255,12 +258,12 @@ namespace LinkedData_Api.Controllers
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
         #endregion
-        
+
         #region Predicate
 
         /// <summary>
@@ -301,7 +304,7 @@ namespace LinkedData_Api.Controllers
             return NotFound(new ErrorVm()
             {
                 ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {UrlFactoryClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -320,8 +323,8 @@ namespace LinkedData_Api.Controllers
             Parameters parameters =
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             if (parameters.RouteParameters.Predicate == null)
-                return Redirect(UrlFactoryClass.ReduceUrl(Request.GetEncodedUrl(), "resource"));
-            return Redirect(UrlFactoryClass.ReduceUrl(Request.GetEncodedUrl(), "predicate"));
+                return Redirect(UrlHelperClass.ReduceUrl(Request.GetEncodedUrl(), "resource"));
+            return Redirect(UrlHelperClass.ReduceUrl(Request.GetEncodedUrl(), "predicate"));
         }
 
         #endregion

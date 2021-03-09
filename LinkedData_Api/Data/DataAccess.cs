@@ -15,24 +15,22 @@ namespace LinkedData_Api.Data
 {
     public class DataAccess : IDataAccess
     {
-        private readonly ConcurrentDictionary<string, Endpoint> _threadSafeConfigurationFilesDictionary;
-
-        //Get Endpoint Configuration from Files and dispose them in ReadOnly = Thread-Safe Collection  
+        private readonly Dictionary<string, Endpoint> _configurationFilesDictionary;
         private readonly NamespaceMapper _namespaceMapper;
 
 
         public DataAccess()
         {
-            _threadSafeConfigurationFilesDictionary =
-                new ConcurrentDictionary<string, Endpoint>(
+            _configurationFilesDictionary =
+                new Dictionary<string, Endpoint>(
                     LoadConfigurationFiles(@"Data/JsonFiles/EndpointConfiguration"));
             _namespaceMapper = new NamespaceMapper();
             _namespaceMapper = LoadNamespacesFile(@"Data/JsonFiles/Namespaces/namespaces.json");
         }
 
-        public ConcurrentDictionary<string, Endpoint> GetEndpointsConfiguration()
+        public Dictionary<string, Endpoint> GetEndpointsConfiguration()
         {
-            return _threadSafeConfigurationFilesDictionary;
+            return _configurationFilesDictionary;
         }
 
         public NamespaceMapper GetNamespaces()
@@ -53,16 +51,16 @@ namespace LinkedData_Api.Data
 
         public Dictionary<string, Endpoint> LoadConfigurationFiles(string pathToConfigurationFiles)
         {
-            Dictionary<string, Endpoint> endpointDtos = new Dictionary<string, Endpoint>();
+            Dictionary<string, Endpoint> endpoints = new Dictionary<string, Endpoint>();
             string[] fileEntries = Directory.GetFiles(pathToConfigurationFiles);
             foreach (string fileName in fileEntries)
             {
                 try
                 {
                     Endpoint endpoint = JsonConvert.DeserializeObject<Endpoint>(File.ReadAllText(fileName));
-                    if (CheckAndAdjustEndpointConfigurationFile(endpoint, endpointDtos, out Endpoint checkedEndpoint))
+                    if (CheckAndAdjustEndpointConfigurationFile(endpoint, endpoints, out Endpoint checkedEndpoint))
                     {
-                        endpointDtos.Add(endpoint.EndpointName, checkedEndpoint);
+                        endpoints.Add(endpoint.EndpointName, checkedEndpoint);
                     }
                 }
                 catch (JsonSerializationException e)
@@ -72,7 +70,7 @@ namespace LinkedData_Api.Data
                 }
             }
 
-            return endpointDtos;
+            return endpoints;
         }
 
         private bool CheckAndAdjustEndpointConfigurationFile(Endpoint endpoint, Dictionary<string, Endpoint> endpoints,
@@ -94,11 +92,19 @@ namespace LinkedData_Api.Data
                 return false;
             }
 
-            if (!(Uri.TryCreate(endpoint.EndpointUrl, UriKind.Absolute, out var uriResult)
-                  && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)))
+            if (!CheckIfIsUrl(endpoint.EndpointUrl))
             {
                 Console.WriteLine(
                     "Endpoint URL is not valid. Endpoint settings will be ignored.");
+                return false;
+            }
+
+            if (endpoint.Namespaces != null && (endpoint.Namespaces.Any(x =>
+                string.IsNullOrWhiteSpace(x.Prefix)) || endpoint.Namespaces.Any(y =>
+                    string.IsNullOrWhiteSpace(y.Uri)) || endpoint.Namespaces.Any(z => !CheckIfIsUrl(z.Uri))))
+            {
+                Console.WriteLine(
+                    "Namespace definition is not valid. Uri must be valid url, prefix and uri must not be empty. Endpoint settings will be ignored.");
                 return false;
             }
 
@@ -116,10 +122,10 @@ namespace LinkedData_Api.Data
             }
 
             var values = new[] {"yes", "no"};
-            if (string.IsNullOrWhiteSpace(endpoint.SupportedMethods.Sparql10) ||
-                string.IsNullOrWhiteSpace(endpoint.SupportedMethods.Sparql11) ||
-                !values.Contains(endpoint.SupportedMethods.Sparql10) ||
-                !values.Contains(endpoint.SupportedMethods.Sparql11))
+            if (string.IsNullOrWhiteSpace(endpoint.SupportedMethods?.Sparql10) ||
+                string.IsNullOrWhiteSpace(endpoint.SupportedMethods?.Sparql11) ||
+                !values.Contains(endpoint.SupportedMethods?.Sparql10) ||
+                !values.Contains(endpoint.SupportedMethods?.Sparql11))
             {
                 Console.WriteLine(
                     "Invalid endpoint configuration file settings. Missing supported methods information (\"yes\" | \"no\" expected). Endpoint settings will be ignored.");
@@ -127,6 +133,12 @@ namespace LinkedData_Api.Data
             }
 
             return true;
+        }
+
+        private bool CheckIfIsUrl(string url)
+        {
+            return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
+                     && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
     }
 }

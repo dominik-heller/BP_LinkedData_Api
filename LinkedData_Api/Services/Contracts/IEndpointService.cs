@@ -14,7 +14,7 @@ namespace LinkedData_Api.Services.Contracts
         IEnumerable<NamedGraph>? GetEndpointGraphs(string endpointName);
         Task<IEnumerable<SparqlResult>?> ExecuteSelectSparqlQueryAsync(string endpointName, string? graphName, string query);
         Task<bool> ExecuteUpdateSparqlQueryAsync(string endpointName, string? graphName, string query);
-        bool AddEndpoint(Endpoint endpoint);
+        bool AddEndpoint(Endpoint endpoint, out Endpoint adjusted);
         bool RemoveEndpoint(string endpointName);
     }
 }

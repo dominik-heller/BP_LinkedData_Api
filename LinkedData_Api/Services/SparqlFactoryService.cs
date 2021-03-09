@@ -406,10 +406,13 @@ namespace LinkedData_Api.Services
         {
             Endpoint? endpointConfig = _endpointService.GetEndpointConfiguration(parameters.RouteParameters.Endpoint);
             if (endpointConfig == null) return null;
-            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph) && endpointConfig.NamedGraphs!=null)
+            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph) && endpointConfig.NamedGraphs != null)
             {
+                var graph = endpointConfig.NamedGraphs.Where(x => x.GraphName.Equals(parameters.RouteParameters.Graph))
+                    .Select(y => y.Uri).FirstOrDefault();
+                if (string.IsNullOrEmpty(graph)) return null;
                 query = Regex.Replace(query, "where",
-                    $"FROM <{endpointConfig.NamedGraphs.Where(x => x.GraphName.Equals(parameters.RouteParameters.Graph)).Select(y => y.Uri).FirstOrDefault()}> WHERE",
+                    $"FROM <{graph}> WHERE",
                     RegexOptions.IgnoreCase);
                 return query;
             }
@@ -444,7 +447,9 @@ namespace LinkedData_Api.Services
 
             return query;
         }
+
         #endregion
+
 /*
         private string ImplementFromGraphClauseToDeleteQuery(string query, Parameters parameters)
         {

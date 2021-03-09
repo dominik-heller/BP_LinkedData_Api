@@ -25,7 +25,7 @@ namespace LinkedData_Api.Services
         public EndpointService(IDataAccess dataAccess, INamespaceFactoryService namespaceFactoryService)
         {
             _namespaceFactoryService = namespaceFactoryService;
-            _endpoints = dataAccess.GetEndpointsConfiguration();
+            _endpoints = new ConcurrentDictionary<string, Endpoint>(dataAccess.GetEndpointsConfiguration());
             AddEndpointsNamespaces(_endpoints.Select(x => x.Value.Namespaces));
         }
 
@@ -137,14 +137,34 @@ namespace LinkedData_Api.Services
             return false;
         }
 
-        public bool AddEndpoint(Endpoint endpoint)
+        public bool AddEndpoint(Endpoint endpoint, out Endpoint adjustedEndpoint)
         {
-            return _endpoints.TryAdd(endpoint.EndpointName, endpoint);
+            adjustedEndpoint = CheckAdditionalConditionsAndAdjustEndpointConfiguration(endpoint);
+            if(adjustedEndpoint.Namespaces!=null && adjustedEndpoint.Namespaces.Count>0) _namespaceFactoryService.AddNewPrefixes(adjustedEndpoint.Namespaces);
+            return _endpoints.TryAdd(endpoint.EndpointName, adjustedEndpoint);
         }
 
         public bool RemoveEndpoint(string endpointName)
         {
             return _endpoints.TryRemove(endpointName, out var e);
+        }
+
+        private Endpoint CheckAdditionalConditionsAndAdjustEndpointConfiguration(Endpoint endpoint)
+        {
+            if (endpoint.SupportedMethods == null)
+            {
+                endpoint.SupportedMethods = new SupportedMethods() {Sparql10 = "yes", Sparql11 = "no"};
+            }
+
+            if (endpoint.EntryResource == null || endpoint.EntryResource.Count==0)
+            {
+                endpoint.EntryResource = new List<EntryResource>
+                {
+                    new() {GraphName = "default", Command = "SELECT ?s WHERE { ?s ?p ?o }"}
+                };
+            }
+
+            return endpoint;
         }
     }
 }

@@ -47,8 +47,8 @@ namespace LinkedData_Api.Services
         {
             try
             {
-               namespaceUri = _threadSafeQNameOutputMapper.GetNamespaceUri(prefix).ToString();
-               return true;
+                namespaceUri = _threadSafeQNameOutputMapper.GetNamespaceUri(prefix).ToString();
+                return true;
             }
             catch (RdfException)
             {
@@ -100,7 +100,15 @@ namespace LinkedData_Api.Services
         {
             foreach (var var in namespaces)
             {
-                _threadSafeQNameOutputMapper.AddNamespace(var.Prefix, new Uri(var.Uri));
+                //if(_threadSafeQNameOutputMapper.HasNamespace(var.Prefix)){continue;} //ignores prefixes that are already defined, if commented out namespace with same prefix will be overwritten
+                try
+                {
+                    _threadSafeQNameOutputMapper.AddNamespace(var.Prefix, new Uri(var.Uri));
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
             }
         }
 
