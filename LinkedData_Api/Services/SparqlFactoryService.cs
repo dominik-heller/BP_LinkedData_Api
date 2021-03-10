@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using LinkedData_Api.Model.Domain;
 using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Services.Contracts;
+using VDS.RDF;
 using VDS.RDF.Query;
 
 namespace LinkedData_Api.Services
@@ -94,8 +95,7 @@ namespace LinkedData_Api.Services
         }
 
         #endregion
-
-
+        
         #region PutSparqlQueries
 
         public string? GetFinalPutQueryForResource(Parameters parameters, ResourceVm resourceVm)
@@ -226,7 +226,6 @@ namespace LinkedData_Api.Services
         }
 
         #endregion
-
 
         #region PrivateMethods
 
@@ -449,79 +448,6 @@ namespace LinkedData_Api.Services
         }
 
         #endregion
-
-/*
-        private string ImplementFromGraphClauseToDeleteQuery(string query, Parameters parameters)
-        {
-            Endpoint? endpointConfig = _endpointService.GetEndpointConfiguration(parameters.RouteParameters.Endpoint);
-            if (endpointConfig == null) return query;
-            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph))
-            {
-                query =
-                    $"WITH <{endpointConfig.NamedGraphs.Where(x => x.GraphName.Equals(parameters.RouteParameters.Graph)).Select(y => y.Uri).FirstOrDefault()}> {query}";
-                return query;
-            }
-
-            if (!string.IsNullOrEmpty(endpointConfig.DefaultGraph))
-            {
-                query = $"WITH <{endpointConfig.DefaultGraph} {query}";
-                return query;
-            }
-
-            return query;
-        }
-*/
-
-
-/*
-        private string ImplementFromGraphClauseToInsertQuery(string query, Parameters parameters)
-        {
-            Endpoint? endpointConfig = _endpointService.GetEndpointConfiguration(parameters.RouteParameters.Endpoint);
-            if (endpointConfig == null) return query;
-            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph))
-            {
-                query = Regex.Replace(query, "insert data",
-                    $"WITH <{endpointConfig.NamedGraphs.Where(x => x.GraphName.Equals(parameters.RouteParameters.Graph)).Select(y => y.Uri).FirstOrDefault()}> INSERT DATA",
-                    RegexOptions.IgnoreCase);
-                return query;
-            }
-
-            if (!string.IsNullOrEmpty(endpointConfig.DefaultGraph))
-            {
-                query = Regex.Replace(query, "insert data", $"WITH <{endpointConfig.DefaultGraph}> INSERT DATA",
-                    RegexOptions.IgnoreCase);
-                return query;
-            }
-
-            return query;
-        }
-
-
-
-
-        private string ImplementFromGraphClauseToDeleteQuery(string query, Parameters parameters)
-        {
-            Endpoint? endpointConfig = _endpointService.GetEndpointConfiguration(parameters.RouteParameters.Endpoint);
-            if (endpointConfig == null) return query;
-            var z = endpointConfig.NamedGraphs.Where(x => x.GraphName.Equals(parameters.RouteParameters.Graph))
-                .Select(y => y.Uri).FirstOrDefault();
-            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph))
-            {
-                query = Regex.Replace(query, "delete {",
-                    $"WITH <{endpointConfig.NamedGraphs.Where(x => x.GraphName.Equals(parameters.RouteParameters.Graph)).Select(y => y.Uri).FirstOrDefault()}> DELETE {{",
-                    RegexOptions.IgnoreCase);
-                return query;
-            }
-
-            if (!string.IsNullOrEmpty(endpointConfig.DefaultGraph))
-            {
-                query = Regex.Replace(query, "delete {", $"WITH <{endpointConfig.DefaultGraph}> DELETE {{",
-                    RegexOptions.IgnoreCase);
-                return query;
-            }
-
-            return query;
-        }
-*/
+        
     }
 }

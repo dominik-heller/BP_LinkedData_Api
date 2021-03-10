@@ -53,22 +53,17 @@ namespace LinkedData_Api.Controllers
                     return Created(new Uri(Request.GetEncodedUrl()), resourceVm);
                 }
 
-                return BadRequest(new ErrorVm()
-                {
-                    ErrorMessage =
-                        $"Resource could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
-                });
+                query = $"Generated sparql query: {query}.";
             }
 
             return BadRequest(new ErrorVm()
             {
-                ErrorMessage =
-                    $"FluentValErrors :)"
+                CustomErrorMessage =
+                    $"Resource could not have been created! {query} Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
         #endregion
-
 
         #region Predicate
 
@@ -97,17 +92,13 @@ namespace LinkedData_Api.Controllers
                     return Created(new Uri(Request.GetEncodedUrl()), predicateVm);
                 }
 
-                return BadRequest(new ErrorVm()
-                {
-                    ErrorMessage =
-                        $"Predicate could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
-                });
+                query = $"Generated sparql query: {query}.";
             }
 
             return BadRequest(new ErrorVm()
             {
-                ErrorMessage =
-                    $"FluentValErrors :)"
+                CustomErrorMessage =
+                    $"Predicate could not have been created! {query} Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 

@@ -140,7 +140,8 @@ namespace LinkedData_Api.Services
         public bool AddEndpoint(Endpoint endpoint, out Endpoint adjustedEndpoint)
         {
             adjustedEndpoint = CheckAdditionalConditionsAndAdjustEndpointConfiguration(endpoint);
-            if(adjustedEndpoint.Namespaces!=null && adjustedEndpoint.Namespaces.Count>0) _namespaceFactoryService.AddNewPrefixes(adjustedEndpoint.Namespaces);
+            if (adjustedEndpoint.Namespaces != null && adjustedEndpoint.Namespaces.Count > 0)
+                _namespaceFactoryService.AddNewPrefixes(adjustedEndpoint.Namespaces);
             return _endpoints.TryAdd(endpoint.EndpointName, adjustedEndpoint);
         }
 
@@ -156,7 +157,7 @@ namespace LinkedData_Api.Services
                 endpoint.SupportedMethods = new SupportedMethods() {Sparql10 = "yes", Sparql11 = "no"};
             }
 
-            if (endpoint.EntryResource == null || endpoint.EntryResource.Count==0)
+            if (endpoint.EntryResource == null || endpoint.EntryResource.Count == 0)
             {
                 endpoint.EntryResource = new List<EntryResource>
                 {

@@ -38,7 +38,7 @@ namespace LinkedData_Api.Controllers
         }
 
 
-        #region GeneralInfo
+        #region GeneralInformation
 
         /// <summary>
         /// Returns endpoint configuration information.
@@ -52,7 +52,7 @@ namespace LinkedData_Api.Controllers
         {
             var info = _endpointService.GetEndpointConfiguration(endpoint);
             if (info != null) return Ok(_mapper.Map<Endpoint, EndpointVm>(info));
-            return NotFound(new ErrorVm() {ErrorMessage = "Endpoint does not exist."});
+            return NotFound(new ErrorVm() {CustomErrorMessage = "Endpoint does not exist."});
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace LinkedData_Api.Controllers
             if (graphs != null) return Ok(graphs);
             return NotFound(new ErrorVm()
             {
-                ErrorMessage =
+                CustomErrorMessage =
                     $"No graphs found. Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}"
             });
         }
@@ -89,7 +89,7 @@ namespace LinkedData_Api.Controllers
                 return Ok(namespaceUri);
             }
 
-            return NotFound(new ErrorVm() {ErrorMessage = "Namespace uri for given prefix not found!"});
+            return NotFound(new ErrorVm() {CustomErrorMessage = "Namespace uri for given prefix not found!"});
         }
 
         #endregion
@@ -97,7 +97,7 @@ namespace LinkedData_Api.Controllers
         #region Classes
 
         /// <summary>
-        /// Returns list of classes.
+        /// Returns endpoint configuration.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -123,15 +123,13 @@ namespace LinkedData_Api.Controllers
                     return Ok(curiesVm);
                 }
 
-
-                return NotFound(new ErrorVm()
-                    {ErrorMessage = $"No results were found! Generated sparql query: {query}"});
+                query = $"Generated sparql query: {query}.";
             }
 
             return NotFound(new ErrorVm()
             {
-                ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                CustomErrorMessage =
+                    $"No results were found! {query}."
             });
         }
 
@@ -166,15 +164,13 @@ namespace LinkedData_Api.Controllers
                     return Ok(curiesVm);
                 }
 
-
-                return NotFound(new ErrorVm()
-                    {ErrorMessage = $"No results were found! Generated sparql query: {query}"});
+                query = $"Generated sparql query: {query}.";
             }
 
             return NotFound(new ErrorVm()
             {
-                ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                CustomErrorMessage =
+                    $"No results were found! {query} Check submitted URL or endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -207,15 +203,13 @@ namespace LinkedData_Api.Controllers
                     return Ok(curiesVm);
                 }
 
-
-                return NotFound(new ErrorVm()
-                    {ErrorMessage = $"No results were found! Generated sparql query: {query}"});
+                query = $"Generated sparql query: {query}.";
             }
 
             return NotFound(new ErrorVm()
             {
-                ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                CustomErrorMessage =
+                    $"No results were found! {query} Check submitted URL or endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -251,14 +245,13 @@ namespace LinkedData_Api.Controllers
                     return Ok(resourceVm);
                 }
 
-                return NotFound(new ErrorVm()
-                    {ErrorMessage = $"No results were found! Generated sparql query: {query}"});
+                query = $"Generated sparql query: {query}.";
             }
 
             return NotFound(new ErrorVm()
             {
-                ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                CustomErrorMessage =
+                    $"No results were found! {query}."
             });
         }
 
@@ -296,15 +289,13 @@ namespace LinkedData_Api.Controllers
                     return Ok(predicateVm);
                 }
 
-
-                return NotFound(new ErrorVm()
-                    {ErrorMessage = $"No results were found! Generated sparql query: {query}"});
+                query = $"Generated sparql query: {query}.";
             }
 
             return NotFound(new ErrorVm()
             {
-                ErrorMessage =
-                    $"No results could have been acquired due to invalid request parameters! Check submitted URL or endpoint configuration, if exists, at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                CustomErrorMessage =
+                    $"No results were found! {query}."
             });
         }
 

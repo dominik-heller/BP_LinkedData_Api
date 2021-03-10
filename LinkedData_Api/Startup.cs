@@ -5,6 +5,7 @@ using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using FluentValidation.AspNetCore;
 using LinkedData_Api.Data;
+using LinkedData_Api.Filters;
 using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Services;
 using LinkedData_Api.Services.Contracts;
@@ -61,8 +62,11 @@ namespace LinkedData_Api
             services.AddSwaggerGenNewtonsoftSupport();
             services.AddSwaggerExamplesFromAssemblyOf<Startup>();
 
-            //fluentValidation
-            services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+
+            //FluentValidation and ValidationFilter
+            services.AddMvc(options => options.Filters.Add<ValidationFilter>())
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+
 
             //automapper
             services.AddAutoMapper(typeof(Startup));

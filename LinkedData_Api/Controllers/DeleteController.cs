@@ -32,7 +32,7 @@ namespace LinkedData_Api.Controllers
         #region GeneralInfo
 
         /// <summary>
-        /// Removes endpoint configuration.
+        /// Deletes endpoint configuration.
         /// </summary>
         /// <param name="endpoint"></param>
         /// <returns></returns>
@@ -45,7 +45,7 @@ namespace LinkedData_Api.Controllers
             if (_endpointService.RemoveEndpoint(endpoint)) return NoContent();
             return NotFound(new ErrorVm()
             {
-                ErrorMessage =
+                CustomErrorMessage =
                     "Endpoint with given name does not exist!"
             });
         }
@@ -79,17 +79,13 @@ namespace LinkedData_Api.Controllers
                     return NoContent();
                 }
 
-                return NotFound(new ErrorVm()
-                {
-                    ErrorMessage =
-                        $"Resource could not have been deleted! \nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
-                });
+                query = $"Generated sparql query: {query}.";
             }
 
-            return NotFound(new ErrorVm()
+            return BadRequest(new ErrorVm()
             {
-                ErrorMessage =
-                    $"Resource could not have been deleted due to invalid request parameters! Check submitted URL or selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}"
+                CustomErrorMessage =
+                    $"Resource could not have been deleted! {query} Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -121,18 +117,13 @@ namespace LinkedData_Api.Controllers
                 {
                     return NoContent();
                 }
-
-                return NotFound(new ErrorVm()
-                {
-                    ErrorMessage =
-                        $"Predicate could not have been deleted!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
-                });
+                query = $"Generated sparql query: {query}.";
             }
 
-            return NotFound(new ErrorVm()
+            return BadRequest(new ErrorVm()
             {
-                ErrorMessage =
-                    $"Predicate could not have been deleted due to invalid request parameters! Check submitted URL or selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}"
+                CustomErrorMessage =
+                    $"Predicate could not have been deleted! {query} Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
     }

@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using LinkedData_Api.Helpers;
@@ -29,6 +30,8 @@ namespace LinkedData_Api.Controllers
             _mapper = mapper;
         }
 
+        #region GeneralInfo
+
         /// <summary>
         /// Creates new resource or appends to existing one.
         /// </summary>
@@ -39,9 +42,7 @@ namespace LinkedData_Api.Controllers
         [ProducesResponseType(typeof(ErrorVm), 400)]
         public IActionResult PostEndpoint(EndpointVm endpoint)
         {
-            bool successful =
-                _endpointService.AddEndpoint(_mapper.Map<EndpointVm, Endpoint>(endpoint), out var finalEndpoint);
-            if (successful)
+            if (_endpointService.AddEndpoint(_mapper.Map<EndpointVm, Endpoint>(endpoint), out var finalEndpoint))
             {
                 return Created(
                     new Uri(UrlHelperClass.CreateEndpointUrl(Request.GetEncodedUrl(), endpoint.EndpointName)),
@@ -50,12 +51,12 @@ namespace LinkedData_Api.Controllers
 
             return BadRequest(new ErrorVm()
             {
-                ErrorMessage =
+                CustomErrorMessage =
                     $"Given endpoint name is already assigned. Check this endpoint configuration at {UrlHelperClass.CreateEndpointUrl(Request.GetEncodedUrl(), endpoint.EndpointName)}"
             });
-            
         }
 
+        #endregion
 
         #region Resources
 
@@ -70,7 +71,6 @@ namespace LinkedData_Api.Controllers
         [ProducesResponseType(typeof(ErrorVm), 400)]
         public async Task<IActionResult> PostResource(NamedResourceVm namedResourceVm)
         {
-            if (!ModelState.IsValid) Console.WriteLine("Invalid Model");
             Parameters parameters =
                 _parametersProcessorService.ProcessParameters(Request.RouteValues, Request.QueryString);
             string? query = _sparqlFactoryService.GetFinalPostQueryForResource(parameters, namedResourceVm);
@@ -84,17 +84,13 @@ namespace LinkedData_Api.Controllers
                     return Created(new Uri(Request.GetEncodedUrl()), namedResourceVm);
                 }
 
-                return BadRequest(new ErrorVm()
-                {
-                    ErrorMessage =
-                        $"Resource could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
-                });
+                query = $"Generated sparql query: {query}.";
             }
 
             return BadRequest(new ErrorVm()
             {
-                ErrorMessage =
-                    $"FluentValErrors :)"
+                CustomErrorMessage =
+                    $"Resource could not have been created! {query} Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 
@@ -126,17 +122,13 @@ namespace LinkedData_Api.Controllers
                     return Created(new Uri(Request.GetEncodedUrl()), namedPredicateVm);
                 }
 
-                return BadRequest(new ErrorVm()
-                {
-                    ErrorMessage =
-                        $"Predicate could not have been created!\nGenerated sparql query: \"{query}\". Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
-                });
+                query = $"Generated sparql query: {query}.";
             }
 
             return BadRequest(new ErrorVm()
             {
-                ErrorMessage =
-                    $"FluentValErrors :)"
+                CustomErrorMessage =
+                    $"Predicate could not have been created! {query} Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
             });
         }
 

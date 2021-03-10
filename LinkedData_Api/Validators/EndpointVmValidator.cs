@@ -32,11 +32,11 @@ namespace LinkedData_Api.Validators
             public NamespaceValidator()
             {
                 RuleFor(x => x.Prefix).Must(x => !string.IsNullOrWhiteSpace(x))
-                    .WithMessage("{PropertyName} must not be empty.'");
+                    .WithMessage("{PropertyName} must not be empty.");
                 RuleFor(x => x.Uri).Must(x => !string.IsNullOrWhiteSpace(x))
                     .WithMessage("{PropertyName} must not be empty.");
-                RuleFor(x => x.Uri).Must(CheckIfIsValidUri)
-                    .WithMessage("{PropertyName} must be valid uri (i.e absolute url or urn).");
+                RuleFor(x => x.Uri).Must(CheckIfIsValidAbsoluteUrl)
+                    .WithMessage("{PropertyName} must be valid uri (i.e absolute url).");
             }
         }
 
@@ -45,7 +45,7 @@ namespace LinkedData_Api.Validators
             public NamedGraphValidator()
             {
                 RuleFor(x => x.GraphName).Must(x => !string.IsNullOrWhiteSpace(x))
-                    .WithMessage("{PropertyName} must not be empty.'");
+                    .WithMessage("{PropertyName} must not be empty.");
                 RuleFor(x => x.Uri).Must(x => !string.IsNullOrWhiteSpace(x))
                     .WithMessage("{PropertyName} must not be empty.");
                 RuleFor(x => x.Uri).Must(CheckIfIsValidUri)
@@ -58,12 +58,13 @@ namespace LinkedData_Api.Validators
             public EntryClassValidator()
             {
                 RuleFor(x => x.GraphName).Must(x => !string.IsNullOrWhiteSpace(x))
-                    .WithMessage("{PropertyName} must not be empty.'");
+                    .WithMessage("{PropertyName} must not be empty.");
                 RuleFor(x => x.Command).Must(x => !string.IsNullOrWhiteSpace(x))
                     .WithMessage("{PropertyName} must not be empty.");
-                RuleFor(x => x.Command.ToLower())
-                    .Must(x => x.Contains("select") && x.Contains("where") && x.Contains("{") && x.Contains("}"))
-                    .WithMessage("{PropertyName} is not valid select sparql command.'");
+                RuleFor(x => x.Command)
+                    .Must(x => x != null && x.ToLower().Contains("select") && x.ToLower().Contains("where") &&
+                               x.Contains("{") && x.Contains("}"))
+                    .WithMessage("{PropertyName} is not valid select sparql command.");
             }
         }
 
@@ -72,18 +73,18 @@ namespace LinkedData_Api.Validators
             public EntryResourceValidator()
             {
                 RuleFor(x => x.GraphName).Must(x => !string.IsNullOrWhiteSpace(x))
-                    .WithMessage("{PropertyName} must not be empty.'");
+                    .WithMessage("{PropertyName} must not be empty.");
                 RuleFor(x => x.Command).Must(x => !string.IsNullOrWhiteSpace(x))
                     .WithMessage("{PropertyName} must not be empty.");
-                RuleFor(x => x.Command.ToLower())
-                    .Must(x => x.Contains("select") && x.Contains("where") && x.Contains("{") && x.Contains("}"))
-                    .WithMessage("{PropertyName} is not valid select sparql command.'");
+                RuleFor(x => x.Command)
+                    .Must(x => x != null && x.ToLower().Contains("select") && x.ToLower().Contains("where") &&
+                               x.Contains("{") && x.Contains("}"))
+                    .WithMessage("{PropertyName} is not valid select sparql command.");
             }
         }
 
 
         //only https or http absolute uri
-
         private static bool CheckIfIsValidAbsoluteUrl(string url)
         {
             if (url == null) return false;

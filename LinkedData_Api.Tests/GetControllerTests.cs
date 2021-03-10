@@ -26,7 +26,7 @@ namespace LinkedData_Api.Tests
         [Theory]
         [InlineData("_dbpedia")]
         [InlineData("@đ[dfa")]
-        public async Task TestEndpointConfigurationEndpoint_ShouldReturnNotFound(string endpoint)
+        public async Task TestConfigurationInfoEndpoint_ShouldReturnNotFound(string endpoint)
         {
             var response = await TestClient.GetAsync(ApiRoutes.EndpointConfiguration.Replace("{endpoint}", endpoint));
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
