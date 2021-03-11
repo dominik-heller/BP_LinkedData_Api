@@ -1,7 +1,7 @@
 ﻿{
-  "endpointName": "virtuoso",
-  "endpointUrl": "http://localhost:8890/sparql",
-  "defaultGraph": "http://localhost:8890/dtest",
+  "endpointName": "testEndpoint1",
+  "endpointUrl": "http://localhost:8890/sparql2",
+  "defaultGraph": "http://localhost:8890/test",
   "namedGraphs": [
     {
       "graphName": "test",

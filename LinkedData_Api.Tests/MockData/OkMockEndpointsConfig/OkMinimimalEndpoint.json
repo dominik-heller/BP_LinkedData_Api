@@ -1,0 +1,4 @@
+﻿{
+  "endpointName": "testEndpoint3",
+  "endpointUrl": "http://localhost:8890/sparql2"
+}

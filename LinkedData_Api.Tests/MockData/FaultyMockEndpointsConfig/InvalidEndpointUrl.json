@@ -1,0 +1,4 @@
+﻿{
+  "endpointName": "virtuoso1",
+  "endpointUrl": "http:/localhost:8890/sparql"
+}

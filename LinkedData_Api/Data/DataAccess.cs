@@ -51,6 +51,7 @@ namespace LinkedData_Api.Data
 
         public Dictionary<string, Endpoint> LoadConfigurationFiles(string pathToConfigurationFiles)
         {
+            Console.WriteLine(Directory.GetCurrentDirectory());
             Dictionary<string, Endpoint> endpoints = new Dictionary<string, Endpoint>();
             string[] fileEntries = Directory.GetFiles(pathToConfigurationFiles);
             foreach (string fileName in fileEntries)

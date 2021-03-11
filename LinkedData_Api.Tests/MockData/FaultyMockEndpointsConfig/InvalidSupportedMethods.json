@@ -1,0 +1,15 @@
+﻿{
+  "endpointName": "testEndpoint1",
+  "endpointUrl": "http://localhost:8890/sparql2",
+  "defaultGraph": "http://localhost:8890/test",
+  "namedGraphs": [
+    {
+      "graphName": "test",
+      "uri": "http://localhost:8890/ntest"
+    }
+  ],
+  "supportedMethods": {
+    "sparql1.0": "no",
+    "sparql1.1": "no"
+  }
+}

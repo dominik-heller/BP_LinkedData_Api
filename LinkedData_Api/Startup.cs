@@ -13,6 +13,7 @@ using LinkedData_Api.Swagger.ExampleSchemas;
 using LinkedData_Api.Swagger.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,6 +35,11 @@ namespace LinkedData_Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //FluentValidation and ValidationFilter
+            services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
+            services.AddMvc(options => { options.Filters.Add<ValidationFilter>(); })
+                .AddFluentValidation(options => { options.RegisterValidatorsFromAssemblyContaining<Startup>(); });
+
             services.AddControllers().AddNewtonsoftJson();
             //     services.AddMvc(opt => opt.EnableEndpointRouting = false);
             services.AddSwaggerGen(c =>
@@ -61,12 +67,6 @@ namespace LinkedData_Api
             });
             services.AddSwaggerGenNewtonsoftSupport();
             services.AddSwaggerExamplesFromAssemblyOf<Startup>();
-
-
-            //FluentValidation and ValidationFilter
-            services.AddMvc(options => options.Filters.Add<ValidationFilter>())
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
-
 
             //automapper
             services.AddAutoMapper(typeof(Startup));

@@ -1,5 +1,5 @@
 ﻿{
-  "endpointName": "virtuoso",
+  "endpointName": "testEndpoin2",
   "endpointUrl": "http://localhost:8890/sparql",
   "defaultGraph": "http://localhost:8890/ovm",
   "namedGraphs": [

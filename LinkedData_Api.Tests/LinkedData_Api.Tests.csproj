@@ -25,28 +25,4 @@
       <ProjectReference Include="..\LinkedData_Api\LinkedData_Api.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Content Include="MockData\EndpointConfigurations\customVirtuosoSparqlEndpoint.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-      <Content Include="MockData\EndpointConfigurations\data.gov.czSparqlEndpoint.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-      <Content Include="MockData\EndpointConfigurations\dbPediaSparqlEndpoint.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-      <Content Include="MockData\EndpointConfigurations\elixirChebiSparqlEndpoint.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-      <Content Include="MockData\EndpointConfigurations\testConfigFile.json" />
-    </ItemGroup>
-
 </Project>

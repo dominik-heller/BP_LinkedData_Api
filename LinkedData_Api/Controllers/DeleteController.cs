@@ -59,7 +59,7 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.DefaultGraphResourcesConcreteResource)]
         [Route(ApiRoutes.NamedGraphResourcesConcreteResource)]
         [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(CustomErrorVm), 404)]
+        [ProducesResponseType(typeof(CustomErrorVm), 400)]
         public async Task<IActionResult> DeleteResource()
         {
             Parameters parameters =
@@ -99,7 +99,7 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.DefaultGraphResourceStartConcreteResourcePredicate)]
         [Route(ApiRoutes.NamedGraphResourceStartConcreteResourcePredicate)]
         [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(CustomErrorVm), 404)]
+        [ProducesResponseType(typeof(CustomErrorVm), 400)]
         public async Task<IActionResult> DeletePredicate()
         {
             Parameters parameters =

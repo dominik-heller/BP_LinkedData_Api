@@ -10,6 +10,10 @@
     {
       "graphName": "lexvo",
       "uri": "http://localhost:8890/lexvo"
+    },
+    {
+      "graphName": "test",
+      "uri": "http://localhost:8890/test"
     }
   ],
   "namespaces": [
