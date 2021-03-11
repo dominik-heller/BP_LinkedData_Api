@@ -15,7 +15,7 @@ namespace LinkedData_Api.Filters
                 var errorInModelState = context.ModelState
                     .Where(x => x.Value.Errors.Count > 0)
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(x => x.ErrorMessage)).ToArray();
-                var errorResponse = new ErrorVm();
+                var errorResponse = new ValidationErrorVm();
 
                 foreach (var error in errorInModelState)
                 {
@@ -24,7 +24,7 @@ namespace LinkedData_Api.Filters
                         ErrorModel errorModel = new ErrorModel()
                         {
                             FieldName = error.Key,
-                            Message = subError
+                            ErrorMessage = subError
                         };
                         errorResponse.ValidationErrors.Add(errorModel);
                     }

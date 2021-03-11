@@ -1,15 +1,15 @@
 ﻿{
-  "endpoint_name": "virtuoso",
-  "endpoint_url": "http://localhost:8890/sparql",
-  "default_graph": "http://localhost:8890/dtest",
-  "named_graphs": [
+  "endpointName": "virtuoso",
+  "endpointUrl": "http://localhost:8890/sparql",
+  "defaultGraph": "http://localhost:8890/dtest",
+  "namedGraphs": [
     {
-      "graph_name": "test",
+      "graphName": "test",
       "uri": "http://localhost:8890/ntest"
     }
   ],
-  "supported_methods": {
-    "sparql_1.0": "yes",
-    "sparql_1.1": "yes"
+  "supportedMethods": {
+    "sparql1.0": "yes",
+    "sparql1.1": "yes"
   }
 }

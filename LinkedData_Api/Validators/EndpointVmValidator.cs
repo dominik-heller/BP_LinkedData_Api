@@ -10,9 +10,9 @@ namespace LinkedData_Api.Validators
         public EndpointVmValidator()
         {
             RuleFor(x => x.EndpointName).NotEmpty().Length(3, 15).Matches(@"\A\S+\z");
-            RuleFor(x => x.DefaultGraph).Must(x => x == null || CheckIfIsValidUri(x))
+            RuleFor(x => x.DefaultGraph).Must(x => x == null || ValidatorCustomMethods.CheckIfIsValidUri(x))
                 .WithMessage("{PropertyName} must be valid uri (i.e. absolute uri or urn).");
-            RuleFor(x => x.EndpointUrl).Must(CheckIfIsValidAbsoluteUrl)
+            RuleFor(x => x.EndpointUrl).Must(ValidatorCustomMethods.CheckIfIsValidAbsoluteUrl)
                 .WithMessage("{PropertyName} must be valid absolute uri.");
             RuleFor(x => x.SupportedMethods).Cascade(CascadeMode.Stop).Must(x =>
                 x == null || (x.Sparql10 != null && x.Sparql11 != null) &&
@@ -35,7 +35,7 @@ namespace LinkedData_Api.Validators
                     .WithMessage("{PropertyName} must not be empty.");
                 RuleFor(x => x.Uri).Must(x => !string.IsNullOrWhiteSpace(x))
                     .WithMessage("{PropertyName} must not be empty.");
-                RuleFor(x => x.Uri).Must(CheckIfIsValidAbsoluteUrl)
+                RuleFor(x => x.Uri).Must(ValidatorCustomMethods.CheckIfIsValidAbsoluteUrl)
                     .WithMessage("{PropertyName} must be valid uri (i.e absolute url).");
             }
         }
@@ -48,7 +48,7 @@ namespace LinkedData_Api.Validators
                     .WithMessage("{PropertyName} must not be empty.");
                 RuleFor(x => x.Uri).Must(x => !string.IsNullOrWhiteSpace(x))
                     .WithMessage("{PropertyName} must not be empty.");
-                RuleFor(x => x.Uri).Must(CheckIfIsValidUri)
+                RuleFor(x => x.Uri).Must(ValidatorCustomMethods.CheckIfIsValidUri)
                     .WithMessage("{PropertyName} must be valid uri (i.e absolute url or urn).");
             }
         }
@@ -81,23 +81,6 @@ namespace LinkedData_Api.Validators
                                x.Contains("{") && x.Contains("}"))
                     .WithMessage("{PropertyName} is not valid select sparql command.");
             }
-        }
-
-
-        //only https or http absolute uri
-        private static bool CheckIfIsValidAbsoluteUrl(string url)
-        {
-            if (url == null) return false;
-            return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
-                   && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
-        }
-
-        //only absolute uri or urn
-        private static bool CheckIfIsValidUri(string uri)
-        {
-            if (uri == null) return false;
-            return CheckIfIsValidAbsoluteUrl(uri) ||
-                   Regex.IsMatch(uri, @"^urn:[a-z0-9][a-z0-9-]{0,31}:[a-z0-9()+,\-.:=@;$_!*'%/?#]+$");
         }
     }
 }

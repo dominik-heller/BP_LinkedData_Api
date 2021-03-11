@@ -11,7 +11,7 @@ namespace LinkedData_Api.Validators
         {
             RuleFor(x => x.Curies)
                 .Cascade(CascadeMode.Stop)
-                .Must(x => x == null || x.All(IsCurie))
+                .Must(x => x == null || x.All(ValidatorCustomMethods.IsCurie))
                 .WithMessage("{PropertyName} must be valid curie, i.e. qname ('prefix:value').");
             RuleFor(x => x.Literals)
                 .Cascade(CascadeMode.Stop)
@@ -32,7 +32,7 @@ namespace LinkedData_Api.Validators
                     .WithMessage("{PropertyName} must be valid curie, i.e. qname ('prefix:value').");
                 RuleFor(x => x.Curies)
                     .Cascade(CascadeMode.Stop)
-                    .Must(x => x == null || x.All(IsCurie))
+                    .Must(x => x == null || x.All(ValidatorCustomMethods.IsCurie))
                     .WithMessage("{PropertyName} must be valid curie, i.e. qname ('prefix:value').");
                 RuleFor(x => x.Literals)
                     .Cascade(CascadeMode.Stop)
@@ -40,11 +40,6 @@ namespace LinkedData_Api.Validators
                         x.RuleForEach(y => y)
                             .SetValidator(new ResourceVmValidator.PredicateContentValidator.LiteralValidator()));
             }
-        }
-
-        private static bool IsCurie(string curie)
-        {
-            return Regex.IsMatch(curie, @"^[^:]+\:[^:]+$");
         }
     }
 }

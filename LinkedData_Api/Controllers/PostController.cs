@@ -1,6 +1,5 @@
 ﻿#nullable enable
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using LinkedData_Api.Helpers;
@@ -39,7 +38,7 @@ namespace LinkedData_Api.Controllers
         [HttpPost]
         [Route(ApiRoutes.PostEndpoints)]
         [ProducesResponseType(typeof(EndpointVm), 201)]
-        [ProducesResponseType(typeof(ErrorVm), 400)]
+        [ProducesResponseType(typeof(ValidationErrorVm), 400)]
         public IActionResult PostEndpoint(EndpointVm endpoint)
         {
             if (_endpointService.AddEndpoint(_mapper.Map<EndpointVm, Endpoint>(endpoint), out var finalEndpoint))
@@ -49,10 +48,13 @@ namespace LinkedData_Api.Controllers
                     finalEndpoint);
             }
 
-            return BadRequest(new ErrorVm()
+            return BadRequest(new ValidationErrorVm()
             {
-                CustomErrorMessage =
-                    $"Given endpoint name is already assigned. Check this endpoint configuration at {UrlHelperClass.CreateEndpointUrl(Request.GetEncodedUrl(), endpoint.EndpointName)}"
+                CustomError = new CustomErrorVm()
+                {
+                    CustomErrorMessage =
+                        $"Given endpoint name is already assigned. Check this endpoint configuration at {UrlHelperClass.CreateEndpointUrl(Request.GetEncodedUrl(), endpoint.EndpointName)}"
+                }
             });
         }
 
@@ -68,7 +70,7 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.DefaultGraphResources)]
         [Route(ApiRoutes.NamedGraphResources)]
         [ProducesResponseType(typeof(NamedResourceVm), 201)]
-        [ProducesResponseType(typeof(ErrorVm), 400)]
+        [ProducesResponseType(typeof(ValidationErrorVm), 400)]
         public async Task<IActionResult> PostResource(NamedResourceVm namedResourceVm)
         {
             Parameters parameters =
@@ -87,10 +89,14 @@ namespace LinkedData_Api.Controllers
                 query = $"Generated sparql query: {query}.";
             }
 
-            return BadRequest(new ErrorVm()
+            return BadRequest(new ValidationErrorVm()
             {
-                CustomErrorMessage =
-                    $"Resource could not have been created! {query} Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                CustomError = new CustomErrorVm()
+                {
+                    CustomErrorMessage =
+                        "Resource could not have been created! Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}.",
+                    GeneratedQuery = query
+                }
             });
         }
 
@@ -106,7 +112,7 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.DefaultGraphResourcesConcreteResource)]
         [Route(ApiRoutes.NamedGraphResourcesConcreteResource)]
         [ProducesResponseType(typeof(NamedPredicateVm), 201)]
-        [ProducesResponseType(typeof(ErrorVm), 400)]
+        [ProducesResponseType(typeof(ValidationErrorVm), 400)]
         public async Task<IActionResult> PostPredicate(NamedPredicateVm namedPredicateVm)
         {
             Parameters parameters =
@@ -125,10 +131,14 @@ namespace LinkedData_Api.Controllers
                 query = $"Generated sparql query: {query}.";
             }
 
-            return BadRequest(new ErrorVm()
+            return BadRequest(new ValidationErrorVm()
             {
-                CustomErrorMessage =
-                    $"Predicate could not have been created! {query} Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                CustomError = new CustomErrorVm()
+                {
+                    CustomErrorMessage =
+                        $"Predicate could not have been created! Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}.",
+                    GeneratedQuery = query
+                }
             });
         }
 

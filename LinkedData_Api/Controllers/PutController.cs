@@ -36,7 +36,7 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.DefaultGraphResourcesConcreteResource)]
         [Route(ApiRoutes.NamedGraphResourcesConcreteResource)]
         [ProducesResponseType(typeof(ResourceVm), 201)]
-        [ProducesResponseType(typeof(ErrorVm), 400)]
+        [ProducesResponseType(typeof(ValidationErrorVm), 400)]
         public async Task<IActionResult> PutResource([FromBody] ResourceVm resourceVm)
         {
             Parameters parameters =
@@ -56,10 +56,14 @@ namespace LinkedData_Api.Controllers
                 query = $"Generated sparql query: {query}.";
             }
 
-            return BadRequest(new ErrorVm()
+            return BadRequest(new ValidationErrorVm()
             {
-                CustomErrorMessage =
-                    $"Resource could not have been created! {query} Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                CustomError = new CustomErrorVm()
+                {
+                    CustomErrorMessage =
+                        $"Resource could not have been created! Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}.",
+                    GeneratedQuery = query
+                }
             });
         }
 
@@ -75,7 +79,7 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.DefaultGraphResourceStartConcreteResourcePredicate)]
         [Route(ApiRoutes.NamedGraphResourceStartConcreteResourcePredicate)]
         [ProducesResponseType(typeof(PredicateVm), 201)]
-        [ProducesResponseType(typeof(ErrorVm), 400)]
+        [ProducesResponseType(typeof(ValidationErrorVm), 400)]
         public async Task<IActionResult> PutPredicate(PredicateVm predicateVm)
         {
             Parameters parameters =
@@ -95,10 +99,14 @@ namespace LinkedData_Api.Controllers
                 query = $"Generated sparql query: {query}.";
             }
 
-            return BadRequest(new ErrorVm()
+            return BadRequest(new ValidationErrorVm()
             {
-                CustomErrorMessage =
-                    $"Predicate could not have been created! {query} Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                CustomError = new CustomErrorVm()
+                {
+                    CustomErrorMessage =
+                        $"Predicate could not have been created! Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}.",
+                    GeneratedQuery = query
+                }
             });
         }
 

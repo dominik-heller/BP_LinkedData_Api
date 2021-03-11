@@ -1,14 +1,14 @@
 ﻿{
-  "endpoint_name": "virtuoso",
-  "endpoint_url": "http://localhost:8890/sparql",
-  "default_graph": "http://localhost:8890/ovm",
-  "named_graphs": [
+  "endpointName": "virtuoso",
+  "endpointUrl": "http://localhost:8890/sparql",
+  "defaultGraph": "http://localhost:8890/ovm",
+  "namedGraphs": [
     {
-      "graph_name": "ovm",
+      "graphName": "ovm",
       "uri": "http://localhost:8890/ovm"
     },
     {
-      "graph_name": "lexvo",
+      "graphName": "lexvo",
       "uri": "http://localhost:8890/lexvo"
     }
   ],
@@ -50,35 +50,35 @@
       "uri": "http://lexvo.org/id/script/"
     }
   ],
-  "supported_methods": {
-    "sparql_1.0": "yes",
-    "sparql_1.1": "yes"
+  "supportedMethods": {
+    "sparql1.0": "yes",
+    "sparql1.1": "yes"
   },
-  "entry_class": [
+  "entryClass": [
     {
-      "graph_name": "default",
+      "graphName": "default",
       "command": "SELECT DISTINCT ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing>}"
     },
     {
-      "graph_name": "ovm",
+      "graphName": "ovm",
       "command": "SELECT DISTINCT ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing>}"
     },
     {
-      "graph_name": "lexvo",
+      "graphName": "lexvo",
       "command": "SELECT DISTINCT ?s where {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class>}"
     }
   ],
-  "entry_resource": [
+  "entryResource": [
     {
-      "graph_name": "default",
+      "graphName": "default",
       "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
     },
     {
-      "graph_name": "ovm",
+      "graphName": "ovm",
       "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
     },
     {
-      "graph_name": "lexvo",
+      "graphName": "lexvo",
       "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
     }
   ]

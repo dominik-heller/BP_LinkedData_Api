@@ -47,12 +47,12 @@ namespace LinkedData_Api.Controllers
         /// <returns></returns>
         [HttpGet(ApiRoutes.EndpointConfiguration)]
         [ProducesResponseType(typeof(EndpointVm), 200)]
-        [ProducesResponseType(typeof(ErrorVm), 404)]
+        [ProducesResponseType(typeof(CustomErrorVm), 404)]
         public IActionResult Get_EndpointConfiguration([FromRoute] string endpoint)
         {
             var info = _endpointService.GetEndpointConfiguration(endpoint);
             if (info != null) return Ok(_mapper.Map<Endpoint, EndpointVm>(info));
-            return NotFound(new ErrorVm() {CustomErrorMessage = "Endpoint does not exist."});
+            return NotFound(new CustomErrorVm() {CustomErrorMessage = "Endpoint does not exist."});
         }
 
         /// <summary>
@@ -62,12 +62,12 @@ namespace LinkedData_Api.Controllers
         /// <returns></returns>
         [HttpGet(ApiRoutes.EndpointGraphs)]
         [ProducesResponseType(typeof(List<NamedGraph>), 200)]
-        [ProducesResponseType(typeof(ErrorVm), 404)]
+        [ProducesResponseType(typeof(CustomErrorVm), 404)]
         public IActionResult Get_GraphsForEndpoint([FromRoute] string endpoint)
         {
             var graphs = _endpointService.GetEndpointGraphs(endpoint);
             if (graphs != null) return Ok(graphs);
-            return NotFound(new ErrorVm()
+            return NotFound(new CustomErrorVm()
             {
                 CustomErrorMessage =
                     $"No graphs found. Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}"
@@ -81,7 +81,7 @@ namespace LinkedData_Api.Controllers
         /// <returns></returns>
         [HttpGet(ApiRoutes.EndpointNamespacePrefix)]
         [ProducesResponseType(typeof(string), 200)]
-        [ProducesResponseType(typeof(ErrorVm), 404)]
+        [ProducesResponseType(typeof(CustomErrorVm), 404)]
         public IActionResult GetNamespaces([FromRoute] string prefix)
         {
             if (_namespaceFactoryService.GetNamespaceUriByPrefix(prefix, out var namespaceUri))
@@ -89,7 +89,7 @@ namespace LinkedData_Api.Controllers
                 return Ok(namespaceUri);
             }
 
-            return NotFound(new ErrorVm() {CustomErrorMessage = "Namespace uri for given prefix not found!"});
+            return NotFound(new CustomErrorVm() {CustomErrorMessage = "Namespace uri for given prefix not found!"});
         }
 
         #endregion
@@ -104,7 +104,7 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.DefaultGraphClasses)]
         [Route(ApiRoutes.NamedGraphClasses)]
         [ProducesResponseType(typeof(CurieVm), 200)]
-        [ProducesResponseType(typeof(ErrorVm), 404)]
+        [ProducesResponseType(typeof(CustomErrorVm), 404)]
         public async Task<IActionResult> GetClasses([FromQuery] QueryStringParameters queryStringParametersDto)
         {
             Parameters parameters =
@@ -126,10 +126,11 @@ namespace LinkedData_Api.Controllers
                 query = $"Generated sparql query: {query}.";
             }
 
-            return NotFound(new ErrorVm()
+            return NotFound(new CustomErrorVm()
             {
                 CustomErrorMessage =
-                    $"No results were found! {query}."
+                    $"No results were found! Check endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}",
+                GeneratedQuery = query
             });
         }
 
@@ -145,7 +146,7 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.DefaultGraphResources)]
         [Route(ApiRoutes.NamedGraphResources)]
         [ProducesResponseType(typeof(CurieVm), 200)]
-        [ProducesResponseType(typeof(ErrorVm), 404)]
+        [ProducesResponseType(typeof(CustomErrorVm), 404)]
         public async Task<IActionResult> GetResources([FromQuery] QueryStringParameters queryStringParametersDto)
         {
             Parameters parameters =
@@ -167,10 +168,11 @@ namespace LinkedData_Api.Controllers
                 query = $"Generated sparql query: {query}.";
             }
 
-            return NotFound(new ErrorVm()
+            return NotFound(new CustomErrorVm()
             {
                 CustomErrorMessage =
-                    $"No results were found! {query} Check submitted URL or endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                    $"No results were found! Check endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}.",
+                GeneratedQuery = query
             });
         }
 
@@ -186,7 +188,7 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.DefaultGraphConcreteClass)]
         [Route(ApiRoutes.NamedGraphConcreteClass)]
         [ProducesResponseType(typeof(CurieVm), 200)]
-        [ProducesResponseType(typeof(ErrorVm), 404)]
+        [ProducesResponseType(typeof(CustomErrorVm), 404)]
         public async Task<IActionResult> GetConcreteClass([FromQuery] QueryStringParameters queryStringParametersDto)
         {
             Parameters parameters =
@@ -206,10 +208,10 @@ namespace LinkedData_Api.Controllers
                 query = $"Generated sparql query: {query}.";
             }
 
-            return NotFound(new ErrorVm()
+            return NotFound(new CustomErrorVm()
             {
-                CustomErrorMessage =
-                    $"No results were found! {query} Check submitted URL or endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}."
+                CustomErrorMessage = "No results were found!",
+                GeneratedQuery = query
             });
         }
 
@@ -227,7 +229,7 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.DefaultGraphClassesConcreteResource)]
         [Route(ApiRoutes.NamedGraphClassesConcreteResource)]
         [ProducesResponseType(typeof(ResourceVm), 200)]
-        [ProducesResponseType(typeof(ErrorVm), 404)]
+        [ProducesResponseType(typeof(CustomErrorVm), 404)]
         public async Task<IActionResult> GetConcreteResource(
             [FromQuery] QueryStringParameters queryStringParametersDto)
         {
@@ -248,10 +250,10 @@ namespace LinkedData_Api.Controllers
                 query = $"Generated sparql query: {query}.";
             }
 
-            return NotFound(new ErrorVm()
+            return NotFound(new CustomErrorVm()
             {
-                CustomErrorMessage =
-                    $"No results were found! {query}."
+                CustomErrorMessage = "No results were found!",
+                GeneratedQuery = query
             });
         }
 
@@ -269,7 +271,7 @@ namespace LinkedData_Api.Controllers
         [Route(ApiRoutes.DefaultGraphResourceStartConcreteResourcePredicate)]
         [Route(ApiRoutes.NamedGraphResourceStartConcreteResourcePredicate)]
         [ProducesResponseType(typeof(PredicateVm), 200)]
-        [ProducesResponseType(typeof(ErrorVm), 404)]
+        [ProducesResponseType(typeof(CustomErrorVm), 404)]
         public async Task<IActionResult> GetConcreteResourcePredicate(
             [FromQuery] QueryStringParameters queryStringParametersDto)
         {
@@ -292,10 +294,10 @@ namespace LinkedData_Api.Controllers
                 query = $"Generated sparql query: {query}.";
             }
 
-            return NotFound(new ErrorVm()
+            return NotFound(new CustomErrorVm()
             {
-                CustomErrorMessage =
-                    $"No results were found! {query}."
+                CustomErrorMessage = "No results were found!",
+                GeneratedQuery = query
             });
         }
 

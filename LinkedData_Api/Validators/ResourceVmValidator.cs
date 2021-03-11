@@ -46,7 +46,7 @@ namespace LinkedData_Api.Validators
                     .Cascade(CascadeMode.Stop)
                     .NotNull().WithMessage("{PropertyName} must not be null.")
                     .NotEmpty().WithMessage("{PropertyName} must not be empty.")
-                    .Must(x => x.All(IsCurie))
+                    .Must(x => x.All(ValidatorCustomMethods.IsCurie))
                     .WithMessage("{PropertyName} must be valid curie, i.e. qname ('prefix:value').");
                 RuleForEach(x => x.Values).SetValidator(new PredicateContentValidator());
             }
@@ -58,7 +58,7 @@ namespace LinkedData_Api.Validators
             {
                 RuleFor(x => x.Curies)
                     .Cascade(CascadeMode.Stop)
-                    .Must(x => x == null || x.All(IsCurie))
+                    .Must(x => x == null || x.All(ValidatorCustomMethods.IsCurie))
                     .WithMessage("{PropertyName} must be valid curie, i.e. qname ('prefix:value').");
                 RuleFor(x => x.Literals)
                     .Cascade(CascadeMode.Stop)
@@ -75,11 +75,6 @@ namespace LinkedData_Api.Validators
                         .NotEmpty().WithMessage("{PropertyName} must not be empty.");
                 }
             }
-        }
-
-        private static bool IsCurie(string curie)
-        {
-            return Regex.IsMatch(curie, @"^[^:]+\:[^:]+$");
         }
     }
 }
