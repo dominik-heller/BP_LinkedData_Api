@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using LinkedData_Api.Model.Domain;
 using LinkedData_Api.Services.Contracts;
@@ -14,7 +15,7 @@ namespace LinkedData_Api.Services
         public Parameters ProcessParameters(RouteValueDictionary requestRouteValues,
             QueryString requestQueryString)
         {
-            Parameters parameterDto = new Parameters();
+            Parameters parameters = new Parameters();
             RouteParameters routeParametersDto = new RouteParameters();
             foreach (var key in requestRouteValues.Keys)
             {
@@ -59,7 +60,7 @@ namespace LinkedData_Api.Services
                 }
             }
 
-            parameterDto.RouteParameters = routeParametersDto;
+            parameters.RouteParameters = routeParametersDto;
             QueryStringParameters queryStringParametersDto = new QueryStringParameters();
             if (requestQueryString.HasValue)
             {
@@ -68,6 +69,7 @@ namespace LinkedData_Api.Services
                 {
                     foreach (string key in requestQueryStringValues.Keys)
                     {
+                        if (key == null) continue;
                         switch (key.ToLower())
                         {
                             case "limit":
@@ -95,19 +97,24 @@ namespace LinkedData_Api.Services
                             }
                             case "sort":
                             {
+                                if (queryStringParametersDto.Sort != null &&
+                                    (!queryStringParametersDto.Sort.ToLower().Equals("asc") ||
+                                     !queryStringParametersDto.Sort.ToLower().Equals("desc")))
+                                {
+                                    queryStringParametersDto.Sort = null;
+                                    break;
+                                }
+
                                 queryStringParametersDto.Sort = requestQueryStringValues[key];
                                 break;
                             }
-                            //Případně další parametry
                         }
                     }
                 }
             }
 
-            parameterDto.QueryStringParametersDto = queryStringParametersDto;
-            return parameterDto;
+            parameters.QueryStringParametersDto = queryStringParametersDto;
+            return parameters;
         }
-
-       
     }
 }

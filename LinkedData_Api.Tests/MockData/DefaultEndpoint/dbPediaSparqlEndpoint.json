@@ -1,0 +1,25 @@
+﻿{
+  "endpointName": "dbpedia",
+  "endpointUrl": "https://dbpedia.org/sparql",
+  "defaultGraph": "http://dbpedia.org",
+  "namedGraphs": [
+  ],
+  "namespaces": [
+  ],
+  "supportedMethods": {
+    "sparql1.0": "yes",
+    "sparql1.1": "no"
+  },
+  "entryClass": [
+    {
+      "graphName": "default",
+      "command": "SELECT DISTINCT ?s WHERE { ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> }"
+    }
+  ],
+  "entryResource": [
+    {
+      "graphName": "default",
+      "command": "SELECT distinct ?s WHERE { ?s ?p <http://www.w3.org/2002/07/owl#Thing> }"
+    }
+  ]
+}

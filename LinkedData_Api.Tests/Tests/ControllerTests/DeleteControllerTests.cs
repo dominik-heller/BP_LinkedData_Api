@@ -6,7 +6,7 @@ using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Tests.Extensions;
 using Xunit;
 
-namespace LinkedData_Api.Tests.Tests
+namespace LinkedData_Api.Tests.Tests.ControllerTests
 {
     public class DeleteControllerTests : ApiTests
     {

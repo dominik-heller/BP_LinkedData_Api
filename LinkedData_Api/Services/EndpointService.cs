@@ -17,7 +17,7 @@ namespace LinkedData_Api.Services
     {
         private readonly INamespaceFactoryService _namespaceFactoryService;
         private readonly ConcurrentDictionary<string, Endpoint> _endpoints;
-        private const int DefaultSparqlEndpointConnectionTimeout = 10000;
+        private const int DefaultSparqlEndpointConnectionTimeout = 30000;
 
         private const string DefaultSparqlEndpointAcceptHeaders =
             "application/sparql-results+xml,application/sparql-results+json,text/boolean,application/rdf+xml,text/xml,application/xml,application/json,text/json,application/rdf+json,text/csv,text/comma-separated-values";

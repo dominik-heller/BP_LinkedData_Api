@@ -4,8 +4,6 @@ using System.Linq;
 using System.Web;
 using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Services.Contracts;
-using VDS.Common.Collections.Enumerations;
-using VDS.RDF;
 using VDS.RDF.Query;
 
 namespace LinkedData_Api.Services

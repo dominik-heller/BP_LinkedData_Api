@@ -74,6 +74,8 @@ namespace LinkedData_Api.Data
             return endpoints;
         }
 
+        #region PrivateMethods
+
         private bool CheckAndAdjustEndpointConfigurationFile(Endpoint endpoint, Dictionary<string, Endpoint> endpoints,
             out Endpoint checkedEndpoint)
         {
@@ -102,7 +104,7 @@ namespace LinkedData_Api.Data
 
             if (endpoint.Namespaces != null && (endpoint.Namespaces.Any(x =>
                 string.IsNullOrWhiteSpace(x.Prefix)) || endpoint.Namespaces.Any(y =>
-                    string.IsNullOrWhiteSpace(y.Uri)) || endpoint.Namespaces.Any(z => !CheckIfIsUrl(z.Uri))))
+                string.IsNullOrWhiteSpace(y.Uri)) || endpoint.Namespaces.Any(z => !CheckIfIsUrl(z.Uri))))
             {
                 Console.WriteLine(
                     "Namespace definition is not valid. Uri must be valid url, prefix and uri must not be empty. Endpoint settings will be ignored.");
@@ -139,7 +141,9 @@ namespace LinkedData_Api.Data
         private bool CheckIfIsUrl(string url)
         {
             return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
-                     && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+                   && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
+
+        #endregion
     }
 }

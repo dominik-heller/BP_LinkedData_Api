@@ -10,7 +10,7 @@ using LinkedData_Api.Tests.Extensions;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace LinkedData_Api.Tests.Tests
+namespace LinkedData_Api.Tests.Tests.ControllerTests
 {
     public class PostControllerTests : ApiTests
     {

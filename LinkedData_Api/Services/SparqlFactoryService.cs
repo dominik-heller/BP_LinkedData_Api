@@ -26,7 +26,8 @@ namespace LinkedData_Api.Services
         public string? GetFinalQuery(string? query, Parameters parameters)
         {
             if (query == null) return query;
-            query = ApplyQueryStringParametersToSparqlQuery(query, parameters.QueryStringParametersDto, "?s");
+            query = ApplyQueryStringParametersToSparqlQuery(query, parameters.QueryStringParametersDto,
+                FindSubjectVariableInQuery(query));
             query = ImplementFromGraphClauseToSelectQuery(query, parameters);
             return query;
         }
@@ -35,7 +36,7 @@ namespace LinkedData_Api.Services
         {
             if (_namespaceFactoryService.GetAbsoluteUriFromQname(parameters.RouteParameters.Class, out var absoluteUri))
             {
-                string command = "SELECT ?s WHERE {?s ?p @var}";
+                string command = "SELECT ?s WHERE { ?s ?p @var }";
                 SparqlParameterizedString sparqlParameterizedString = new();
                 sparqlParameterizedString.CommandText = command;
                 sparqlParameterizedString.SetUri("var", new Uri(absoluteUri));
@@ -54,7 +55,7 @@ namespace LinkedData_Api.Services
             if (_namespaceFactoryService.GetAbsoluteUriFromQname(parameters.RouteParameters.Resource,
                 out var absoluteUri))
             {
-                string command = "SELECT * WHERE {@var ?p ?o}";
+                string command = "SELECT * WHERE { @var ?p ?o }";
                 SparqlParameterizedString sparqlParameterizedString = new();
                 sparqlParameterizedString.CommandText = command;
                 sparqlParameterizedString.SetUri("var", new Uri(absoluteUri));
@@ -71,12 +72,12 @@ namespace LinkedData_Api.Services
         public string? GetFinalSelectQueryForPredicate(Parameters parameters)
         {
             SparqlParameterizedString sparqlParameterizedString = new();
-            if (parameters.RouteParameters.Resource.Equals("*"))
-                sparqlParameterizedString.CommandText = "SELECT * WHERE {[] @pred ?o}";
+      //      if (parameters.RouteParameters.Resource.Equals("*"))
+       //         sparqlParameterizedString.CommandText = "SELECT * WHERE { [] @pred ?o }";
             if (_namespaceFactoryService.GetAbsoluteUriFromQname(parameters.RouteParameters.Resource,
                 out var resourceAbsoluteUri))
             {
-                sparqlParameterizedString.CommandText = "SELECT * WHERE {@sub @pred ?o}";
+                sparqlParameterizedString.CommandText = "SELECT * WHERE { @sub @pred ?o }";
                 sparqlParameterizedString.SetUri("sub", new Uri(resourceAbsoluteUri));
             }
 
@@ -95,7 +96,7 @@ namespace LinkedData_Api.Services
         }
 
         #endregion
-        
+
         #region PutSparqlQueries
 
         public string? GetFinalPutQueryForResource(Parameters parameters, ResourceVm resourceVm)
@@ -229,6 +230,14 @@ namespace LinkedData_Api.Services
 
         #region PrivateMethods
 
+        private string FindSubjectVariableInQuery(string query)
+        {
+            var s = query.IndexOf("?", StringComparison.Ordinal);
+            string a = query.Substring(s);
+            var parts = a.Split(" ", 2);
+            return parts[0];
+        }
+
         private string? ConstructInsertResourceQueryString(ResourceVm resourceVm, string resourceAbsoluteUri)
         {
             SparqlParameterizedString sparqlParameterizedInsertQuery = new();
@@ -315,7 +324,7 @@ namespace LinkedData_Api.Services
             {
                 var i = query.LastIndexOf("}", StringComparison.Ordinal);
                 query =
-                    $"{query.Substring(0, i)} FILTER regex({sortAndRegexParameter}, \"{regex}\") {query.Substring(i)}";
+                    $"{query.Substring(0, i)}FILTER regex({sortAndRegexParameter}, \"{regex}\") {query.Substring(i)}";
             }
 
             if (sort != null)
@@ -405,7 +414,7 @@ namespace LinkedData_Api.Services
         {
             Endpoint? endpointConfig = _endpointService.GetEndpointConfiguration(parameters.RouteParameters.Endpoint);
             if (endpointConfig == null) return null;
-            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph) && endpointConfig.NamedGraphs != null)
+            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph) && endpointConfig.NamedGraphs != null && endpointConfig.NamedGraphs.Count>0)
             {
                 var graph = endpointConfig.NamedGraphs.Where(x => x.GraphName.Equals(parameters.RouteParameters.Graph))
                     .Select(y => y.Uri).FirstOrDefault();
@@ -431,7 +440,7 @@ namespace LinkedData_Api.Services
         {
             Endpoint? endpointConfig = _endpointService.GetEndpointConfiguration(parameters.RouteParameters.Endpoint);
             if (endpointConfig == null) return null;
-            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph))
+            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph) && endpointConfig.NamedGraphs != null && endpointConfig.NamedGraphs.Count>0)
             {
                 query =
                     $"WITH <{endpointConfig.NamedGraphs.Where(x => x.GraphName.Equals(parameters.RouteParameters.Graph)).Select(y => y.Uri).FirstOrDefault()}> {query}";
@@ -448,6 +457,5 @@ namespace LinkedData_Api.Services
         }
 
         #endregion
-        
     }
 }

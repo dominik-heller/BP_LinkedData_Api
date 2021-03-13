@@ -33,7 +33,7 @@ namespace LinkedData_Api.Services
                 }
                 catch (RdfException e)
                 {
-                    Console.WriteLine("Absolute Uri could not have been created. " + e);
+            //        Console.WriteLine("Absolute Uri could not have been created. " + e);
                     absoluteUri = String.Empty;
                     return false;
                 }
@@ -57,18 +57,15 @@ namespace LinkedData_Api.Services
             }
         }
 
-        //přijde dbpedia.org/resource#Germany a nutno to změnit na př: dbr:Germany
+
         public bool GetQnameFromAbsoluteUri(string uri, out string qname)
         {
-            //pokud existuje definovaný prefix/namespace pro dané uri = > vrátí qname
             if (_threadSafeQNameOutputMapper.ReduceToQName(uri, out var _qname))
             {
                 qname = _qname;
                 return true;
             }
 
-            //pokud ne vytvoří nový prefix/namespace ve tvaru ns[cislo] a vrati qname (pokud je příchozí ve tvaru http... jinak vrací string.empty)
-            //  Console.WriteLine("Namespace undefined.");
             if (GetNamespaceUriFromAbsoluteUri(uri, out var nsUri))
             {
                 string prefix;
@@ -83,12 +80,9 @@ namespace LinkedData_Api.Services
                 }
 
                 _threadSafeQNameOutputMapper.AddNamespace(prefix, new Uri(nsUri));
-                //      Console.WriteLine("Namespace added.");
-                if (_threadSafeQNameOutputMapper.ReduceToQName(uri, out _qname))
-                {
-                    qname = _qname;
-                    return true;
-                }
+                qname = prefix+":"+uri.Replace(nsUri,"");
+                Console.WriteLine();
+                return true;
             }
 
             qname = string.Empty;

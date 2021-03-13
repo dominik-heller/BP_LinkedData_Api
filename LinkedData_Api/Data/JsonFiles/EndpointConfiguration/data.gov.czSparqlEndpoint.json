@@ -6,6 +6,26 @@
     {
       "graphName": "school",
       "uri": "https://data.gov.cz/zdroj/datové-sady/00551023/861588425/41f9841463beb472c92f62fff43b15dd"
+    },
+    {
+      "graphName": "emplpolicy",
+      "uri": "https://data.gov.cz/zdroj/datové-sady/00551023/861588425/823171dd619cb29965ec368c25083ff0"
+    },
+    {
+      "graphName": "regions",
+      "uri": "https://data.gov.cz/zdroj/datové-sady/00551023/861588425/61963903d713a0173320878b215395f5"
+    },
+    {
+      "graphName": "cities",
+      "uri": "https://data.gov.cz/zdroj/datové-sady/00551023/861588425/46c8c042160be5bbb669fd0b30df1416"
+    },
+    {
+      "graphName": "languages",
+      "uri": "https://data.gov.cz/zdroj/datové-sady/00551023/861588425/4362f44ca6369c5ceaea9059c0dc3652"
+    },
+    {
+      "graphName": "graduation",
+      "uri": "https://data.gov.cz/zdroj/datové-sady/00551023/861588425/fa42aa43b517e640b4936a1fd53fb9f0"
     }
   ],
   "namespaces": [
@@ -27,6 +47,26 @@
     },
     {
       "graphName": "school",
+      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
+    },
+    {
+      "graphName": "emplpolicy",
+      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
+    },
+    {
+      "graphName": "regions",
+      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
+    },
+    {
+      "graphName": "cities",
+      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
+    },
+    {
+      "graphName": "graduation",
+      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
+    },
+    {
+      "graphName": "languages",
       "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
     }
   ]
