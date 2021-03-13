@@ -100,6 +100,7 @@ namespace LinkedData_Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "LinkedData_Api v1");
                 c.DocExpansion(DocExpansion.None);
+                c.RoutePrefix = string.Empty;
             });
 
             app.UseHttpsRedirection();

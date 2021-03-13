@@ -13,6 +13,7 @@ namespace LinkedData_Api.Controllers
 {
     [ApiController]
     [Produces("application/json")]
+    [Consumes("application/json")]
     public class PostController : ControllerBase
     {
         private readonly IEndpointService _endpointService;

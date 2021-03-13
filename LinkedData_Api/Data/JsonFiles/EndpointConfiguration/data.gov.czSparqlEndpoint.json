@@ -47,27 +47,7 @@
     },
     {
       "graphName": "school",
-      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
-    },
-    {
-      "graphName": "emplpolicy",
-      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
-    },
-    {
-      "graphName": "regions",
-      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
-    },
-    {
-      "graphName": "cities",
-      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
-    },
-    {
-      "graphName": "graduation",
-      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
-    },
-    {
-      "graphName": "languages",
-      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
+      "command": "SELECT ?s WHERE { ?s ?p ?o }"
     }
   ]
 }

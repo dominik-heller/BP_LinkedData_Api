@@ -65,7 +65,14 @@ namespace LinkedData_Api.Services
                 if (graph == null)
                     return endpoint?.EntryResource.FirstOrDefault(x => x.GraphName.Equals("default"))
                         ?.Command;
-                return endpoint?.EntryResource.FirstOrDefault(x => x.GraphName.Equals(graph))?.Command;
+
+                if (endpoint?.NamedGraphs.FirstOrDefault(x => x.GraphName.Equals(graph)) != null)
+                {
+                    //this condition enables searching in named graphs even without entry resource sparql query defined
+                    if (endpoint?.EntryResource.FirstOrDefault(x => x.GraphName.Equals(graph))?.Command == null)
+                        return "SELECT ?s WHERE {?s ?p ?o}";
+                    return endpoint?.EntryResource.FirstOrDefault(x => x.GraphName.Equals(graph))?.Command;
+                }
             }
 
             return null;
@@ -107,7 +114,7 @@ namespace LinkedData_Api.Services
             }
             catch (RdfException e)
             {
-                Console.WriteLine(e);
+               // Console.WriteLine(e);
                 return null;
             }
         }
@@ -131,6 +138,7 @@ namespace LinkedData_Api.Services
             }
             catch (RdfException)
             {
+                // Console.WriteLine(e);
                 return false;
             }
 
