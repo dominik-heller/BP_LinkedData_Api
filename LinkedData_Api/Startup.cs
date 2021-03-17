@@ -52,12 +52,13 @@ namespace LinkedData_Api
                     Version = "v1",
                     Title = "LinkedData API",
                     Description =
-                        @"<article>REST API for extraction and manipulation with semantic data, normally available only via SPARQL endpoints.</br>
-                         This project is part of bachelor thesis <em>Linked data utilization via web API</em> at Faculty of Science, The University of South Bohemia, České Budějovice, Czech Republic.</article>",
+                        @"<article>REST API for extraction and manipulation with semantic data, normally available only via SPARQL endpoints.<br>
+                         This project is part of bachelor thesis <em>Linked data utilization via web API</em> at Faculty of Science, The University of South Bohemia, České Budějovice, Czech Republic.<br>
+                         <a href='https://github.com/dominik-heller/BP_LinkedData_Api'>GitHub repository</a></article>",
                     Contact = new OpenApiContact
                     {
                         Name = "Dominik Heller",
-                        Email = "helled01@prf.jcu.cz",
+                        Email = "helled01@prf.jcu.cz"
                     }
                 });
                 //Generate swagger extented documentation

@@ -95,7 +95,7 @@ namespace LinkedData_Api.Controllers
                 CustomError = new CustomErrorVm()
                 {
                     CustomErrorMessage =
-                        "Resource could not have been created! Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}.",
+                        $"Resource could not have been created! Check selected endpoint configuration at {UrlHelperClass.GetEndpointUrl(Request.GetEncodedUrl())}.",
                     GeneratedQuery = query
                 }
             });
