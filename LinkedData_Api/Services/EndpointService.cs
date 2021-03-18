@@ -114,7 +114,7 @@ namespace LinkedData_Api.Services
             }
             catch (RdfException e)
             {
-               // Console.WriteLine(e);
+                Console.WriteLine(e);
                 return null;
             }
         }
@@ -136,9 +136,9 @@ namespace LinkedData_Api.Services
                 var httpWebResponse = await Task.Run(() => sparqlEndpoint.QueryRaw(query));
                 if (httpWebResponse.StatusCode == HttpStatusCode.OK) return true;
             }
-            catch (RdfException)
+            catch (RdfException e)
             {
-                // Console.WriteLine(e);
+                Console.WriteLine(e);
                 return false;
             }
 

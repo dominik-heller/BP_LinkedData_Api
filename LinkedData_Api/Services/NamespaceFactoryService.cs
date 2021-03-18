@@ -31,9 +31,8 @@ namespace LinkedData_Api.Services
                     absoluteUri = _threadSafeQNameOutputMapper.GetNamespaceUri(s[0]) + s[1];
                     return true;
                 }
-                catch (RdfException e)
+                catch (RdfException)
                 {
-            //        Console.WriteLine("Absolute Uri could not have been created. " + e);
                     absoluteUri = String.Empty;
                     return false;
                 }
@@ -80,8 +79,7 @@ namespace LinkedData_Api.Services
                 }
 
                 _threadSafeQNameOutputMapper.AddNamespace(prefix, new Uri(nsUri));
-                qname = prefix+":"+uri.Replace(nsUri,"");
-                Console.WriteLine();
+                qname = prefix + ":" + uri.Replace(nsUri, "");
                 return true;
             }
 

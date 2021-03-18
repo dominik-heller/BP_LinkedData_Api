@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using LinkedData_Api.Model.Domain;
 using LinkedData_Api.Model.ViewModels;
 using LinkedData_Api.Services.Contracts;
-using VDS.RDF;
 using VDS.RDF.Query;
 
 namespace LinkedData_Api.Services
@@ -72,8 +71,8 @@ namespace LinkedData_Api.Services
         public string? GetFinalSelectQueryForPredicate(Parameters parameters)
         {
             SparqlParameterizedString sparqlParameterizedString = new();
-      //      if (parameters.RouteParameters.Resource.Equals("*"))
-       //         sparqlParameterizedString.CommandText = "SELECT * WHERE { [] @pred ?o }";
+            //      if (parameters.RouteParameters.Resource.Equals("*"))
+            //         sparqlParameterizedString.CommandText = "SELECT * WHERE { [] @pred ?o }";
             if (_namespaceFactoryService.GetAbsoluteUriFromQname(parameters.RouteParameters.Resource,
                 out var resourceAbsoluteUri))
             {
@@ -113,7 +112,6 @@ namespace LinkedData_Api.Services
                 deleteQuery = ImplementFromGraphClauseToInsertDeleteQuery(deleteQuery, parameters);
                 if (string.IsNullOrEmpty(deleteQuery)) return null;
                 string finalQuery = deleteQuery + insertQuery;
-                Console.WriteLine(finalQuery);
                 return finalQuery;
             }
 
@@ -139,7 +137,6 @@ namespace LinkedData_Api.Services
                 deleteQuery = ImplementFromGraphClauseToInsertDeleteQuery(deleteQuery, parameters);
                 if (string.IsNullOrEmpty(deleteQuery)) return null;
                 string finalQuery = deleteQuery + insertQuery;
-                Console.WriteLine(finalQuery);
                 return finalQuery;
             }
 
@@ -158,7 +155,6 @@ namespace LinkedData_Api.Services
                 string? insertQuery = ConstructInsertResourceQueryString(namedResourceVm, resourceAbsoluteUri);
                 if (string.IsNullOrEmpty(insertQuery)) return null;
                 insertQuery = ImplementFromGraphClauseToInsertDeleteQuery(insertQuery, parameters);
-                Console.WriteLine(insertQuery);
                 return insertQuery;
             }
 
@@ -176,7 +172,6 @@ namespace LinkedData_Api.Services
                     ConstructInsertPredicateQueryString(namedPredicateVm, resourceAbsoluteUri, predicateAbsoluteUri);
                 if (string.IsNullOrEmpty(insertQuery)) return null;
                 insertQuery = ImplementFromGraphClauseToInsertDeleteQuery(insertQuery, parameters);
-                Console.WriteLine(insertQuery);
                 return insertQuery;
             }
 
@@ -217,7 +212,6 @@ namespace LinkedData_Api.Services
                 sparqlParameterizedDeleteQuery.SetUri("sub", new Uri(resourceAbsoluteUri));
                 sparqlParameterizedDeleteQuery.SetUri("pred", new Uri(predicateAbsoluteUri));
                 string? deleteQuery = sparqlParameterizedDeleteQuery.ToString();
-                Console.WriteLine(deleteQuery);
                 deleteQuery = ImplementFromGraphClauseToInsertDeleteQuery(deleteQuery, parameters);
                 if (string.IsNullOrEmpty(deleteQuery)) return null;
                 return deleteQuery;
@@ -414,7 +408,8 @@ namespace LinkedData_Api.Services
         {
             Endpoint? endpointConfig = _endpointService.GetEndpointConfiguration(parameters.RouteParameters.Endpoint);
             if (endpointConfig == null) return null;
-            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph) && endpointConfig.NamedGraphs != null && endpointConfig.NamedGraphs.Count>0)
+            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph) && endpointConfig.NamedGraphs != null &&
+                endpointConfig.NamedGraphs.Count > 0)
             {
                 var graph = endpointConfig.NamedGraphs.Where(x => x.GraphName.Equals(parameters.RouteParameters.Graph))
                     .Select(y => y.Uri).FirstOrDefault();
@@ -440,7 +435,8 @@ namespace LinkedData_Api.Services
         {
             Endpoint? endpointConfig = _endpointService.GetEndpointConfiguration(parameters.RouteParameters.Endpoint);
             if (endpointConfig == null) return null;
-            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph) && endpointConfig.NamedGraphs != null && endpointConfig.NamedGraphs.Count>0)
+            if (!string.IsNullOrEmpty(parameters.RouteParameters.Graph) && endpointConfig.NamedGraphs != null &&
+                endpointConfig.NamedGraphs.Count > 0)
             {
                 query =
                     $"WITH <{endpointConfig.NamedGraphs.Where(x => x.GraphName.Equals(parameters.RouteParameters.Graph)).Select(y => y.Uri).FirstOrDefault()}> {query}";

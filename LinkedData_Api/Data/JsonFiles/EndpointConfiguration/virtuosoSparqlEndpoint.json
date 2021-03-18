@@ -1,6 +1,6 @@
 ﻿{
   "endpointName": "virtuoso",
-  "endpointUrl": "http://localhost:8890/sparql",
+  "endpointUrl": "http://virtuoso:8890/sparql",
   "defaultGraph": "http://localhost:8890/ovm",
   "namedGraphs": [
     {
@@ -83,6 +83,10 @@
     },
     {
       "graphName": "lexvo",
+      "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
+    },
+    {
+      "graphName": "test",
       "command": "SELECT DISTINCT ?s WHERE { ?s ?p ?o }"
     }
   ]
