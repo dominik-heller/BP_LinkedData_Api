@@ -7,7 +7,7 @@
 <h3>Docker-compose</h3>
 <p>Alternatively, if you want to test UPDATE capabilties, use following <em>docker-compose</em> configuration to set up dedicated sparql server instance alongside LinkedDataApi.</p>
 <pre><code>
-version: "3.9"
+version: "3.5"
 services:
     virtuoso:
         image: "helldo/virtuoso"
@@ -26,9 +26,9 @@ services:
 networks:    
     virtuoso:
         driver: bridge</code></pre>
-<p>Copy the configuration into new file called <i>docker-compose.yml</i> and run cli commands "docker-compose build" and "docker-compose up". 
+<p>Copy the configuration into new file called <i>docker-compose.yml</i> and run cli command "docker-compose up". 
 LinkedDataApi will be available at <i>localhost:8080</i> and sparql endpoint at <i>localhost:8890/sparql</i>. 
 Server contains predefined datasets which can be accessed and manipulated via endpointName "virtuoso", eg. <i>http://localhost:8080/api/virtuoso...</i> . 
-Additionaly you can even modify the sparql server configuration at <i>localhost:8890</i>, ie. add datasets, create new named graphs etc.
+Additionaly you can even modify the sparql server configuration with login <i>dba</i> and password <i>dba</i> at <i>localhost:8890</i>, ie. add datasets, create new named graphs etc.
 </p>
 </article>
