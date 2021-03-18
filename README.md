@@ -27,7 +27,7 @@ networks:
     virtuoso:
         driver: bridge</code></pre>
 <p>Copy the configuration into new file called <i>docker-compose.yml</i> and run cli commands "docker-compose build" and "docker-compose up". 
-LinkedDataAPI will be available at <i>localhost:8080</i> and sparql endpoint at <i>localhost:8890/sparql</i>. 
+LinkedDataApi will be available at <i>localhost:8080</i> and sparql endpoint at <i>localhost:8890/sparql</i>. 
 Server contains predefined datasets which can be accessed and manipulated via endpointName "virtuoso", eg. <i>http://localhost:8080/api/virtuoso...</i> . 
 Additionaly you can even modify the sparql server configuration at <i>localhost:8890</i>, ie. add datasets, create new named graphs etc.
 </p>
