@@ -13,7 +13,7 @@ namespace LinkedData_Api.Swagger.ExampleSchemas
                 Predicates = new Dictionary<string, PredicateContent>()
                 {
                     {
-                        "ex:exampleProperty",
+                        "ex:examplePredicate",
                         new PredicateContent()
                         {
                             Curies = new List<string>() {"ex:curie1", "ex:curie2", "ex:curie3"},

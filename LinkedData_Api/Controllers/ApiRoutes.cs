@@ -56,7 +56,7 @@
         public const string EndpointConfiguration =
             Base + "/{endpoint}";
 
-        public const string PostEndpoints =
+        public const string Endpoints =
             Base + "/endpoints";
 
         public const string EndpointGraphs =

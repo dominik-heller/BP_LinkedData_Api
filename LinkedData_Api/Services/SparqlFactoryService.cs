@@ -71,8 +71,6 @@ namespace LinkedData_Api.Services
         public string? GetFinalSelectQueryForPredicate(Parameters parameters)
         {
             SparqlParameterizedString sparqlParameterizedString = new();
-            //      if (parameters.RouteParameters.Resource.Equals("*"))
-            //         sparqlParameterizedString.CommandText = "SELECT * WHERE { [] @pred ?o }";
             if (_namespaceFactoryService.GetAbsoluteUriFromQname(parameters.RouteParameters.Resource,
                 out var resourceAbsoluteUri))
             {
@@ -331,21 +329,6 @@ namespace LinkedData_Api.Services
 
             return query;
         }
-/*
-        private string ConstructClassResourceQuery(string classQuery)
-        {
-            var x = Regex.Split(classQuery, "where", RegexOptions.IgnoreCase);
-            var y = x[1].Substring(x[1].IndexOf('?')).Split((char[]) null!, StringSplitOptions.RemoveEmptyEntries)
-                .Select(j => j.Trim()).First();
-            x[0] = x[0].Replace(y, "*");
-            var query = x[1].Replace(y, "@var");
-            var i = query.IndexOfAny(new char[] {';', '}'});
-            query = query.Remove(i, 1);
-            query = query.Insert(i, "; ?p ?o }");
-            query = $"{x[0]} WHERE {query}";
-            return query;
-        }
-*/
 
         private string? PopulateInsertQueryString(PredicateContent propertyContent,
             SparqlParameterizedString sparqlParameterizedInsertQuery,

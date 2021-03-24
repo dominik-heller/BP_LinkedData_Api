@@ -12,7 +12,7 @@ namespace LinkedData_Api.Swagger.ExampleSchemas
             {
                 Curies = new List<string>()
                 {
-                    "curie1", "curie2", "curie3"
+                    "ex:curie1", "ex:curie2", "ex:curie3"
                 }
             };
         }

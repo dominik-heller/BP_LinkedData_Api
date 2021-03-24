@@ -1,7 +1,7 @@
 ﻿{
   "endpointName": "datagov",
   "endpointUrl": "https://data.gov.cz/sparql",
-  "defaultGraph": "",
+  "defaultGraph": "http://eurovoc.europa.eu",
   "namedGraphs": [
     {
       "graphName": "school",
@@ -29,6 +29,10 @@
     }
   ],
   "namespaces": [
+    {
+      "prefix": "eu",
+      "uri": "http://eurovoc.europa.eu/"
+    }
   ],
   "supportedMethods": {
     "sparql1.0": "yes",
@@ -38,6 +42,10 @@
     {
       "graphName": "default",
       "command": "SELECT DISTINCT ?s WHERE {?s <http://www.w3.org/ns/dqv#computedOn> <https://data.gov.cz/zdroj/katalog/NKOD>}"
+    },
+    {
+      "graphName": "school",
+      "command": "SELECT ?s WHERE {?s a ?o}"
     }
   ],
   "entryResource": [

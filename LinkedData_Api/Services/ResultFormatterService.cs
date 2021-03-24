@@ -175,9 +175,12 @@ namespace LinkedData_Api.Services
             if (uri.Contains("^^"))
             {
                 literal = new Literal();
-                literal.Value = uri.Split("^")[0];
+                literal.Value = uri;
                 if (_namespaceFactoryService.GetQnameFromAbsoluteUri(uri.Split("^")[2], out var qname))
+                {
+                    literal.Value = uri.Split("^^")[0];
                     literal.Datatype = qname;
+                }
                 return true;
             }
 

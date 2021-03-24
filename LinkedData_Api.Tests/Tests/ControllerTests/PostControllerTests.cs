@@ -31,7 +31,7 @@ namespace LinkedData_Api.Tests.Tests.ControllerTests
             foreach (string fileName in fileEntries)
             {
                 var response = await TestClient.PostAsJsonAsync(
-                    ApiRoutes.PostEndpoints,
+                    ApiRoutes.Endpoints,
                     JsonConvert.DeserializeObject(await File.ReadAllTextAsync(fileName)));
                 responseMessages.Add(response);
             }
@@ -50,7 +50,7 @@ namespace LinkedData_Api.Tests.Tests.ControllerTests
             foreach (string fileName in fileEntries)
             {
                 var response = await TestClient.PostAsJsonAsync(
-                    ApiRoutes.PostEndpoints,
+                    ApiRoutes.Endpoints,
                     JsonConvert.DeserializeObject(await File.ReadAllTextAsync(fileName)));
                 responseMessages.Add(response);
             }

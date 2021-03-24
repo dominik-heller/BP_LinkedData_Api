@@ -71,5 +71,11 @@ namespace LinkedData_Api.Services.Contracts
         /// <param name="endpointName"></param>
         /// <returns></returns>
         bool RemoveEndpoint(string endpointName);
+
+        /// <summary>
+        /// Returns names of all registered endpoints.
+        /// </summary>
+        /// <returns></returns>
+        List<string>? GetEndpointNames();
     }
 }

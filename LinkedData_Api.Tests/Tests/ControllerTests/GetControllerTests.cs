@@ -76,7 +76,7 @@ namespace LinkedData_Api.Tests.Tests.ControllerTests
 
         [SparqlSetupExtensions.IgnoreOnSparqlSettingUpForGetTestsNotSuccessful]
         [InlineData("dbpedia", "virtuoso", "ovm")]
-        [InlineData("datagov", "virtuoso", "lexvo")]
+        [InlineData("dbpedia", "virtuoso", "lexvo")]
         public async Task TestClassesEndpoint_ShouldReturnOkWithNotEmptyCurieVm(string endpointWithoutGraph,
             string endpointWithGraph, string graph)
         {
@@ -100,7 +100,7 @@ namespace LinkedData_Api.Tests.Tests.ControllerTests
 
         [SparqlSetupExtensions.IgnoreOnSparqlSettingUpForGetTestsNotSuccessful]
         [InlineData("wrongEndpoint1", "virtuoso", "wrongGraph")]
-        [InlineData("wrongEndpoint2", "datagov", "school")] //datagov does not have classesentry defined => false
+        [InlineData("wrongEndpoint2", "datagov", "cities")] //datagov does not have classesentry for cities defined => false
         [InlineData("wrongEndpoint3", "datagov", null)]
         public async Task TestClassesEndpoint_ShouldReturnNotFound(string endpointWithoutGraph,
             string endpointWithGraph, string graph)

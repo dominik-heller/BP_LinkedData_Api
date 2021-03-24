@@ -75,8 +75,6 @@ namespace LinkedData_Api.Controllers
                 {
                     return NoContent();
                 }
-
-                query = $"Generated sparql query: {query}.";
             }
 
             return BadRequest(new CustomErrorVm()
@@ -114,8 +112,6 @@ namespace LinkedData_Api.Controllers
                 {
                     return NoContent();
                 }
-
-                query = $"Generated sparql query: {query}.";
             }
 
             return BadRequest(new CustomErrorVm()

@@ -62,6 +62,7 @@ namespace LinkedData_Api.Services
             if (_threadSafeQNameOutputMapper.ReduceToQName(uri, out var _qname))
             {
                 qname = _qname;
+                if (qname.EndsWith(":")) return false;
                 return true;
             }
 

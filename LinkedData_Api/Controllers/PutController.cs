@@ -53,8 +53,6 @@ namespace LinkedData_Api.Controllers
                 {
                     return Created(new Uri(Request.GetEncodedUrl()), resourceVm);
                 }
-
-                query = $"Generated sparql query: {query}.";
             }
 
             return BadRequest(new ValidationErrorVm()
@@ -96,8 +94,6 @@ namespace LinkedData_Api.Controllers
                 {
                     return Created(new Uri(Request.GetEncodedUrl()), predicateVm);
                 }
-
-                query = $"Generated sparql query: {query}.";
             }
 
             return BadRequest(new ValidationErrorVm()

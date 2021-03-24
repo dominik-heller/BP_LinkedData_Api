@@ -41,6 +41,20 @@ namespace LinkedData_Api.Controllers
         #region GeneralInformation
 
         /// <summary>
+        /// Returns list of endpoint names.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet(ApiRoutes.Endpoints)]
+        [ProducesResponseType(typeof(List<string>), 200)]
+        [ProducesResponseType(typeof(CustomErrorVm), 404)]
+        public IActionResult GetEndpointNames()
+        {
+            var endpointNames = _endpointService.GetEndpointNames();
+            if (endpointNames != null) return Ok(endpointNames);
+            return NotFound(new CustomErrorVm() {CustomErrorMessage = "No endpoints found."});
+        }
+
+        /// <summary>
         /// Returns endpoint configuration information.
         /// </summary>
         /// <param name="endpoint"></param>
@@ -48,7 +62,7 @@ namespace LinkedData_Api.Controllers
         [HttpGet(ApiRoutes.EndpointConfiguration)]
         [ProducesResponseType(typeof(EndpointVm), 200)]
         [ProducesResponseType(typeof(CustomErrorVm), 404)]
-        public IActionResult Get_EndpointConfiguration([FromRoute] string endpoint)
+        public IActionResult GetEndpointConfiguration([FromRoute] string endpoint)
         {
             var info = _endpointService.GetEndpointConfiguration(endpoint);
             if (info != null) return Ok(_mapper.Map<Endpoint, EndpointVm>(info));
@@ -63,7 +77,7 @@ namespace LinkedData_Api.Controllers
         [HttpGet(ApiRoutes.EndpointGraphs)]
         [ProducesResponseType(typeof(List<NamedGraph>), 200)]
         [ProducesResponseType(typeof(CustomErrorVm), 404)]
-        public IActionResult Get_GraphsForEndpoint([FromRoute] string endpoint)
+        public IActionResult GetGraphsForEndpoint([FromRoute] string endpoint)
         {
             var graphs = _endpointService.GetEndpointGraphs(endpoint);
             if (graphs != null) return Ok(graphs);
@@ -122,8 +136,6 @@ namespace LinkedData_Api.Controllers
                     CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToCurieList(sparqlResults);
                     return Ok(curiesVm);
                 }
-
-                query = $"Generated sparql query: {query}.";
             }
 
             return NotFound(new CustomErrorVm()
@@ -164,8 +176,6 @@ namespace LinkedData_Api.Controllers
                     CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToCurieList(sparqlResults);
                     return Ok(curiesVm);
                 }
-
-                query = $"Generated sparql query: {query}.";
             }
 
             return NotFound(new CustomErrorVm()
@@ -204,8 +214,6 @@ namespace LinkedData_Api.Controllers
                     CurieVm curiesVm = _resultFormatterService.FormatSparqlResultToCurieList(sparqlResults);
                     return Ok(curiesVm);
                 }
-
-                query = $"Generated sparql query: {query}.";
             }
 
             return NotFound(new CustomErrorVm()
@@ -246,8 +254,6 @@ namespace LinkedData_Api.Controllers
                     ResourceVm resourceVm = _resultFormatterService.FormatSparqlResultToResourceDetail(sparqlResults);
                     return Ok(resourceVm);
                 }
-
-                query = $"Generated sparql query: {query}.";
             }
 
             return NotFound(new CustomErrorVm()
@@ -290,8 +296,6 @@ namespace LinkedData_Api.Controllers
                             parameters.RouteParameters.Predicate, sparqlResults);
                     return Ok(predicateVm);
                 }
-
-                query = $"Generated sparql query: {query}.";
             }
 
             return NotFound(new CustomErrorVm()

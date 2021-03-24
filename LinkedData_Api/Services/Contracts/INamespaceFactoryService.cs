@@ -17,8 +17,8 @@ namespace LinkedData_Api.Services.Contracts
         /// <summary>
         /// Tries to get qname from given uri and returns true if succeeded
         /// </summary>
+        /// <param name="uri"></param>
         /// <param name="qname"></param>
-        /// <param name="uri">
         bool GetQnameFromAbsoluteUri(string uri, out string qname);
 
         /// <summary>

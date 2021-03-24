@@ -11,7 +11,7 @@ namespace LinkedData_Api.Tests.Tests.ControllerTests
     public class DeleteControllerTests : ApiTests
     {
         [Theory]
-        [InlineData("biolit")]
+        [InlineData("datagov")]
         public async Task TestConfigurationInfoEndpoint_ShouldReturnOk(string endpoint)
         {
             var response =

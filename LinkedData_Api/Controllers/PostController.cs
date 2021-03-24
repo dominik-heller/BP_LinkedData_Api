@@ -37,7 +37,7 @@ namespace LinkedData_Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [Route(ApiRoutes.PostEndpoints)]
+        [Route(ApiRoutes.Endpoints)]
         [ProducesResponseType(typeof(EndpointVm), 201)]
         [ProducesResponseType(typeof(ValidationErrorVm), 400)]
         public IActionResult PostEndpoint(EndpointVm endpoint)
@@ -84,10 +84,9 @@ namespace LinkedData_Api.Controllers
                     parameters.RouteParameters.Graph, query);
                 if (successful)
                 {
-                    return Created(new Uri(Request.GetEncodedUrl()), namedResourceVm);
+                    return Created(new Uri(Request.GetEncodedUrl()+"/"+namedResourceVm.ResourceCurie), namedResourceVm);
                 }
 
-                query = $"Generated sparql query: {query}.";
             }
 
             return BadRequest(new ValidationErrorVm()
@@ -126,10 +125,9 @@ namespace LinkedData_Api.Controllers
                     parameters.RouteParameters.Graph, query);
                 if (successful)
                 {
-                    return Created(new Uri(Request.GetEncodedUrl()), namedPredicateVm);
+                    return Created(new Uri(Request.GetEncodedUrl()+"/"+namedPredicateVm.PredicateCurie), namedPredicateVm);
                 }
 
-                query = $"Generated sparql query: {query}.";
             }
 
             return BadRequest(new ValidationErrorVm()

@@ -17,10 +17,10 @@ namespace LinkedData_Api.Services
     {
         private readonly INamespaceFactoryService _namespaceFactoryService;
         private readonly ConcurrentDictionary<string, Endpoint> _endpoints;
-        private const int DefaultSparqlEndpointConnectionTimeout = 30000;
+        private const int DefaultSparqlEndpointConnectionTimeout = 15000;
 
         private const string DefaultSparqlEndpointAcceptHeaders =
-            "application/sparql-results+xml,application/sparql-results+json,text/boolean,application/rdf+xml,text/xml,application/xml,application/json,text/json,application/rdf+json,text/csv,text/comma-separated-values";
+            "application/sparql-results+xml,application/sparql-results+json,text/boolean,application/rdf+xml,text/xml,application/xml,application/json,text/json,application/rdf+json";
 
         public EndpointService(IDataAccess dataAccess, INamespaceFactoryService namespaceFactoryService)
         {
@@ -78,6 +78,12 @@ namespace LinkedData_Api.Services
             return null;
         }
 
+        public List<string>? GetEndpointNames()
+        {
+            if (_endpoints.Keys.Count == 0) return null;
+            return _endpoints.Keys.ToList();
+        }
+        
         public IEnumerable<NamedGraph>? GetEndpointGraphs(string endpointName)
         {
             if (_endpoints.TryGetValue(endpointName, out var endpoint))
@@ -136,9 +142,8 @@ namespace LinkedData_Api.Services
                 var httpWebResponse = await Task.Run(() => sparqlEndpoint.QueryRaw(query));
                 if (httpWebResponse.StatusCode == HttpStatusCode.OK) return true;
             }
-            catch (RdfException e)
+            catch (RdfException)
             {
-                Console.WriteLine(e);
                 return false;
             }
 
