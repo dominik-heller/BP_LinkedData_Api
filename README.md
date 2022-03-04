@@ -31,4 +31,5 @@ LinkedDataApi will be available at <i>localhost:8080</i> and sparql endpoint at 
 Server contains predefined datasets which can be accessed and manipulated via endpointName "virtuoso", eg. <i>http://localhost:8080/api/virtuoso...</i> . 
 Additionaly you can even modify the sparql server configuration with login <i>dba</i> and password <i>dba</i> at <i>localhost:8890</i>, ie. add datasets, create new named graphs etc.
 </p>
+    <p> *** Fully functional DEMO: https://linkeddataapi.azurewebsites.net/ ***<p/>
 </article>
